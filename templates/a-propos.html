@@ -1,0 +1,393 @@
+{% extends 'base.html' %}
+{% block title %}À propos | LCE - Leader Chiffre Entreprise{% endblock %}
+{% block description %}Découvrez Leader Chiffre Entreprise : notre histoire, notre mission, nos valeurs et notre équipe. Centre de formation en conduite d'engins au Togo.{% endblock %}
+
+{% block content %}
+
+<!-- JSON-LD -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Accueil", "item": "{{ url_for('main.index', _external=True) }}"},
+        {"@type": "ListItem", "position": 2, "name": "À propos", "item": "{{ url_for('main.a_propos_page', _external=True) }}"}
+    ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "LCE - Leader Chiffre Entreprise",
+    "description": "Centre professionnel de formation en conduite d'engins de manutention, logistique et transport au Togo.",
+    "url": "{{ url_for('main.index', _external=True) }}",
+    "logo": "{{ url_for('static', filename='images/lc.JPG', _external=True) }}",
+    "address": {"@type": "PostalAddress", "addressLocality": "Lomé", "addressCountry": "TG"},
+    "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "availableLanguage": ["French"]
+    }
+}
+</script>
+
+<!-- HERO -->
+<section class="apropos-hero">
+    <div class="apropos-hero-overlay"></div>
+    <div class="container position-relative z-2">
+        <div class="row min-vh-40 align-items-center py-5">
+            <div class="col-lg-8" data-aos="fade-up" data-aos-duration="800">
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Accueil</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">À propos</li>
+                    </ol>
+                </nav>
+                <h1 class="apropos-hero-title">À propos de Leader Chiffre Entreprise</h1>
+                <p class="apropos-hero-subtitle">Former aujourd'hui les professionnels de demain grâce à une formation pratique, moderne et de qualité.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- QUI SOMMES-NOUS ? -->
+<section class="section-padding">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6" data-aos="fade-right">
+                <div class="about-img-wrapper">
+                    <img src="{{ url_for('static', filename='images/appre.JPG') }}" loading="lazy" alt="Apprenants LCE en formation" class="about-img-main">
+                    <div class="about-img-decoration"></div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <span class="section-badge">Qui sommes-nous ?</span>
+                <h2 class="section-title">Leader Chiffre Entreprise</h2>
+                <p class="about-lead">Leader Chiffre Entreprise est un centre spécialisé dans la formation professionnelle à la conduite d'engins de manutention, de transport et de travaux publics.</p>
+                <p class="about-text">Notre objectif est de préparer des professionnels compétents grâce à une approche alliant théorie, pratique et accompagnement personnalisé. Nous croyons en une formation de qualité qui transforme durablement le parcours de nos apprenants.</p>
+                <p class="about-text">Nos formations couvrent un large éventail d'engins allant du chariot élévateur au camion semi-remorque, en passant par la grue PPM, le bulldozer et bien d'autres.</p>
+                <a href="{{ url_for('main.formations_page') }}" class="btn btn-primary btn-lg rounded-pill px-4 mt-3">Découvrir nos formations</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MISSION, VISION, VALEURS -->
+<section class="section-padding bg-light">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Notre raison d'être</span>
+            <h2 class="section-title">Notre Mission</h2>
+            <p class="section-subtitle">Des valeurs fortes pour une formation d'excellence</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="0">
+                <div class="mission-card">
+                    <div class="mission-icon"><i class="bi bi-bullseye"></i></div>
+                    <h4>Notre mission</h4>
+                    <p>Former des conducteurs qualifiés répondant aux besoins du marché du travail, en offrant une formation complète alliant rigueur, sécurité et professionnalisme.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="mission-card">
+                    <div class="mission-icon"><i class="bi bi-eye"></i></div>
+                    <h4>Notre vision</h4>
+                    <p>Être une référence dans la formation aux engins de manutention et de transport au Togo et en Afrique de l'Ouest, en formant une nouvelle génération de professionnels qualifiés.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="mission-card">
+                    <div class="mission-icon"><i class="bi bi-star"></i></div>
+                    <h4>Nos valeurs</h4>
+                    <div class="valeurs-list">
+                        <span class="valeur-tag"><i class="bi bi-check-circle-fill"></i> Professionnalisme</span>
+                        <span class="valeur-tag"><i class="bi bi-shield-check"></i> Sécurité</span>
+                        <span class="valeur-tag"><i class="bi bi-trophy"></i> Excellence</span>
+                        <span class="valeur-tag"><i class="bi bi-book"></i> Discipline</span>
+                        <span class="valeur-tag"><i class="bi bi-lightbulb"></i> Innovation</span>
+                        <span class="valeur-tag"><i class="bi bi-heart"></i> Respect</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- NOS DOMAINES D'EXPERTISE -->
+<section class="section-padding">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Expertise</span>
+            <h2 class="section-title">Nos Domaines d'Expertise</h2>
+            <p class="section-subtitle">Un large éventail de formations pour répondre à tous les besoins du marché</p>
+        </div>
+        <div class="row g-4">
+            {% set expertises = [
+                {'nom': 'Chariot élévateur', 'img': 'char.JPG', 'desc': 'Manutention de charges en entrepôt et sur chantier.', 'cat': 'Manutention'},
+                {'nom': 'Reachstacker', 'img': 'reash.JPG', 'desc': 'Manutention portuaire et logistique lourde.', 'cat': 'Logistique'},
+                {'nom': 'Grue PPM', 'img': 'gru.JPG', 'desc': 'Levage de charges lourdes en sécurité.', 'cat': 'BTP'},
+                {'nom': 'Chargeuse', 'img': 'cha.JPG', 'desc': 'Terrassement et carrières.', 'cat': 'BTP'},
+                {'nom': 'Pelle hydraulique', 'img': 'pelle.JPG', 'desc': 'Excavation, tranchée et terrassement.', 'cat': 'BTP'},
+                {'nom': 'Manitou télescopique', 'img': 'mani.JPG', 'desc': 'Manutention polyvalente chantier et agricole.', 'cat': 'Manutention'},
+                {'nom': 'Niveleuse', 'img': 'niveu.JPG', 'desc': 'Nivellement et travaux de voirie.', 'cat': 'BTP'},
+                {'nom': 'Bulldozer', 'img': 'buldo.JPG', 'desc': 'Grands travaux de terrassement.', 'cat': 'BTP'},
+                {'nom': 'Camion Benne', 'img': 'benne.JPG', 'desc': 'Transport de matériaux en vrac.', 'cat': 'Transport'},
+                {'nom': 'Bus', 'img': 'bus.JPG', 'desc': 'Transport de passagers en sécurité.', 'cat': 'Transport'},
+                {'nom': 'Camion Semi-remorque', 'img': 'semi.JPG', 'desc': 'Transport longue distance.', 'cat': 'Transport'},
+            ] %}
+            {% for exp in expertises %}
+            <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="{{ loop.index * 40 }}">
+                <div class="expertise-card">
+                    <div class="expertise-img-wrapper">
+                        <img src="{{ url_for('static', filename='images/' + exp.img) }}" loading="lazy" alt="{{ exp.nom }}" class="expertise-img">
+                        <div class="expertise-img-overlay"><i class="bi bi-gear-wide-connected"></i></div>
+                    </div>
+                    <div class="expertise-body">
+                        <span class="expertise-cat">{{ exp.cat }}</span>
+                        <h4>{{ exp.nom }}</h4>
+                        <p>{{ exp.desc }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- POURQUOI NOUS CHOISIR ? -->
+<section class="section-padding bg-light">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-5" data-aos="fade-right">
+                <div class="about-img-wrapper">
+                    <img src="{{ url_for('static', filename='images/appre2.JPG') }}" loading="lazy" alt="Formation LCE" class="about-img-main">
+                    <div class="about-img-decoration"></div>
+                </div>
+            </div>
+            <div class="col-lg-7" data-aos="fade-left">
+                <span class="section-badge">Pourquoi nous choisir ?</span>
+                <h2 class="section-title">L'Excellence au Service de Votre Avenir</h2>
+                <p class="section-subtitle text-start mb-4">Découvrez ce qui fait de LCE le partenaire idéal pour votre formation professionnelle.</p>
+                <div class="row g-3">
+                    {% set avantages = [
+                        {'icon': 'bi-person-check', 'title': 'Formateurs qualifiés', 'desc': 'Des professionnels certifiés avec plus de 10 ans d\'expérience dans la conduite d\'engins.'},
+                        {'icon': 'bi-journal-check', 'title': 'Formation théorique et pratique', 'desc': 'Un programme complet couvrant la théorie, la sécurité et la pratique intensive.'},
+                        {'icon': 'bi-tools', 'title': 'Équipements modernes', 'desc': 'Un parc d\'engins récent et régulièrement entretenu pour des conditions optimales.'},
+                        {'icon': 'bi-person-hearts', 'title': 'Accompagnement personnalisé', 'desc': 'Un suivi individuel adapté au rythme et aux besoins de chaque apprenant.'},
+                        {'icon': 'bi-patch-check', 'title': 'Certificat de fin de formation', 'desc': 'Une attestation reconnue qui valorise votre parcours et vos compétences acquises.'},
+                        {'icon': 'bi-graph-up-arrow', 'title': 'Suivi des apprenants', 'desc': 'Un accompagnement post-formation pour faciliter votre insertion professionnelle.'},
+                    ] %}
+                    {% for av in avantages %}
+                    <div class="col-md-6" data-aos="fade-up" data-aos-delay="{{ loop.index * 60 }}">
+                        <div class="avantage-card-about">
+                            <div class="avantage-card-icon"><i class="bi {{ av.icon }}"></i></div>
+                            <div>
+                                <h5>{{ av.title }}</h5>
+                                <p>{{ av.desc }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- NOS CHIFFRES -->
+<section class="chiffres section-padding" id="chiffres-apropos">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge" style="background:rgba(255,255,255,0.15);color:#fff;">Nos chiffres</span>
+            <h2 class="section-title text-white">LCE en Chiffres</h2>
+            <p class="section-subtitle text-white opacity-75">Des résultats qui témoignent de notre engagement</p>
+        </div>
+        <div class="row g-4 text-center" data-aos="fade-up">
+            {% if stats %}
+            {% for stat in stats %}
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="{{ loop.index * 80 }}">
+                <div class="chiffre-card">
+                    <div class="chiffre-number">{{ stat.valeur }}</div>
+                    <div class="chiffre-label">{{ stat.cle.replace('_', ' ') }}</div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            {% set default_stats = [
+                ('500+', 'Apprenants formés'),
+                ('11', 'Types d\'engins'),
+                ('95%', 'Taux de réussite'),
+                ('100%', 'Formation pratique'),
+            ] %}
+            {% for number, label in default_stats %}
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="{{ loop.index * 80 }}">
+                <div class="chiffre-card">
+                    <div class="chiffre-number">{{ number }}</div>
+                    <div class="chiffre-label">{{ label }}</div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- NOTRE MÉTHODE -->
+<section class="section-padding">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Notre méthode</span>
+            <h2 class="section-title">Comment ça Marche ?</h2>
+            <p class="section-subtitle">Un parcours structuré en 6 étapes pour garantir votre réussite</p>
+        </div>
+        <div class="steps-timeline" data-aos="fade-up">
+            {% set etapes = [
+                ('1', 'Accueil', 'bi-person-raised-hand', 'Premier contact et présentation du centre'),
+                ('2', 'Inscription', 'bi-pencil-square', 'Choix de la formation et inscription'),
+                ('3', 'Théorie', 'bi-book', 'Apprentissage des notions clés et sécurité'),
+                ('4', 'Pratique', 'bi-tools', 'Formation pratique intensive sur les engins'),
+                ('5', 'Évaluation', 'bi-clipboard-check', 'Évaluation des compétences acquises'),
+                ('6', 'Certificat', 'bi-award', 'Remise du certificat de fin de formation'),
+            ] %}
+            {% for num, title, icon, desc in etapes %}
+            <div class="step-item" data-aos="zoom-in" data-aos-delay="{{ loop.index * 100 }}">
+                <div class="step-circle">
+                    <i class="bi {{ icon }}"></i>
+                    <span class="step-num">{{ num }}</span>
+                </div>
+                <div class="step-content">
+                    <h6>{{ title }}</h6>
+                    <p>{{ desc }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- NOTRE ÉQUIPE -->
+<section class="section-padding bg-light">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Notre équipe</span>
+            <h2 class="section-title">Des Formateurs Passionnés</h2>
+            <p class="section-subtitle">Une équipe expérimentée dédiée à votre réussite professionnelle</p>
+        </div>
+        {% if equipiers %}
+        <div class="row g-4 justify-content-center">
+            {% for membre in equipiers %}
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ loop.index * 80 }}">
+                <div class="equipe-card">
+                    <div class="equipe-img-wrapper">
+                        <img src="{{ url_for('static', filename='images/' + membre.photo) if membre.photo else url_for('static', filename='images/lc.JPG') }}" loading="lazy" alt="{{ membre.nom }}" class="equipe-img">
+                        <div class="equipe-img-overlay">
+                            <span>+</span>
+                        </div>
+                    </div>
+                    <div class="equipe-body">
+                        <h5>{{ membre.nom }}</h5>
+                        <span class="equipe-fonction">{{ membre.fonction }}</span>
+                        {% if membre.description %}<p>{{ membre.description }}</p>{% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-4" data-aos="fade-up">
+            <i class="bi bi-people display-3 text-muted opacity-50"></i>
+            <p class="text-muted mt-3">Les membres de notre équipe seront présentés prochainement.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- TÉMOIGNAGES -->
+<section class="section-padding">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Témoignages</span>
+            <h2 class="section-title">Ce Que Disent Nos Apprenants</h2>
+            <p class="section-subtitle">La satisfaction de nos apprenants est notre plus belle réussite</p>
+        </div>
+        {% if temoignages %}
+        <div class="row g-4">
+            {% for tem in temoignages %}
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ loop.index * 80 }}">
+                <div class="temoignage-card-about">
+                    <div class="temoignage-stars mb-3">
+                        {% for i in range(tem.note) %}<i class="bi bi-star-fill"></i>{% endfor %}
+                        {% for i in range(5 - tem.note) %}<i class="bi bi-star"></i>{% endfor %}
+                    </div>
+                    <p class="temoignage-message">"{{ tem.message or tem.contenu }}"</p>
+                    <div class="temoignage-author-about">
+                        <div class="temoignage-avatar-about">
+                            {% if tem.photo %}
+                            <img src="{{ url_for('static', filename='images/' + tem.photo) }}" alt="{{ tem.nom }}">
+                            {% else %}
+                            <span>{{ tem.nom[0] | upper }}</span>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <strong>{{ tem.nom }}</strong>
+                            <small>{{ tem.profession or tem.fonction or 'Apprenant LCE' }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-4" data-aos="fade-up">
+            <i class="bi bi-chat-quote display-3 text-muted opacity-50"></i>
+            <p class="text-muted mt-3">Les témoignages de nos apprenants seront bientôt disponibles.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- CERTIFICATIONS -->
+<section class="section-padding bg-light">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Certifications</span>
+            <h2 class="section-title">Nos Engagements</h2>
+            <p class="section-subtitle">Des standards élevés pour une formation de qualité</p>
+        </div>
+        <div class="row g-4 justify-content-center">
+            {% set certifs = [
+                {'icon': 'bi-patch-check-fill', 'title': 'Formation de qualité', 'desc': 'Des programmes conformes aux standards internationaux, régulièrement mis à jour.'},
+                {'icon': 'bi-shield-fill-check', 'title': 'Respect des normes de sécurité', 'desc': 'La sécurité est au cœur de chaque formation, avec des protocoles stricts.'},
+                {'icon': 'bi-person-badge', 'title': 'Encadrement professionnel', 'desc': 'Des formateurs certifiés et expérimentés pour un apprentissage optimal.'},
+                {'icon': 'bi-gear', 'title': 'Équipements adaptés', 'desc': 'Un parc d\'engins modernes et variés pour une pratique sur tous types de machines.'},
+            ] %}
+            {% for cert in certifs %}
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="{{ loop.index * 80 }}">
+                <div class="certif-card">
+                    <div class="certif-icon"><i class="bi {{ cert.icon }}"></i></div>
+                    <h5>{{ cert.title }}</h5>
+                    <p>{{ cert.desc }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-5" data-aos="fade-up">
+            <p class="text-muted fst-italic">Des certifications officielles seront présentées ici prochainement.</p>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <div class="container text-center" data-aos="zoom-in">
+        <h2 class="cta-title">Construisez votre avenir avec Leader Chiffre Entreprise</h2>
+        <p class="cta-subtitle mb-4">Rejoignez un centre de formation reconnu pour son professionnalisme et son approche pratique.</p>
+        <div class="cta-buttons">
+            <a href="{{ url_for('main.formations_page') }}#inscription" class="btn btn-white btn-lg rounded-pill px-5 me-3">S'inscrire maintenant</a>
+            <a href="{{ url_for('main.contact_page') }}" class="btn btn-outline-white btn-lg rounded-pill px-5">Nous contacter</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

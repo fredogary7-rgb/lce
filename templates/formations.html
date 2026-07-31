@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+{% block title %}Nos Formations Professionnelles | LCE{% endblock %}
+{% block description %}Découvrez toutes les formations en conduite d'engins de LCE : chariot élévateur, grue PPM, pelle hydraulique, bulldozer et plus. Formations théoriques et pratiques avec certificat professionnel.{% endblock %}
+
+{% block content %}
+
+<!-- JSON-LD Breadcrumb -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Accueil",
+            "item": "{{ url_for('main.index', _external=True) }}"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Formations",
+            "item": "{{ url_for('main.formations_page', _external=True) }}"
+        }
+    ]
+}
+</script>
+
+<!-- HERO -->
+<section class="formations-hero">
+    <div class="formations-hero-overlay"></div>
+    <div class="container hero-content position-relative z-2">
+        <div class="row min-vh-50 align-items-center py-5">
+            <div class="col-lg-8" data-aos="fade-up" data-aos-duration="800">
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Accueil</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Formations</li>
+                    </ol>
+                </nav>
+                <h1 class="formations-hero-title">Nos Formations Professionnelles</h1>
+                <p class="formations-hero-subtitle">Développez vos compétences grâce à des formations pratiques, encadrées par des professionnels qualifiés.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- INTRODUCTION -->
+<section class="section-padding">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6" data-aos="fade-right">
+                <span class="section-badge">LCE Formation</span>
+                <h2 class="section-title">Formez-vous aux métiers de la conduite d'engins</h2>
+                <p class="mb-3">Leader Chiffre Entreprise forme les futurs conducteurs d'engins dans les secteurs les plus porteurs de l'économie togolaise et africaine.</p>
+                <div class="row g-3 mt-3">
+                    <div class="col-sm-6">
+                        <div class="sector-badge"><i class="bi bi-box-seam"></i> Logistique</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="sector-badge"><i class="bi bi-building"></i> BTP</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="sector-badge"><i class="bi bi-gear"></i> Industrie</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="sector-badge"><i class="bi bi-truck"></i> Transport</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="sector-badge"><i class="bi bi-box"></i> Manutention</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="intro-img-wrapper">
+                    <img src="{{ url_for('static', filename='images/appre.JPG') }}" alt="Apprenant LCE" loading="lazy" class="intro-img rounded-4 shadow-lg">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- LISTE DES FORMATIONS -->
+<section class="section-padding bg-light" id="liste-formations">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Catalogue</span>
+            <h2 class="section-title">Nos Formations</h2>
+            <p class="section-subtitle">Choisissez la formation qui correspond à votre projet professionnel</p>
+        </div>
+
+        {% if formations %}
+        <div class="row g-4">
+            {% for formation in formations %}
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 }}">
+                <div class="formation-pro-card">
+                    <div class="formation-pro-img-wrapper">
+                        <img src="{{ url_for('static', filename='images/' + formation.image) }}" loading="lazy" alt="{{ formation.nom }}" class="formation-pro-img">
+                        <div class="formation-pro-overlay">
+                            <i class="bi bi-eye"></i>
+                            <span>En savoir plus</span>
+                        </div>
+                        {% if formation.categorie %}
+                        <span class="formation-badge-cat">{{ formation.categorie }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="formation-pro-body">
+                        <h5 class="formation-pro-title">{{ formation.nom }}</h5>
+                        <p class="formation-pro-text">{{ formation.description }}</p>
+                        <div class="formation-pro-meta">
+                            <div class="meta-item"><i class="bi bi-clock"></i> {{ formation.duree or '4 à 8 semaines' }}</div>
+                            <div class="meta-item"><i class="bi bi-book"></i> Théorie</div>
+                            <div class="meta-item"><i class="bi bi-tools"></i> Pratique</div>
+                        </div>
+                        <div class="formation-pro-certif">
+                            <i class="bi bi-patch-check-fill text-success"></i> Certificat délivré
+                        </div>
+                        <div class="formation-pro-footer">
+                            <button class="btn btn-outline-primary btn-sm rounded-pill w-100" onclick="openInscription()">Voir les détails</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5" data-aos="fade-up">
+            <i class="bi bi-inbox display-1 text-muted"></i>
+            <p class="text-muted mt-3">Aucune formation disponible pour le moment. Revenez bientôt !</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- POURQUOI CHOISIR NOS FORMATIONS -->
+<section class="section-padding">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Avantages</span>
+            <h2 class="section-title">Pourquoi choisir nos formations ?</h2>
+            <p class="section-subtitle">Des atouts concrets pour votre réussite professionnelle</p>
+        </div>
+        <div class="row g-4">
+            {% set avantages = [
+                {'icon': 'bi-tools', 'title': 'Formation 100% pratique', 'desc': 'Une immersion totale sur des engins réels, pas de théorie sans mise en application.'},
+                {'icon': 'bi-person-check', 'title': 'Formateurs expérimentés', 'desc': 'Des professionnels certifiés avec plus de 10 ans d\'expérience terrain.'},
+                {'icon': 'bi-cpu', 'title': 'Machines modernes', 'desc': 'Un parc d\'engins récent et régulièrement entretenu pour votre sécurité.'},
+                {'icon': 'bi-heart', 'title': 'Accompagnement personnalisé', 'desc': 'Un suivi individuel pour chaque apprenant, du début à la certification.'},
+                {'icon': 'bi-award', 'title': 'Certificat professionnel', 'desc': 'Un certificat reconnu par les entreprises du secteur au Togo et à l\'international.'},
+                {'icon': 'bi-briefcase', 'title': 'Insertion professionnelle', 'desc': 'Un taux d\'insertion de 95% grâce à notre réseau de partenaires.'},
+            ] %}
+            {% for av in avantages %}
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ loop.index * 80 }}">
+                <div class="avantage-card">
+                    <div class="avantage-icon"><i class="bi {{ av.icon }}"></i></div>
+                    <h5>{{ av.title }}</h5>
+                    <p>{{ av.desc }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- DÉROULEMENT D'UNE FORMATION -->
+<section class="section-padding bg-light" id="deroulement">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Parcours</span>
+            <h2 class="section-title">Déroulement d'une formation</h2>
+            <p class="section-subtitle">Un parcours structuré en 6 étapes pour garantir votre réussite</p>
+        </div>
+        <div class="steps-timeline" data-aos="fade-up">
+            {% set steps = [
+                {'num': '1', 'icon': 'bi-pencil-square', 'title': 'Inscription', 'desc': 'Choisissez votre formation et inscrivez-vous en ligne ou dans nos locaux.'},
+                {'num': '2', 'icon': 'bi-clipboard-check', 'title': 'Évaluation du niveau', 'desc': 'Un test rapide pour adapter la formation à votre niveau actuel.'},
+                {'num': '3', 'icon': 'bi-book', 'title': 'Formation théorique', 'desc': 'Apprenez les règles de sécurité, la réglementation et les bases techniques.'},
+                {'num': '4', 'icon': 'bi-tools', 'title': 'Formation pratique', 'desc': 'Pratique intensive sur les engins avec un accompagnement personnalisé.'},
+                {'num': '5', 'icon': 'bi-check2-circle', 'title': 'Examen', 'desc': 'Évaluez vos compétences lors d\'un test pratique et théorique.'},
+                {'num': '6', 'icon': 'bi-award', 'title': 'Certificat', 'desc': 'Recevez votre certificat professionnel reconnu et lancez votre carrière.'},
+            ] %}
+            {% for step in steps %}
+            <div class="step-item" data-aos="zoom-in" data-aos-delay="{{ loop.index * 80 }}">
+                <div class="step-circle">
+                    <i class="bi {{ step.icon }}"></i>
+                    <span class="step-num">{{ step.num }}</span>
+                </div>
+                <div class="step-content">
+                    <h6>{{ step.title }}</h6>
+                    <p>{{ step.desc }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- NOS APPRENANTS -->
+<section class="section-padding" id="apprenants">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Galerie</span>
+            <h2 class="section-title">Nos Apprenants en Action</h2>
+            <p class="section-subtitle">Découvrez nos apprenants lors des séances de formation pratique</p>
+        </div>
+        <div class="row g-3">
+            {% for img in ['appre.JPG', 'appre2.JPG', 'appre3.JPG'] %}
+            <div class="col-md-4" data-aos="zoom-in" data-aos-delay="{{ loop.index * 100 }}">
+                <a href="{{ url_for('static', filename='images/' + img) }}" class="galerie-item" data-lightbox="galerie-formations">
+                    <img src="{{ url_for('static', filename='images/' + img) }}" loading="lazy" alt="Apprenant LCE" class="galerie-img">
+                    <div class="galerie-overlay"><i class="bi bi-zoom-in"></i></div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="section-padding bg-light" id="faq">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">FAQ</span>
+            <h2 class="section-title">Questions fréquentes</h2>
+            <p class="section-subtitle">Tout ce que vous devez savoir avant de vous inscrire</p>
+        </div>
+        <div class="faq-wrapper mx-auto" style="max-width: 850px;" data-aos="fade-up">
+            <div class="accordion" id="faqAccordion">
+                {% set faqs = [
+                    {'q': 'Qui peut suivre une formation ?', 'a': 'Toute personne majeure, avec ou sans expérience préalable, souhaitant se former à la conduite d\'engins. Nos formations sont ouvertes aux débutants comme aux professionnels souhaitant se perfectionner.'},
+                    {'q': 'Quelle est la durée des formations ?', 'a': 'La durée varie selon le type d\'engin et votre niveau. En moyenne, une formation dure entre 4 et 12 semaines. Nous proposons des formules intensives et des formules à temps partiel.'},
+                    {'q': 'Faut-il avoir de l\'expérience ?', 'a': 'Non, aucune expérience n\'est requise pour commencer. Nos formations sont conçues pour vous accompagner de zéro jusqu\'à la maîtrise complète de l\'engin.'},
+                    {'q': 'Le certificat est-il reconnu ?', 'a': 'Oui, nos certificats sont reconnus par les entreprises du secteur au Togo et dans la sous-région. Ils attestent de votre qualification professionnelle et facilitent votre insertion.'},
+                    {'q': 'Comment s\'inscrire ?', 'a': 'Vous pouvez vous inscrire directement sur notre site via le formulaire ci-dessous, ou nous rendre visite dans nos locaux à Lomé. Notre équipe est à votre disposition pour vous guider.'},
+                ] %}
+                {% for faq in faqs %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button {% if not loop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#faq{{ loop.index }}" aria-expanded="{{ 'true' if loop.first else 'false' }}">
+                            {{ faq.q }}
+                        </button>
+                    </h2>
+                    <div id="faq{{ loop.index }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">{{ faq.a }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <div class="container text-center" data-aos="zoom-in">
+        <h2 class="cta-title">Prêt à lancer votre carrière ?</h2>
+        <p class="cta-subtitle mb-4">Rejoignez les 500+ apprenants déjà formés par LCE et obtenez votre certificat professionnel.</p>
+        <div class="cta-buttons">
+            <a href="#inscription" class="btn btn-white btn-lg rounded-pill px-5 me-3">S'inscrire maintenant</a>
+            <a href="{{ url_for('main.index', _anchor='contact') }}" class="btn btn-outline-white btn-lg rounded-pill px-5">Nous contacter</a>
+        </div>
+        <div class="cta-engins mt-5 d-none d-md-block">
+            <div class="cta-engin-grid">
+                <img src="{{ url_for('static', filename='images/char.JPG') }}" alt="Engin" loading="lazy">
+                <img src="{{ url_for('static', filename='images/gru.JPG') }}" alt="Engin" loading="lazy">
+                <img src="{{ url_for('static', filename='images/pelle.JPG') }}" alt="Engin" loading="lazy">
+                <img src="{{ url_for('static', filename='images/buldo.JPG') }}" alt="Engin" loading="lazy">
+                <img src="{{ url_for('static', filename='images/semi.JPG') }}" alt="Engin" loading="lazy">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FORMULAIRE INSCRIPTION RAPIDE -->
+<section class="section-padding bg-light" id="inscription">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8" data-aos="fade-up">
+                <div class="section-header text-center mb-4">
+                    <span class="section-badge">Inscription</span>
+                    <h2 class="section-title">Inscrivez-vous à une formation</h2>
+                    <p>Remplissez ce formulaire, nous vous contacterons sous 24h.</p>
+                </div>
+                <form action="{{ url_for('main.inscription') }}" method="POST" class="contact-form bg-white p-4 rounded-4 shadow-sm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="fNom" class="form-label">Nom <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="fNom" name="nom" required placeholder="Votre nom">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="fPrenom" class="form-label">Prénom</label>
+                            <input type="text" class="form-control" id="fPrenom" name="prenom" placeholder="Votre prénom">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="fTel" class="form-label">Téléphone <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control" id="fTel" name="telephone" required placeholder="+228 XX XX XX XX">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="fEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="fEmail" name="email" placeholder="votre@email.com">
+                        </div>
+                        <div class="col-12">
+                            <label for="fFormation" class="form-label">Formation souhaitée</label>
+                            <select class="form-select" id="fFormation" name="formation">
+                                <option value="">Choisissez une formation...</option>
+                                {% for formation in formations %}
+                                <option value="{{ formation.nom }}">{{ formation.nom }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary rounded-pill px-5">Envoyer mon inscription</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

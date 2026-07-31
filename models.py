@@ -1,0 +1,149 @@
+from extensions import db
+from datetime import datetime
+
+
+class Formation(db.Model):
+    __tablename__ = 'formations'
+    id = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(200), nullable=False)
+    slug = db.Column(db.String(200), unique=True, nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    image = db.Column(db.String(300), nullable=True)
+    prix = db.Column(db.String(100), nullable=True)
+    duree = db.Column(db.String(100), nullable=True)
+    categorie = db.Column(db.String(100), nullable=True)
+    actif = db.Column(db.Boolean, default=True)
+    ordre_affichage = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Formation {self.nom}>'
+
+
+class Message(db.Model):
+    __tablename__ = 'messages'
+    id = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(200), nullable=False)
+    telephone = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(200), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    lu = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Message {self.nom}>'
+
+
+class Temoignage(db.Model):
+    __tablename__ = 'temoignages'
+    id = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(200), nullable=False)
+    profession = db.Column(db.String(200), nullable=True)
+    fonction = db.Column(db.String(200), nullable=True)
+    photo = db.Column(db.String(300), nullable=True)
+    message = db.Column(db.Text, nullable=True)
+    contenu = db.Column(db.Text, nullable=False)
+    note = db.Column(db.Integer, default=5)
+    actif = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Temoignage {self.nom}>'
+
+
+class Inscription(db.Model):
+    __tablename__ = 'inscriptions'
+    id = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(200), nullable=False)
+    prenom = db.Column(db.String(200), nullable=True)
+    telephone = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(200), nullable=True)
+    formation = db.Column(db.String(200), nullable=True)
+    statut = db.Column(db.String(50), default='en_attente')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Inscription {self.nom}>'
+
+
+class Galerie(db.Model):
+    __tablename__ = 'galerie'
+    id = db.Column(db.Integer, primary_key=True)
+    titre = db.Column(db.String(200), nullable=True)
+    image = db.Column(db.String(300), nullable=False)
+    categorie = db.Column(db.String(100), default='general')
+    description = db.Column(db.Text, nullable=True)
+    actif = db.Column(db.Boolean, default=True)
+    ordre = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Galerie {self.titre or self.image}>'
+
+
+class Equipe(db.Model):
+    __tablename__ = 'equipe'
+    id = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(200), nullable=False)
+    fonction = db.Column(db.String(200), nullable=False)
+    photo = db.Column(db.String(300), nullable=True)
+    description = db.Column(db.Text, nullable=True)
+    ordre = db.Column(db.Integer, default=0)
+    actif = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Equipe {self.nom}>'
+
+
+class Video(db.Model):
+    __tablename__ = 'videos'
+    id = db.Column(db.Integer, primary_key=True)
+    titre = db.Column(db.String(200), nullable=False)
+    miniature = db.Column(db.String(300), nullable=True)
+    url_video = db.Column(db.String(500), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    actif = db.Column(db.Boolean, default=True)
+    ordre = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Video {self.titre}>'
+
+
+class ParametreSite(db.Model):
+    __tablename__ = 'parametres_site'
+    id = db.Column(db.Integer, primary_key=True)
+    cle = db.Column(db.String(100), unique=True, nullable=False)
+    valeur = db.Column(db.Text, nullable=True)
+
+    def __repr__(self):
+        return f'<Parametre {self.cle}>'
+
+
+class Statistique(db.Model):
+    __tablename__ = 'statistiques'
+    id = db.Column(db.Integer, primary_key=True)
+    cle = db.Column(db.String(100), unique=True, nullable=False)
+    valeur = db.Column(db.String(200), nullable=False)
+    icone = db.Column(db.String(200), nullable=True)
+    ordre = db.Column(db.Integer, default=0)
+
+    def __repr__(self):
+        return f'<Statistique {self.cle}>'
+
+
+class ContactMessage(db.Model):
+    __tablename__ = 'contact_messages'
+    id = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(200), nullable=False)
+    telephone = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(200), nullable=False)
+    sujet = db.Column(db.String(300), nullable=True)
+    message = db.Column(db.Text, nullable=False)
+    lu = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<ContactMessage {self.nom}>'

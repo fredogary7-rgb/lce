@@ -1,0 +1,17 @@
+{
+    "name": "LCE - Leader Chiffre Entreprise",
+    "short_name": "LCE",
+    "description": "Centre professionnel de formation en conduite d'engins de manutention, logistique et transport.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0D47C7",
+    "theme_color": "#0D47C7",
+    "icons": [
+        {
+            "src": "/static/images/lc.JPG",
+            "sizes": "512x512",
+            "type": "image/jpeg"
+        }
+    ],
+    "lang": "fr-FR"
+}

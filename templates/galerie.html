@@ -1,0 +1,305 @@
+{% extends 'base.html' %}
+{% block title %}Galerie | LCE - Leader Chiffre Entreprise{% endblock %}
+{% block description %}Découvrez la galerie photo de LCE : nos apprenants en formation, nos engins, nos événements. Plongez dans l'univers de Leader Chiffre Entreprise à Lomé.{% endblock %}
+
+{% block content %}
+
+<!-- JSON-LD -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Accueil", "item": "{{ url_for('main.index', _external=True) }}"},
+        {"@type": "ListItem", "position": 2, "name": "Galerie", "item": "{{ url_for('main.galerie_page', _external=True) }}"}
+    ]
+}
+</script>
+
+<!-- HERO -->
+<section class="galerie-hero">
+    <div class="galerie-hero-overlay"></div>
+    <div class="container position-relative z-2">
+        <div class="row min-vh-40 align-items-center py-5">
+            <div class="col-lg-8" data-aos="fade-up" data-aos-duration="800">
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Accueil</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Galerie</li>
+                    </ol>
+                </nav>
+                <h1 class="galerie-hero-title">Notre Galerie</h1>
+                <p class="galerie-hero-subtitle">Découvrez nos formations en images, nos apprenants et les différents engins utilisés durant les séances pratiques.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- INTRODUCTION -->
+<section class="section-padding bg-light">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8" data-aos="fade-up">
+                <p class="galerie-intro-text">Leader Chiffre Entreprise met l'accent sur la pratique et la qualité de la formation. À travers cette galerie, découvrez quelques moments de nos formations ainsi que les différents équipements utilisés.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FILTRES -->
+<section class="section-padding pt-0 bg-light">
+    <div class="container">
+        <div class="filter-bar text-center" data-aos="fade-up">
+            {% if categories %}
+            {% for cat in categories %}
+            <button class="filter-btn {% if loop.first %}active{% endif %}" data-filter="{{ cat.lower() }}">{{ cat }}</button>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- GALERIE MASONRY -->
+<section class="section-padding pt-0 bg-light">
+    <div class="container">
+        {% if images %}
+        <div class="gallery-masonry" data-aos="fade-up" id="galleryGrid">
+            {% for img in images %}
+            <div class="gallery-item" data-category="{{ img.categorie.lower() }}" data-aos="zoom-in" data-aos-delay="{{ loop.index * 40 }}">
+                <a href="{{ url_for('static', filename='images/' + img.image) }}" class="gallery-link" data-lightbox="galerie">
+                    <img src="{{ url_for('static', filename='images/' + img.image) }}" loading="lazy" alt="{{ img.titre or 'Image LCE' }}" class="gallery-img">
+                    <div class="gallery-item-overlay">
+                        <i class="bi bi-zoom-in"></i>
+                        {% if img.titre %}<span>{{ img.titre }}</span>{% endif %}
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5" data-aos="fade-up">
+            <i class="bi bi-images display-1 text-muted"></i>
+            <p class="text-muted mt-3">Aucune image disponible pour le moment.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- NOS FORMATIONS EN ACTION -->
+<section class="section-padding">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">En Action</span>
+            <h2 class="section-title">Nos Formations en Action</h2>
+            <p class="section-subtitle">Des formations pratiques avec des équipements professionnels</p>
+        </div>
+        <div class="row g-4">
+            {% set actions = [
+                {'icon': 'bi-tools', 'title': 'Formation pratique', 'desc': 'Nos apprenants manipulent les engins réels dès le premier jour, avec des exercices progressifs adaptés à chaque niveau.', 'img': 'appre.JPG'},
+                {'icon': 'bi-cpu', 'title': 'Machines modernes', 'desc': 'Un parc d\'engins récent et régulièrement entretenu pour garantir la sécurité et l\'efficacité de votre apprentissage.', 'img': 'pelle.JPG'},
+                {'icon': 'bi-people', 'title': 'Encadrement professionnel', 'desc': 'Des formateurs certifiés avec plus de 10 ans d\'expérience vous accompagnent à chaque étape.', 'img': 'appre2.JPG'},
+            ] %}
+            {% for act in actions %}
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+                <div class="action-card">
+                    <div class="action-card-img-wrapper">
+                        <img src="{{ url_for('static', filename='images/' + act.img) }}" loading="lazy" alt="{{ act.title }}" class="action-card-img">
+                    </div>
+                    <div class="action-card-body">
+                        <div class="action-card-icon"><i class="bi {{ act.icon }}"></i></div>
+                        <h4>{{ act.title }}</h4>
+                        <p>{{ act.desc }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- NOS CHIFFRES -->
+<section class="chiffres section-padding" id="chiffres-galerie">
+    <div class="container">
+        <div class="row g-4 text-center" data-aos="fade-up">
+            {% set stats = [
+                {'number': '500+', 'label': 'Apprenants', 'icon': 'bi-people'},
+                {'number': '11', 'label': 'Engins de formation', 'icon': 'bi-truck'},
+                {'number': '95%', 'label': 'Réussite', 'icon': 'bi-award'},
+                {'number': '100%', 'label': 'Pratique', 'icon': 'bi-tools'},
+            ] %}
+            {% for stat in stats %}
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="{{ loop.index * 80 }}">
+                <div class="chiffre-card">
+                    <div class="chiffre-number">{{ stat.number }}</div>
+                    <div class="chiffre-label">{{ stat.label }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- SECTION VIDÉOS -->
+{% if videos %}
+<section class="section-padding" id="videos">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Vidéos</span>
+            <h2 class="section-title">Nos Vidéos</h2>
+            <p class="section-subtitle">Revivez nos formations et événements en vidéo</p>
+        </div>
+        <div class="row g-4">
+            {% for video in videos %}
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ loop.index * 80 }}">
+                <div class="video-card">
+                    <div class="video-thumbnail-wrapper">
+                        <img src="{{ url_for('static', filename='images/' + video.miniature) if video.miniature else url_for('static', filename='images/lc.JPG') }}" loading="lazy" alt="{{ video.titre }}" class="video-thumbnail">
+                        <button class="video-play-btn" onclick="playVideo('{{ video.url_video }}')">
+                            <i class="bi bi-play-circle-fill"></i>
+                        </button>
+                    </div>
+                    <div class="video-card-body">
+                        <h5>{{ video.titre }}</h5>
+                        {% if video.description %}<p>{{ video.description }}</p>{% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- CTA -->
+<section class="cta-section">
+    <div class="container text-center" data-aos="zoom-in">
+        <h2 class="cta-title">Rejoignez Leader Chiffre Entreprise</h2>
+        <p class="cta-subtitle mb-4">Venez apprendre sur des équipements professionnels avec des formateurs expérimentés.</p>
+        <div class="cta-buttons">
+            <a href="{{ url_for('main.formations_page') }}#inscription" class="btn btn-white btn-lg rounded-pill px-5 me-3">S'inscrire</a>
+            <a href="{{ url_for('main.contact_page') }}" class="btn btn-outline-white btn-lg rounded-pill px-5">Nous contacter</a>
+        </div>
+    </div>
+</section>
+
+<!-- LIGHTBOX MODALE -->
+<div class="lightbox-modal" id="lightboxModal">
+    <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+    <button class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1)"><i class="bi bi-chevron-left"></i></button>
+    <img class="lightbox-content" id="lightboxImg" src="" alt="">
+    <button class="lightbox-nav lightbox-next" onclick="navigateLightbox(1)"><i class="bi bi-chevron-right"></i></button>
+    <div class="lightbox-counter" id="lightboxCounter"></div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Galerie filter
+document.addEventListener('DOMContentLoaded', function() {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const galleryItems = document.querySelectorAll('.gallery-item');
+
+    if (filterBtns.length && galleryItems.length) {
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const filter = this.getAttribute('data-filter');
+
+                galleryItems.forEach(item => {
+                    const cat = item.getAttribute('data-category');
+                    if (filter === 'toutes' || cat === filter) {
+                        item.style.display = 'block';
+                        setTimeout(() => { item.style.opacity = '1'; item.style.transform = 'scale(1)'; }, 10);
+                    } else {
+                        item.style.opacity = '0';
+                        item.style.transform = 'scale(0.8)';
+                        setTimeout(() => { item.style.display = 'none'; }, 300);
+                    }
+                });
+            });
+        });
+    }
+});
+
+// Lightbox
+let lightboxImages = [];
+let currentLightboxIndex = 0;
+
+function initLightbox() {
+    const links = document.querySelectorAll('.gallery-link[data-lightbox="galerie"]');
+    lightboxImages = Array.from(links).map(link => link.getAttribute('href'));
+    links.forEach((link, index) => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            currentLightboxIndex = index;
+            openLightbox(link.getAttribute('href'));
+        });
+    });
+}
+
+function openLightbox(src) {
+    document.getElementById('lightboxImg').src = src;
+    document.getElementById('lightboxModal').classList.add('active');
+    updateCounter();
+    document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+    document.getElementById('lightboxModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+function navigateLightbox(dir) {
+    currentLightboxIndex += dir;
+    if (currentLightboxIndex < 0) currentLightboxIndex = lightboxImages.length - 1;
+    if (currentLightboxIndex >= lightboxImages.length) currentLightboxIndex = 0;
+    document.getElementById('lightboxImg').src = lightboxImages[currentLightboxIndex];
+    updateCounter();
+}
+
+function updateCounter() {
+    const counter = document.getElementById('lightboxCounter');
+    if (lightboxImages.length > 1) {
+        counter.textContent = (currentLightboxIndex + 1) + ' / ' + lightboxImages.length;
+        counter.style.display = 'block';
+    } else {
+        counter.style.display = 'none';
+    }
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+    const modal = document.getElementById('lightboxModal');
+    if (!modal.classList.contains('active')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') navigateLightbox(-1);
+    if (e.key === 'ArrowRight') navigateLightbox(1);
+});
+
+// Video modal
+function playVideo(url) {
+    const modal = document.createElement('div');
+    modal.className = 'lightbox-modal active';
+    modal.innerHTML = `
+        <span class="lightbox-close" onclick="this.parentElement.remove(); document.body.style.overflow=''">&times;</span>
+        <div class="video-modal-content">
+            <iframe src="${url}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="width:80vw;height:60vh;border-radius:12px;"></iframe>
+        </div>
+    `;
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) { modal.remove(); document.body.style.overflow = ''; }
+    });
+    document.body.appendChild(modal);
+    document.body.style.overflow = 'hidden';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    initLightbox();
+    document.getElementById('lightboxModal').addEventListener('click', function(e) {
+        if (e.target === this) closeLightbox();
+    });
+});
+</script>
+{% endblock %}

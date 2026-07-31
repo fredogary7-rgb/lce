@@ -1,0 +1,378 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- HERO SECTION -->
+<section class="hero" id="accueil">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-7" data-aos="fade-right" data-aos-duration="1000">
+                <img src="{{ url_for('static', filename='images/lc.JPG') }}" alt="LCE Logo" class="hero-logo mb-4" width="100" height="100">
+                <h1 class="hero-title">Leader Chiffre Entreprise</h1>
+                <p class="hero-subtitle">Centre professionnel de formation en conduite d'engins de manutention, logistique et transport.</p>
+                <div class="hero-buttons mt-4">
+                    <a href="#formations" class="btn btn-primary btn-lg rounded-pill me-3 px-4">Découvrir nos formations</a>
+                    <a href="#contact" class="btn btn-outline-light btn-lg rounded-pill px-4">Nous contacter</a>
+                </div>
+            </div>
+            <div class="col-lg-5 text-center d-none d-lg-block" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="300">
+                <div class="hero-engins">
+                    <div class="engin-circle engin-1"><img src="{{ url_for('static', filename='images/cha.JPG') }}" alt="Engin"></div>
+                    <div class="engin-circle engin-2"><img src="{{ url_for('static', filename='images/gru.JPG') }}" alt="Engin"></div>
+                    <div class="engin-circle engin-3"><img src="{{ url_for('static', filename='images/pelle.JPG') }}" alt="Engin"></div>
+                    <div class="engin-circle engin-center"><img src="{{ url_for('static', filename='images/char.JPG') }}" alt="Engin principal"></div>
+                    <div class="engin-circle engin-4"><img src="{{ url_for('static', filename='images/buldo.JPG') }}" alt="Engin"></div>
+                    <div class="engin-circle engin-5"><img src="{{ url_for('static', filename='images/semi.JPG') }}" alt="Engin"></div>
+                    <div class="engin-circle engin-6"><img src="{{ url_for('static', filename='images/reash.JPG') }}" alt="Engin"></div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-scroll">
+            <a href="#pourquoi" class="scroll-down"><i class="bi bi-chevron-down"></i></a>
+        </div>
+    </div>
+</section>
+
+<!-- POURQUOI CHOISIR LCE -->
+<section class="pourquoi section-padding" id="pourquoi">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Pourquoi nous choisir</span>
+            <h2 class="section-title">Pourquoi choisir LCE ?</h2>
+            <p class="section-subtitle">Un centre de formation d'excellence à votre service</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="pourquoi-card">
+                    <div class="pourquoi-icon"><i class="bi bi-tools"></i></div>
+                    <h4>Formation pratique</h4>
+                    <p>100% de formation pratique sur des engins réels avec des instructeurs expérimentés.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="pourquoi-card">
+                    <div class="pourquoi-icon"><i class="bi bi-people-fill"></i></div>
+                    <h4>Encadrement professionnel</h4>
+                    <p>Des formateurs certifiés et passionnés pour vous accompagner vers la réussite.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="pourquoi-card">
+                    <div class="pourquoi-icon"><i class="bi bi-briefcase-fill"></i></div>
+                    <h4>Insertion professionnelle</h4>
+                    <p>Un taux d'insertion exceptionnel grâce à notre réseau de partenaires.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                <div class="pourquoi-card">
+                    <div class="pourquoi-icon"><i class="bi bi-patch-check-fill"></i></div>
+                    <h4>Certificat reconnu</h4>
+                    <p>Des certifications reconnues par les entreprises du secteur.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- NOS FORMATIONS -->
+<section class="formations section-padding bg-light" id="formations">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Catalogue</span>
+            <h2 class="section-title">Nos Formations</h2>
+            <p class="section-subtitle">Des formations complètes et certifiantes pour tous les niveaux</p>
+        </div>
+        <div class="row g-4">
+            {% for formation in formations %}
+            <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="{{ loop.index * 50 }}">
+                <div class="formation-card">
+                    <div class="formation-img-wrapper">
+                        <img src="{{ url_for('static', filename='images/' + formation.image) }}" loading="lazy" alt="{{ formation.nom }}" class="formation-img">
+                        <div class="formation-overlay">
+                            <a href="#inscription" class="btn btn-light btn-sm rounded-pill">En savoir plus</a>
+                        </div>
+                    </div>
+                    <div class="formation-body">
+                        <h5 class="formation-title">{{ formation.nom }}</h5>
+                        <p class="formation-text">{{ formation.description }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- GALERIE -->
+<section class="galerie section-padding" id="galerie">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Galerie</span>
+            <h2 class="section-title">Nos Apprenants en Action</h2>
+            <p class="section-subtitle">Découvrez nos apprenants lors des séances de formation pratique</p>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
+                <a href="{{ url_for('static', filename='images/appre.JPG') }}" class="galerie-item" data-lightbox="galerie">
+                    <img src="{{ url_for('static', filename='images/appre.JPG') }}" loading="lazy" alt="Apprenant LCE" class="galerie-img">
+                    <div class="galerie-overlay"><i class="bi bi-zoom-in"></i></div>
+                </a>
+            </div>
+            <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
+                <a href="{{ url_for('static', filename='images/appre2.JPG') }}" class="galerie-item" data-lightbox="galerie">
+                    <img src="{{ url_for('static', filename='images/appre2.JPG') }}" loading="lazy" alt="Apprenant LCE" class="galerie-img">
+                    <div class="galerie-overlay"><i class="bi bi-zoom-in"></i></div>
+                </a>
+            </div>
+            <div class="col-md-4" data-aos="zoom-in" data-aos-delay="300">
+                <a href="{{ url_for('static', filename='images/appre3.JPG') }}" class="galerie-item" data-lightbox="galerie">
+                    <img src="{{ url_for('static', filename='images/appre3.JPG') }}" loading="lazy" alt="Apprenant LCE" class="galerie-img">
+                    <div class="galerie-overlay"><i class="bi bi-zoom-in"></i></div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- NOS CHIFFRES -->
+<section class="chiffres section-padding" id="chiffres">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-lg-3 col-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="chiffre-card">
+                    <div class="chiffre-number"><span class="counter" data-target="500">0</span>+</div>
+                    <div class="chiffre-label">Apprenants</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="chiffre-card">
+                    <div class="chiffre-number"><span class="counter" data-target="11">0</span></div>
+                    <div class="chiffre-label">Formations</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="chiffre-card">
+                    <div class="chiffre-number"><span class="counter" data-target="95">0</span>%</div>
+                    <div class="chiffre-label">Réussite</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6" data-aos="fade-up" data-aos-delay="400">
+                <div class="chiffre-card">
+                    <div class="chiffre-number"><span class="counter" data-target="100">0</span>%</div>
+                    <div class="chiffre-label">Pratique</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- NOTRE METHODE -->
+<section class="methode section-padding bg-light" id="a-propos">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Méthodologie</span>
+            <h2 class="section-title">Notre Méthode</h2>
+            <p class="section-subtitle">Un parcours structuré pour garantir votre réussite</p>
+        </div>
+        <div class="timeline">
+            <div class="timeline-item" data-aos="fade-right">
+                <div class="timeline-marker">1</div>
+                <div class="timeline-content">
+                    <h4>Inscription</h4>
+                    <p>Inscrivez-vous en ligne ou directement dans nos locaux. Choisissez la formation qui vous correspond.</p>
+                </div>
+            </div>
+            <div class="timeline-item" data-aos="fade-left">
+                <div class="timeline-marker">2</div>
+                <div class="timeline-content">
+                    <h4>Formation théorique</h4>
+                    <p>Acquérez les connaissances essentielles : sécurité, réglementation, techniques de conduite.</p>
+                </div>
+            </div>
+            <div class="timeline-item" data-aos="fade-right">
+                <div class="timeline-marker">3</div>
+                <div class="timeline-content">
+                    <h4>Formation pratique</h4>
+                    <p>Passez à la pratique sur des engins réels avec un accompagnement personnalisé.</p>
+                </div>
+            </div>
+            <div class="timeline-item" data-aos="fade-left">
+                <div class="timeline-marker">4</div>
+                <div class="timeline-content">
+                    <h4>Évaluation</h4>
+                    <p>Évaluez vos compétences lors d'un test pratique supervisé par nos formateurs.</p>
+                </div>
+            </div>
+            <div class="timeline-item" data-aos="fade-right">
+                <div class="timeline-marker">5</div>
+                <div class="timeline-content">
+                    <h4>Obtention du certificat</h4>
+                    <p>Recevez votre certificat reconnu et lancez votre carrière professionnelle !</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TEMOIGNAGES -->
+<section class="temoignages section-padding" id="temoignages">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Témoignages</span>
+            <h2 class="section-title">Ce Que Disent Nos Apprenants</h2>
+            <p class="section-subtitle">La satisfaction de nos apprenants est notre plus grande fierté</p>
+        </div>
+
+        {% if temoignages %}
+        <div id="temoignagesCarousel" class="carousel slide" data-bs-ride="carousel" data-aos="fade-up">
+            <div class="carousel-inner">
+                {% for temoignage in temoignages %}
+                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                    <div class="temoignage-card">
+                        <div class="temoignage-stars mb-2">
+                            {% for i in range(temoignage.note) %}<i class="bi bi-star-fill"></i>{% endfor %}
+                            {% for i in range(5 - temoignage.note) %}<i class="bi bi-star"></i>{% endfor %}
+                        </div>
+                        <p class="temoignage-text">"{{ temoignage.contenu }}"</p>
+                        <div class="temoignage-author">
+                            <div class="temoignage-avatar">{{ temoignage.nom[:1] }}</div>
+                            <div>
+                                <strong>{{ temoignage.nom }}</strong>
+                                {% if temoignage.fonction %}<br><small>{{ temoignage.fonction }}</small>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#temoignagesCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#temoignagesCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            </button>
+        </div>
+        {% else %}
+        <div class="text-center" data-aos="fade-up">
+            <div class="temoignage-card mx-auto" style="max-width:600px;">
+                <div class="temoignage-stars mb-2">
+                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                </div>
+                <p class="temoignage-text">"Excellente formation ! Les instructeurs sont très compétents et le matériel est de qualité. J'ai trouvé un emploi rapidement après ma certification."</p>
+                <div class="temoignage-author">
+                    <div class="temoignage-avatar">K</div>
+                    <div><strong>Koffi A.</strong><br><small>Chauffeur certifié</small></div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- INSCRIPTION + CONTACT -->
+<section class="contact section-padding bg-light" id="contact">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Formulaire Contact -->
+            <div class="col-lg-6" data-aos="fade-right">
+                <div class="section-header mb-4">
+                    <span class="section-badge">Contact</span>
+                    <h2 class="section-title">Contactez-nous</h2>
+                    <p>Une question ? Envoyez-nous un message, nous vous répondrons rapidement.</p>
+                </div>
+                <form action="{{ url_for('main.contact') }}" method="POST" class="contact-form">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="contactNom" class="form-label">Nom <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="contactNom" name="nom" required placeholder="Votre nom">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="contactTel" class="form-label">Téléphone <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control" id="contactTel" name="telephone" required placeholder="+228 XX XX XX XX">
+                        </div>
+                        <div class="col-12">
+                            <label for="contactEmail" class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="contactEmail" name="email" required placeholder="votre@email.com">
+                        </div>
+                        <div class="col-12">
+                            <label for="contactMsg" class="form-label">Message <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="contactMsg" name="message" rows="4" required placeholder="Votre message..."></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary rounded-pill px-4">Envoyer le message</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Formulaire Inscription + Infos -->
+            <div class="col-lg-6" data-aos="fade-left" id="inscription">
+                <div class="section-header mb-4">
+                    <span class="section-badge">Inscription</span>
+                    <h2 class="section-title">S'inscrire à une Formation</h2>
+                    <p>Prêt à démarrer ? Remplissez le formulaire ci-dessous.</p>
+                </div>
+                <form action="{{ url_for('main.inscription') }}" method="POST" class="contact-form mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="inscNom" class="form-label">Nom <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="inscNom" name="nom" required placeholder="Votre nom">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="inscPrenom" class="form-label">Prénom</label>
+                            <input type="text" class="form-control" id="inscPrenom" name="prenom" placeholder="Votre prénom">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="inscTel" class="form-label">Téléphone <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control" id="inscTel" name="telephone" required placeholder="+228 XX XX XX XX">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="inscEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="inscEmail" name="email" placeholder="votre@email.com">
+                        </div>
+                        <div class="col-12">
+                            <label for="inscFormation" class="form-label">Formation souhaitée</label>
+                            <select class="form-select" id="inscFormation" name="formation">
+                                <option value="">Choisissez une formation...</option>
+                                {% for formation in formations %}
+                                <option value="{{ formation.nom }}">{{ formation.nom }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary rounded-pill px-4">S'inscrire</button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Infos contact -->
+                <div class="contact-infos">
+                    <div class="contact-info-item">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <div><strong>Adresse</strong><br>Lomé, Togo</div>
+                    </div>
+                    <div class="contact-info-item">
+                        <i class="bi bi-telephone-fill"></i>
+                        <div><strong>Téléphone</strong><br>+228 72 04 98 56 / +228 91 05 91 70</div>
+                    </div>
+                    <div class="contact-info-item">
+                        <i class="bi bi-envelope-fill"></i>
+                        <div><strong>Email</strong><br>contact@lcetg.com</div>
+                    </div>
+                    <div class="contact-info-item">
+                        <i class="bi bi-clock-fill"></i>
+                        <div><strong>Horaires</strong><br>Lun - Ven : 8h - 18h<br>Sam : 8h - 12h</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Lightbox Modal -->
+<div class="lightbox-modal" id="lightboxModal">
+    <span class="lightbox-close">&times;</span>
+    <img class="lightbox-content" id="lightboxImg" src="" alt="">
+</div>
+
+{% endblock %}

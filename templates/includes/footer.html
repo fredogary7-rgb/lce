@@ -1,0 +1,44 @@
+<footer class="footer">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4" data-aos="fade-up">
+                <div class="footer-brand">
+                    <img src="{{ url_for('static', filename='images/lc.JPG') }}" alt="LCE Logo" width="60" height="60" class="mb-3 rounded">
+                    <h5 class="text-white">LCE</h5>
+                    <p class="footer-desc">Leader Chiffre Entreprise — Votre partenaire de confiance pour la formation professionnelle en conduite d'engins de manutention, logistique et transport au Togo.</p>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <h6 class="footer-title">Liens rapides</h6>
+                <ul class="footer-links">
+                    <li><a href="{{ url_for('main.index') }}">Accueil</a></li>
+                    <li><a href="#formations">Formations</a></li>
+                    <li><a href="#galerie">Galerie</a></li>
+                    <li><a href="#a-propos">À propos</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <h6 class="footer-title">Contact</h6>
+                <ul class="footer-contact">
+                    <li><i class="bi bi-geo-alt"></i> Lomé, Togo</li>
+                    <li><i class="bi bi-telephone"></i> +228 72 04 98 56</li>
+                    <li><i class="bi bi-telephone"></i> +228 91 05 91 70</li>
+                    <li><i class="bi bi-clock"></i> Lun-Ven: 8h-18h</li>
+                </ul>
+            </div>
+            <div class="col-lg-3" data-aos="fade-up" data-aos-delay="300">
+                <h6 class="footer-title">Suivez-nous</h6>
+                <div class="social-links">
+                    <a href="https://www.tiktok.com/@leader.chiffre.engins" class="social-link" target="_blank" rel="noopener" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>
+                    <a href="https://www.instagram.com/lcetogo?igsh=MWNwMXhmcTJidzg0MA%3D%3D&utm_source=qr" class="social-link" target="_blank" rel="noopener" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                    <a href="https://www.facebook.com/share/1Uebf4Pkgq/?mibextid=wwXIfr" class="social-link" target="_blank" rel="noopener" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                </div>
+            </div>
+        </div>
+        <hr class="footer-divider">
+        <div class="footer-bottom text-center">
+            <p class="mb-0">&copy; {{ now().year if now is defined else '2026' }} LCE - Leader Chiffre Entreprise. Tous droits réservés.</p>
+        </div>
+    </div>
+</footer>
