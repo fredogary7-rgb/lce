@@ -75,7 +75,14 @@ def create_app(config_name=None):
                 for col_name in manquantes:
                     col = Inscription.__table__.columns[col_name]
                     col_type_sql = _column_type_to_sql(col)
-                    db.session.execute(text(f"ALTER TABLE inscriptions ADD COLUMN IF NOT EXISTS {col_name} {col_type_sql}"))
+                    db.session.execute(text(f"""
+                        DO $$
+                        BEGIN
+                            ALTER TABLE inscriptions ADD COLUMN {col_name} {col_type_sql};
+                        EXCEPTION WHEN duplicate_column THEN
+                            -- ignore
+                        END $$;
+                    """))
                 db.session.commit()
 
         db.create_all()
