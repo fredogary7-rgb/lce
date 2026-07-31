@@ -10,10 +10,11 @@ def create_app(config_name=None):
     app.config.from_object(config[config_name])
 
     # Init extensions
-    from extensions import db, migrate, login_manager
+    from extensions import db, migrate, login_manager, mail
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
+    mail.init_app(app)
 
     # Register blueprints
     from routes import main_bp

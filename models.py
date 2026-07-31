@@ -57,6 +57,7 @@ class Temoignage(db.Model):
 class Inscription(db.Model):
     __tablename__ = 'inscriptions'
     id = db.Column(db.Integer, primary_key=True)
+    # Anciens champs
     nom = db.Column(db.String(200), nullable=False)
     prenom = db.Column(db.String(200), nullable=True)
     telephone = db.Column(db.String(50), nullable=False)
@@ -64,9 +65,33 @@ class Inscription(db.Model):
     formation = db.Column(db.String(200), nullable=True)
     statut = db.Column(db.String(50), default='en_attente')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    # Nouveaux champs - formulaire complet
+    nom_complet = db.Column(db.String(300), nullable=True)
+    date_naissance = db.Column(db.String(20), nullable=True)
+    sexe = db.Column(db.String(20), nullable=True)
+    nationalite = db.Column(db.String(100), nullable=True)
+    adresse = db.Column(db.Text, nullable=True)
+    ville = db.Column(db.String(200), nullable=True)
+    whatsapp = db.Column(db.String(50), nullable=True)
+    formation_id = db.Column(db.Integer, db.ForeignKey('formations.id'), nullable=True)
+    niveau_etude = db.Column(db.String(50), nullable=True)
+    situation_professionnelle = db.Column(db.String(50), nullable=True)
+    photo = db.Column(db.String(300), nullable=True)
+    piece_identite = db.Column(db.String(300), nullable=True)
+    cv = db.Column(db.String(300), nullable=True)
+    commentaire = db.Column(db.Text, nullable=True)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    # Nouveaux champs - système d'inscription
+    numero_inscription = db.Column(db.String(50), unique=True, nullable=True)
+    qr_code = db.Column(db.String(300), nullable=True)
+    pdf_recu = db.Column(db.String(300), nullable=True)
+    confirmation_envoyee = db.Column(db.Boolean, default=False)
+    date_confirmation = db.Column(db.DateTime, nullable=True)
+    # Relation
+    formation_ref = db.relationship('Formation', foreign_keys=[formation_id])
 
     def __repr__(self):
-        return f'<Inscription {self.nom}>'
+        return f'<Inscription {self.nom or self.nom_complet}>'
 
 
 class Galerie(db.Model):

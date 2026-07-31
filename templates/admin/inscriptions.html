@@ -3,40 +3,173 @@
 
 {% block content %}
 <div class="container-fluid p-4">
-    <h4><i class="bi bi-pencil-square me-2"></i>Inscriptions</h4>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="bi bi-pencil-square me-2"></i>Inscriptions</h4>
+        <div>
+            <a href="{{ url_for('admin.inscription_export_excel') }}?q={{ search }}" class="btn btn-sm btn-outline-success rounded-pill me-1"><i class="bi bi-file-earmark-excel me-1"></i>Excel</a>
+            <a href="{{ url_for('admin.inscription_export_pdf') }}?q={{ search }}" class="btn btn-sm btn-outline-danger rounded-pill"><i class="bi bi-file-earmark-pdf me-1"></i>PDF</a>
+        </div>
+    </div>
 
     <form class="row g-2 my-3" method="GET">
         <div class="col-md-6 col-lg-4">
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-search"></i></span>
-                <input type="text" name="q" class="form-control" placeholder="Rechercher..." value="{{ search }}">
+                <input type="text" name="q" class="form-control" placeholder="Rechercher nom, tel, email..." value="{{ search }}">
                 <button class="btn btn-primary">Rechercher</button>
             </div>
+        </div>
+        <div class="col-md-4 col-lg-3">
+            <select name="statut" class="form-select" onchange="this.form.submit()">
+                <option value="">Tous les statuts</option>
+                <option value="en_attente" {% if statut_filter == 'en_attente' %}selected{% endif %}>En attente</option>
+                <option value="validee" {% if statut_filter == 'validee' %}selected{% endif %}>Validée</option>
+                <option value="contactee" {% if statut_filter == 'contactee' %}selected{% endif %}>Contactée</option>
+                <option value="refusee" {% if statut_filter == 'refusee' %}selected{% endif %}>Refusée</option>
+            </select>
         </div>
     </form>
 
     <div class="table-responsive">
         <table class="table table-hover align-middle">
             <thead class="table-light">
-                <tr><th>#</th><th>Nom</th><th>Prénom</th><th>Téléphone</th><th>Email</th><th>Formation</th><th>Date</th><th>Statut</th><th>Actions</th></tr>
+                <tr>
+                    <th>N°</th><th>Photo</th><th>Nom</th><th>Téléphone</th><th>Email</th><th>Formation</th><th>N° Inscription</th><th>Date</th><th>Statut</th><th>Actions</th>
+                </tr>
             </thead>
             <tbody>
                 {% for insc in inscriptions %}
                 <tr>
                     <td>{{ insc.id }}</td>
-                    <td>{{ insc.nom }}</td>
-                    <td>{{ insc.prenom or '—' }}</td>
-                    <td>{{ insc.telephone }}</td>
-                    <td>{{ insc.email or '—' }}</td>
-                    <td>{{ insc.formation or '—' }}</td>
-                    <td>{{ insc.created_at.strftime('%d/%m/%Y') if insc.created_at else '—' }}</td>
-                    <td><span class="badge bg-{{ 'warning' if insc.statut == 'en_attente' else 'success' }}">{{ insc.statut }}</span></td>
                     <td>
-                        <form method="POST" action="{{ url_for('admin.inscription_delete', id=insc.id) }}" onsubmit="return confirm('Supprimer ?')">
-                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        {% if insc.photo %}
+                        <img src="{{ url_for('static', filename=insc.photo) }}" class="rounded-circle" width="36" height="36" style="object-fit:cover;">
+                        {% else %}
+                        <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center" style="width:36px;height:36px;"><i class="bi bi-person text-muted"></i></div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <strong>{{ insc.nom_complet or insc.nom }}</strong>
+                        {% if insc.prenom and insc.nom != insc.nom_complet %}<br><small class="text-muted">{{ insc.prenom }}</small>{% endif %}
+                    </td>
+                    <td>
+                        {{ insc.telephone }}
+                        {% if insc.whatsapp %}<br><small class="text-success">WhatsApp: {{ insc.whatsapp }}</small>{% endif %}
+                    </td>
+                    <td>{{ insc.email or '—' }}</td>
+                    <td>{{ insc.formation or (insc.formation_ref.nom if insc.formation_ref else '—') }}</td>
+                    <td>
+                        {% if insc.numero_inscription %}
+                        <span class="badge bg-primary bg-opacity-10 text-primary fw-semibold">{{ insc.numero_inscription }}</span>
+                        {% else %}
+                        <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ insc.created_at.strftime('%d/%m/%Y') if insc.created_at else '—' }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('admin.inscription_statut', id=insc.id) }}" class="d-inline">
+                            <select name="statut" class="form-select form-select-sm" style="width:130px;" onchange="this.form.submit()">
+                                <option value="en_attente" {% if insc.statut == 'en_attente' %}selected{% endif %}>🟡 En attente</option>
+                                <option value="validee" {% if insc.statut == 'validee' %}selected{% endif %}>🟢 Validée</option>
+                                <option value="contactee" {% if insc.statut == 'contactee' %}selected{% endif %}>🔵 Contactée</option>
+                                <option value="refusee" {% if insc.statut == 'refusee' %}selected{% endif %}>🔴 Refusée</option>
+                            </select>
                         </form>
                     </td>
+                    <td>
+                        <div class="d-flex gap-1 flex-wrap">
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal{{ insc.id }}" title="Détails"><i class="bi bi-eye"></i></button>
+                            {% if insc.pdf_recu %}
+                            <a href="{{ url_for('main.telecharger_recu', inscription_id=insc.id) }}" class="btn btn-sm btn-outline-success" title="Télécharger le reçu PDF"><i class="bi bi-file-earmark-pdf"></i></a>
+                            {% endif %}
+                            {% if insc.qr_code %}
+                            <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#qrModal{{ insc.id }}" title="QR Code"><i class="bi bi-qr-code"></i></button>
+                            {% endif %}
+                            {% if insc.piece_identite %}
+                            <a href="{{ url_for('static', filename=insc.piece_identite) }}" class="btn btn-sm btn-outline-warning" target="_blank" title="Pièce d'identité"><i class="bi bi-card-text"></i></a>
+                            {% endif %}
+                            {% if insc.cv %}
+                            <a href="{{ url_for('static', filename=insc.cv) }}" class="btn btn-sm btn-outline-secondary" target="_blank" title="CV"><i class="bi bi-file-earmark-person"></i></a>
+                            {% endif %}
+                            <form method="POST" action="{{ url_for('admin.inscription_delete', id=insc.id) }}" onsubmit="return confirm('Supprimer ?')" class="d-inline">
+                                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </div>
+                    </td>
                 </tr>
+
+                <!-- MODAL DÉTAILS -->
+                <div class="modal fade" id="detailModal{{ insc.id }}" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">
+                    <div class="modal-header"><h5 class="modal-title">Détails inscription #{{ insc.numero_inscription or insc.id }}</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <p class="small text-muted mb-0">Nom complet</p><p class="fw-semibold">{{ insc.nom_complet or insc.nom }}</p>
+                            </div>
+                            <div class="col-md-3">
+                                <p class="small text-muted mb-0">Date naissance</p><p>{{ insc.date_naissance or '—' }}</p>
+                            </div>
+                            <div class="col-md-3">
+                                <p class="small text-muted mb-0">Sexe</p><p>{{ insc.sexe or '—' }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="small text-muted mb-0">Nationalité</p><p>{{ insc.nationalite or '—' }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="small text-muted mb-0">Ville</p><p>{{ insc.ville or '—' }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="small text-muted mb-0">Téléphone</p><p>{{ insc.telephone }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="small text-muted mb-0">WhatsApp</p><p>{{ insc.whatsapp or '—' }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="small text-muted mb-0">Email</p><p>{{ insc.email or '—' }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="small text-muted mb-0">Adresse</p><p>{{ insc.adresse or '—' }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="small text-muted mb-0">Niveau</p><p>{{ insc.niveau_etude or '—' }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="small text-muted mb-0">Situation</p><p>{{ insc.situation_professionnelle or '—' }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="small text-muted mb-0">Formation</p><p class="fw-semibold">{{ insc.formation or (insc.formation_ref.nom if insc.formation_ref else '—') }}</p>
+                            </div>
+                            <div class="col-12">
+                                <p class="small text-muted mb-0">Commentaire</p><p>{{ insc.commentaire or 'Aucun' }}</p>
+                            </div>
+                            {% if insc.photo %}
+                            <div class="col-6"><p class="small text-muted mb-1">Photo</p><img src="{{ url_for('static', filename=insc.photo) }}" class="img-fluid rounded-3" style="max-height:200px;"></div>
+                            {% endif %}
+                            {% if insc.piece_identite %}
+                            <div class="col-6"><p class="small text-muted mb-1">Pièce d'identité</p>
+                                <a href="{{ url_for('static', filename=insc.piece_identite) }}" target="_blank" class="btn btn-sm btn-outline-warning"><i class="bi bi-download me-1"></i>Voir le document</a>
+                            </div>
+                            {% endif %}
+                            {% if insc.cv %}
+                            <div class="col-6"><p class="small text-muted mb-1">CV</p>
+                                <a href="{{ url_for('static', filename=insc.cv) }}" target="_blank" class="btn btn-sm btn-outline-secondary"><i class="bi bi-download me-1"></i>Voir le CV</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div></div></div>
+
+                <!-- MODAL QR -->
+                {% if insc.qr_code %}
+                <div class="modal fade" id="qrModal{{ insc.id }}" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content text-center">
+                    <div class="modal-header"><h6>QR Code — {{ insc.numero_inscription }}</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                    <div class="modal-body">
+                        <img src="{{ url_for('static', filename=insc.qr_code) }}" class="img-fluid p-2 border rounded-3 mb-2" style="max-width:220px;">
+                        <p class="small text-muted mb-0">{{ insc.numero_inscription }}</p>
+                        <p class="small fw-semibold">{{ insc.nom_complet or insc.nom }}</p>
+                    </div>
+                </div></div></div>
+                {% endif %}
                 {% endfor %}
             </tbody>
         </table>

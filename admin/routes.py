@@ -522,16 +522,32 @@ def message_delete(id):
 @admin_required
 def inscriptions():
     search = request.args.get('q', '').strip()
+    statut_filter = request.args.get('statut', '').strip()
+    query = Inscription.query
+    if statut_filter:
+        query = query.filter(Inscription.statut == statut_filter)
     if search:
-        inscs = Inscription.query.filter(
+        query = query.filter(
             (Inscription.nom.ilike(f'%{search}%')) |
+            (Inscription.nom_complet.ilike(f'%{search}%')) |
             (Inscription.telephone.ilike(f'%{search}%')) |
             (Inscription.email.ilike(f'%{search}%')) |
-            (Inscription.formation.ilike(f'%{search}%'))
-        ).order_by(Inscription.created_at.desc()).all()
-    else:
-        inscs = Inscription.query.order_by(Inscription.created_at.desc()).all()
-    return render_template('admin/inscriptions.html', inscriptions=inscs, search=search)
+            (Inscription.formation.ilike(f'%{search}%')) |
+            (Inscription.numero_inscription.ilike(f'%{search}%'))
+        )
+    inscs = query.order_by(Inscription.created_at.desc()).all()
+    return render_template('admin/inscriptions.html', inscriptions=inscs, search=search, statut_filter=statut_filter)
+
+
+@admin_bp.route('/inscription/<int:id>/statut', methods=['POST'])
+@admin_required
+def inscription_statut(id):
+    insc = Inscription.query.get_or_404(id)
+    new_statut = request.form.get('statut', '').strip()
+    if new_statut in ['en_attente', 'validee', 'contactee', 'refusee']:
+        insc.statut = new_statut
+        db.session.commit()
+    return redirect(url_for('admin.inscriptions', **dict(request.args)))
 
 
 @admin_bp.route('/inscription/<int:id>/delete', methods=['POST'])
