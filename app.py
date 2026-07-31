@@ -20,14 +20,13 @@ def create_app(config_name=None):
     with app.app_context():
         from sqlalchemy import text, inspect
         inspector = inspect(db.engine)
-        try:
-            # Test: tenter un SELECT simple sur temoignages
-            if 'temoignages' in inspector.get_table_names():
-                db.session.execute(text("SELECT 1 FROM temoignages LIMIT 1"))
-        except Exception:
-            # La table existe mais a un schéma incompatible -> DROP
-            db.session.execute(text("DROP TABLE IF EXISTS temoignages CASCADE"))
-            db.session.commit()
+        if 'temoignages' in inspector.get_table_names():
+            colonnes_reelles = {c['name'] for c in inspector.get_columns('temoignages')}
+            colonnes_attendues = {c.name for c in db.metadata.tables['temoignages'].columns}
+            if colonnes_reelles != colonnes_attendues:
+                # Schéma incompatible -> DROP et recréation
+                db.session.execute(text("DROP TABLE IF EXISTS temoignages CASCADE"))
+                db.session.commit()
         db.create_all()
 
     # Register blueprints
