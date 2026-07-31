@@ -122,10 +122,12 @@ formations_data = [
 
 def seed():
     with app.app_context():
-        # Drop and recreate the formations table to match new model
+        # Drop and recreate tables to match new models
         from sqlalchemy import text
         print("Drop table formations si elle existe...")
         db.session.execute(text("DROP TABLE IF EXISTS formations CASCADE"))
+        print("Drop table temoignages si elle existe...")
+        db.session.execute(text("DROP TABLE IF EXISTS temoignages CASCADE"))
         db.session.commit()
 
         print("Création des tables...")
