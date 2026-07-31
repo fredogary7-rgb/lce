@@ -422,7 +422,7 @@ def temoignages():
 @admin_required
 def temoignage_add():
     nom = request.form.get('nom', '').strip()
-    profession = request.form.get('profession', '').strip()
+    fonction = request.form.get('fonction', '').strip()
     contenu = request.form.get('contenu', '').strip()
     note = int(request.form.get('note', 5))
     actif = request.form.get('actif') == '1'
@@ -435,7 +435,7 @@ def temoignage_add():
             file.save(os.path.join(current_app.static_folder, 'uploads', 'temoignages', filename))
             photo = filename
 
-    t = Temoignage(nom=nom, profession=profession, contenu=contenu, note=note, photo=photo, actif=actif)
+    t = Temoignage(nom=nom, fonction=fonction, contenu=contenu, note=note, photo=photo, actif=actif)
     db.session.add(t)
     db.session.commit()
     flash('Témoignage ajouté.', 'success')
@@ -447,7 +447,7 @@ def temoignage_add():
 def temoignage_edit(id):
     t = Temoignage.query.get_or_404(id)
     t.nom = request.form.get('nom', '').strip()
-    t.profession = request.form.get('profession', '').strip()
+    t.fonction = request.form.get('fonction', '').strip()
     t.contenu = request.form.get('contenu', '').strip()
     t.note = int(request.form.get('note', 5))
     t.actif = request.form.get('actif') == '1'

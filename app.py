@@ -34,6 +34,16 @@ def create_app(config_name=None):
                 db.session.commit()
         db.create_all()
 
+        # Créer l'admin par défaut si absent
+        from models import AdminUser
+        existing = AdminUser.query.filter_by(email='admin@lcetg.com').first()
+        if not existing:
+            admin = AdminUser(nom='Super Admin', email='admin@lcetg.com', role='super_admin')
+            admin.set_password('admin123')
+            db.session.add(admin)
+            db.session.commit()
+            print("[AUTO-FIX] Admin par défaut créé: admin@lcetg.com / admin123")
+
     # Register blueprints
     from routes import main_bp
     app.register_blueprint(main_bp)
