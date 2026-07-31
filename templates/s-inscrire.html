@@ -138,10 +138,6 @@
                         </div>
                         <div class="text-center position-relative z-1 step-indicator" data-step="3">
                             <div class="step-circle mx-auto rounded-circle bg-light text-muted d-flex align-items-center justify-content-center fw-bold">3</div>
-                            <p class="small mt-2 mb-0 fw-semibold d-none d-sm-block">Documents</p>
-                        </div>
-                        <div class="text-center position-relative z-1 step-indicator" data-step="4">
-                            <div class="step-circle mx-auto rounded-circle bg-light text-muted d-flex align-items-center justify-content-center fw-bold">4</div>
                             <p class="small mt-2 mb-0 fw-semibold d-none d-sm-block">Validation</p>
                         </div>
                         <div class="position-absolute top-50 start-0 w-100 bg-light" style="height:3px;transform:translateY(-50%);z-index:0;">
@@ -152,8 +148,8 @@
 
                 <div class="card border-0 shadow-lg rounded-4" data-aos="fade-up">
                     <div class="card-body p-4 p-lg-5">
-                        <form id="inscriptionForm" method="POST" action="{{ url_for('main.inscription') }}" enctype="multipart/form-data" novalidate>
-<input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <form id="inscriptionForm" method="POST" action="{{ url_for('main.inscription') }}" novalidate>
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
                             <!-- STEP 1: Informations personnelles -->
                             <div class="form-step" id="step1">
@@ -203,43 +199,8 @@
                                 </div>
                             </div>
 
-                            <!-- STEP 3: Documents -->
+                            <!-- STEP 3: Validation -->
                             <div class="form-step d-none" id="step3">
-                                <h4 class="fw-bold mb-4" style="color:#0D47C7"><i class="bi bi-file-earmark-text me-2"></i>Documents</h4>
-                                <p class="text-muted small mb-4">Formats acceptés : JPG, JPEG, PNG, PDF. Taille max : 10 Mo par fichier.</p>
-                                <div class="row g-4">
-                                    <div class="col-md-6">
-                                        <div class="upload-zone border border-2 border-dashed rounded-4 p-4 text-center position-relative" id="photoZone">
-                                            <i class="bi bi-person-bounding-box text-muted" style="font-size:2.5rem;"></i>
-                                            <p class="fw-semibold mt-2 mb-1">Photo d'identité <span class="text-danger">*</span></p>
-                                            <p class="text-muted small">Cliquez ou glissez-déposez</p>
-                                            <input type="file" name="photo" class="position-absolute top-0 start-0 w-100 h-100 opacity-0" accept=".jpg,.jpeg,.png,.pdf" id="photoInput" required>
-                                            <img id="photoPreview" class="img-fluid rounded-3 mt-2 d-none" style="max-height:150px;">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="upload-zone border border-2 border-dashed rounded-4 p-4 text-center position-relative" id="pieceZone">
-                                            <i class="bi bi-card-text text-muted" style="font-size:2.5rem;"></i>
-                                            <p class="fw-semibold mt-2 mb-1">Pièce d'identité <span class="text-danger">*</span></p>
-                                            <p class="text-muted small">Cliquez ou glissez-déposez</p>
-                                            <input type="file" name="piece_identite" class="position-absolute top-0 start-0 w-100 h-100 opacity-0" accept=".jpg,.jpeg,.png,.pdf" id="pieceInput" required>
-                                            <img id="piecePreview" class="img-fluid rounded-3 mt-2 d-none" style="max-height:150px;">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="upload-zone border border-2 border-dashed rounded-4 p-4 text-center position-relative" id="cvZone">
-                                            <i class="bi bi-file-earmark-pdf text-muted" style="font-size:2.5rem;"></i>
-                                            <p class="fw-semibold mt-2 mb-1">CV <span class="text-muted fw-normal">(facultatif)</span></p>
-                                            <p class="text-muted small">Cliquez ou glissez-déposez</p>
-                                            <input type="file" name="cv" class="position-absolute top-0 start-0 w-100 h-100 opacity-0" accept=".jpg,.jpeg,.png,.pdf" id="cvInput">
-                                            <img id="cvPreview" class="img-fluid rounded-3 mt-2 d-none" style="max-height:150px;">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- STEP 4: Validation -->
-                            <div class="form-step d-none" id="step4">
                                 <h4 class="fw-bold mb-4" style="color:#0D47C7"><i class="bi bi-check2-circle me-2"></i>Validation</h4>
                                 <div class="bg-light rounded-3 p-4 mb-4">
                                     <h6 class="fw-bold mb-3">Récapitulatif</h6>
@@ -290,10 +251,6 @@
 .step-indicator.active .step-circle { background: #0D47C7; color: #fff; border-color: #0D47C7; }
 .step-indicator.completed .step-circle { background: #10B981; color: #fff; border-color: #10B981; }
 
-.upload-zone { transition: border-color 0.3s, background 0.3s; cursor: pointer; }
-.upload-zone:hover, .upload-zone.dragover { border-color: #0D47C7 !important; background: rgba(13,71,199,0.03); }
-.upload-zone.has-file { border-color: #10B981 !important; background: rgba(16,185,129,0.03); }
-
 .form-step { animation: fadeSlideIn 0.4s ease; }
 @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -308,7 +265,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     let currentStep = 1;
-    const totalSteps = 4;
+    const totalSteps = 3;
     const steps = document.querySelectorAll('.form-step');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
@@ -343,12 +300,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const formation = form.querySelector('[name="formation_id"]');
             if (!formation.value) { alert('Veuillez choisir une formation.'); formation.focus(); return false; }
         }
-        if (step === 3) {
-            const photo = form.querySelector('[name="photo"]');
-            const piece = form.querySelector('[name="piece_identite"]');
-            if (!photo.files.length) { alert('Veuillez télécharger votre photo d\'identité.'); return false; }
-            if (!piece.files.length) { alert('Veuillez télécharger votre pièce d\'identité.'); return false; }
-        }
         return true;
     }
 
@@ -363,9 +314,6 @@ document.addEventListener('DOMContentLoaded', function() {
             ['Formation', form.querySelector('[name="formation_id"]').selectedOptions[0]?.text || '—'],
             ['Niveau', form.querySelector('[name="niveau_etude"]').value || '—'],
             ['Situation', form.querySelector('[name="situation_professionnelle"]').value || '—'],
-            ['Photo', form.querySelector('[name="photo"]').files[0]?.name || '—'],
-            ['Pièce d\'identité', form.querySelector('[name="piece_identite"]').files[0]?.name || '—'],
-            ['CV', form.querySelector('[name="cv"]').files[0]?.name || '—'],
         ];
         recap.innerHTML = fields.map(f => `<div class="d-flex justify-content-between border-bottom py-2"><span class="text-muted">${f[0]}</span><span class="fw-semibold text-end">${f[1]}</span></div>`).join('');
     }
@@ -374,32 +322,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (validateStep(currentStep)) updateStep(currentStep + 1);
     });
     prevBtn.addEventListener('click', function() { updateStep(currentStep - 1); });
-
-    // File upload previews
-    function setupUpload(inputId, previewId, zoneId) {
-        const input = document.getElementById(inputId);
-        const preview = document.getElementById(previewId);
-        const zone = document.getElementById(zoneId);
-        input.addEventListener('change', function() {
-            if (this.files.length) {
-                const file = this.files[0];
-                zone.classList.add('has-file');
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) { preview.src = e.target.result; preview.classList.remove('d-none'); };
-                    reader.readAsDataURL(file);
-                } else {
-                    preview.classList.add('d-none');
-                    const icon = zone.querySelector('i');
-                    icon.className = 'bi bi-file-earmark-check-fill text-success';
-                    icon.style.fontSize = '2.5rem';
-                }
-            }
-        });
-    }
-    setupUpload('photoInput', 'photoPreview', 'photoZone');
-    setupUpload('pieceInput', 'piecePreview', 'pieceZone');
-    setupUpload('cvInput', 'cvPreview', 'cvZone');
 
     // Submit loader
     form.addEventListener('submit', function() {
