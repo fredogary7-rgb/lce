@@ -17,14 +17,19 @@ def create_app(config_name=None):
     mail.init_app(app)
 
     # Réparation automatique des tables au démarrage
+    from models import Temoignage  # noqa: import nécessaire pour metadata
     with app.app_context():
         from sqlalchemy import text, inspect
         inspector = inspect(db.engine)
-        if 'temoignages' in inspector.get_table_names():
-            colonnes_reelles = {c['name'] for c in inspector.get_columns('temoignages')}
-            colonnes_attendues = {c.name for c in db.metadata.tables['temoignages'].columns}
+        tables_inspectees = inspector.get_table_names()
+        if 'temoignages' in tables_inspectees:
+            # Comparer les colonnes réelles en base vs modèle Python
+            colonnes_reelles = sorted(c['name'] for c in inspector.get_columns('temoignages'))
+            colonnes_attendues = sorted(c.name for c in Temoignage.__table__.columns)
             if colonnes_reelles != colonnes_attendues:
-                # Schéma incompatible -> DROP et recréation
+                print(f"[AUTO-FIX] Schéma temoignages obsolète. Re-création...")
+                print(f"  Base: {colonnes_reelles}")
+                print(f"  Modèle: {colonnes_attendues}")
                 db.session.execute(text("DROP TABLE IF EXISTS temoignages CASCADE"))
                 db.session.commit()
         db.create_all()
