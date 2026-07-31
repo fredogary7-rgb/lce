@@ -1,7 +1,7 @@
 """Script de seed pour peupler la base de données avec les formations initiales."""
 from app import create_app
 from extensions import db
-from models import Formation
+from models import Formation, AdminUser
 from datetime import datetime
 
 app = create_app()
@@ -138,6 +138,17 @@ def seed():
 
         db.session.commit()
         print(f"✅ {len(formations_data)} formations insérées avec succès !")
+
+        # Créer l'admin par défaut
+        existing = AdminUser.query.filter_by(email='admin@lcetg.com').first()
+        if not existing:
+            admin = AdminUser(nom='Super Admin', email='admin@lcetg.com', role='super_admin')
+            admin.set_password('admin123')
+            db.session.add(admin)
+            db.session.commit()
+            print("✅ Admin par défaut créé: admin@lcetg.com / admin123")
+        else:
+            print("ℹ️ Admin par défaut existe déjà.")
 
 
 if __name__ == '__main__':

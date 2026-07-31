@@ -10,13 +10,17 @@ def create_app(config_name=None):
     app.config.from_object(config[config_name])
 
     # Init extensions
-    from extensions import db, migrate
+    from extensions import db, migrate, login_manager
     db.init_app(app)
     migrate.init_app(app, db)
+    login_manager.init_app(app)
 
     # Register blueprints
     from routes import main_bp
     app.register_blueprint(main_bp)
+
+    from admin import admin_bp
+    app.register_blueprint(admin_bp)
 
     # SEO routes
     @app.route('/robots.txt')

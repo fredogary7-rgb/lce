@@ -1,0 +1,92 @@
+{% extends 'admin/base.html' %}
+{% block title %}Galerie{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="bi bi-images me-2"></i>Galerie</h4>
+        <button class="btn btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#addModal">
+            <i class="bi bi-plus-lg me-1"></i>Ajouter
+        </button>
+    </div>
+
+    <div class="row g-3">
+        {% for img in images %}
+        <div class="col-xl-2 col-lg-3 col-md-4 col-6">
+            <div class="card border-0 shadow-sm h-100">
+                <img src="{{ url_for('static', filename='uploads/galerie/' + img.image) }}" class="card-img-top" style="height:150px;object-fit:cover;" alt="{{ img.titre or '' }}">
+                <div class="card-body p-2">
+                    <p class="small mb-1 fw-semibold text-truncate">{{ img.titre or 'Sans titre' }}</p>
+                    <span class="badge bg-{{ 'success' if img.actif else 'danger' }}">{{ 'Actif' if img.actif else 'Inactif' }}</span>
+                </div>
+                <div class="card-footer bg-transparent d-flex gap-1 p-2">
+                    <button class="btn btn-sm btn-outline-secondary flex-grow-1" onclick="editImg({{ img.id }}, '{{ img.titre|default('')|e }}', '{{ img.description|default('')|e }}', '{{ img.categorie|e }}', {{ img.ordre }}, {{ img.actif|tojson }})"><i class="bi bi-pencil"></i></button>
+                    <form method="POST" action="{{ url_for('admin.galerie_delete', id=img.id) }}" onsubmit="return confirm('Supprimer ?')" class="d-inline">
+                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- MODAL ADD -->
+<div class="modal fade" id="addModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="imgForm" method="POST" action="{{ url_for('admin.galerie_add') }}" enctype="multipart/form-data">
+                <div class="modal-header"><h5 class="modal-title" id="imgTitle">Ajouter une image</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <div class="mb-3"><label class="form-label">Titre</label><input type="text" name="titre" id="gTitre" class="form-control"></div>
+                    <div class="mb-3"><label class="form-label">Catégorie</label>
+                        <select name="categorie" id="gCat" class="form-select">
+                            <option value="general">Général</option>
+                            <option value="Apprenants">Apprenants</option>
+                            <option value="Engins">Engins</option>
+                            <option value="Formations">Formations</option>
+                            <option value="Événements">Événements</option>
+                        </select>
+                    </div>
+                    <div class="mb-3"><label class="form-label">Description</label><textarea name="description" id="gDesc" class="form-control" rows="2"></textarea></div>
+                    <div class="mb-3"><label class="form-label">Ordre</label><input type="number" name="ordre" id="gOrdre" class="form-control" value="0"></div>
+                    <div class="mb-3"><label class="form-label">Statut</label><select name="actif" id="gActif" class="form-select"><option value="1">Actif</option><option value="0">Inactif</option></select></div>
+                    <div class="mb-3"><label class="form-label">Image *</label><input type="file" name="image" class="form-control" accept="image/*" id="gImage"><small class="text-muted">Laissez vide pour garder l'image actuelle</small></div>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button><button type="submit" class="btn btn-primary">Enregistrer</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function clearForm(){
+    document.getElementById('imgTitle').textContent = 'Ajouter une image';
+    document.getElementById('imgForm').action = "{{ url_for('admin.galerie_add') }}";
+    document.getElementById('gTitre').value = '';
+    document.getElementById('gCat').value = 'general';
+    document.getElementById('gDesc').value = '';
+    document.getElementById('gOrdre').value = '0';
+    document.getElementById('gActif').value = '1';
+    document.getElementById('gImage').required = true;
+}
+
+function editImg(id, titre, desc, cat, ordre, actif){
+    document.getElementById('imgTitle').textContent = 'Modifier';
+    document.getElementById('imgForm').action = "/admin/galerie/" + id + "/edit";
+    document.getElementById('gTitre').value = titre;
+    document.getElementById('gCat').value = cat;
+    document.getElementById('gDesc').value = desc;
+    document.getElementById('gOrdre').value = ordre;
+    document.getElementById('gActif').value = actif ? '1' : '0';
+    document.getElementById('gImage').required = false;
+    new bootstrap.Modal(document.getElementById('addModal')).show();
+}
+
+document.getElementById('addModal').addEventListener('show.bs.modal', function(e){
+    if(document.getElementById('imgTitle').textContent === 'Ajouter une image') clearForm();
+});
+</script>
+{% endblock %}

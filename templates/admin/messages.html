@@ -1,0 +1,60 @@
+{% extends 'admin/base.html' %}
+{% block title %}Messages{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-4">
+    <h4><i class="bi bi-envelope me-2"></i>Messages</h4>
+
+    <!-- Search -->
+    <form class="row g-2 my-3" method="GET">
+        <div class="col-md-6 col-lg-4">
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input type="text" name="q" class="form-control" placeholder="Rechercher..." value="{{ search }}">
+                <button class="btn btn-primary">Rechercher</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr><th>#</th><th>Nom</th><th>Téléphone</th><th>Email</th><th>Message</th><th>Date</th><th>Lu</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for msg in messages %}
+                <tr class="{{ 'table-secondary' if msg.lu else 'fw-bold' }}">
+                    <td>{{ msg.id }}</td>
+                    <td>{{ msg.nom }}</td>
+                    <td>{{ msg.telephone }}</td>
+                    <td>{{ msg.email }}</td>
+                    <td><span class="d-inline-block text-truncate" style="max-width:250px;" title="{{ msg.message }}">{{ msg.message[:80] }}</span></td>
+                    <td>{{ msg.created_at.strftime('%d/%m/%Y %H:%M') if msg.created_at else '—' }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-{{ 'success' if msg.lu else 'outline-secondary' }}" onclick="toggleLu({{ msg.id }})" title="{{ 'Marquer non lu' if msg.lu else 'Marquer lu' }}">
+                            <i class="bi bi-{{ 'check-circle-fill' if msg.lu else 'circle' }}"></i>
+                        </button>
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('admin.message_delete', id=msg.id) }}" onsubmit="return confirm('Supprimer ?')">
+                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function toggleLu(id){
+    try {
+        const resp = await fetch('/admin/message/' + id + '/toggle-lu', {method:'POST'});
+        location.reload();
+    } catch(e){ alert('Erreur'); }
+}
+</script>
+{% endblock %}

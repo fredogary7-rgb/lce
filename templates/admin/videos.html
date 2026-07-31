@@ -1,0 +1,76 @@
+{% extends 'admin/base.html' %}
+{% block title %}Vidéos{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="bi bi-play-circle me-2"></i>Vidéos</h4>
+        <button class="btn btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#addModal" onclick="clearVideoForm()">
+            <i class="bi bi-plus-lg me-1"></i>Ajouter
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light"><tr><th>Miniature</th><th>Titre</th><th>URL</th><th>Ordre</th><th>Statut</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for v in videos %}
+                <tr>
+                    <td>{% if v.miniature %}<img src="{{ url_for('static', filename='uploads/videos/' + v.miniature) }}" width="80" class="rounded" alt="">{% else %}<span class="text-muted">—</span>{% endif %}</td>
+                    <td>{{ v.titre }}</td>
+                    <td><a href="{{ v.url_video }}" target="_blank" rel="noopener" class="small">{{ v.url_video[:50] }}...</a></td>
+                    <td>{{ v.ordre }}</td>
+                    <td><span class="badge bg-{{ 'success' if v.actif else 'danger' }}">{{ 'Actif' if v.actif else 'Inactif' }}</span></td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <button class="btn btn-sm btn-outline-secondary" onclick="editVideo({{ v.id }}, '{{ v.titre|e }}', '{{ v.url_video|e }}', '{{ v.description|default('')|e }}', {{ v.ordre }}, {{ v.actif|tojson }})"><i class="bi bi-pencil"></i></button>
+                            <form method="POST" action="{{ url_for('admin.video_delete', id=v.id) }}" onsubmit="return confirm('Supprimer ?')"><button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button></form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal fade" id="addModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+    <form id="videoForm" method="POST" action="{{ url_for('admin.video_add') }}" enctype="multipart/form-data">
+        <div class="modal-header"><h5 class="modal-title" id="vTitle">Ajouter une vidéo</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+            <div class="mb-3"><label class="form-label">Titre *</label><input type="text" name="titre" id="vTitre" class="form-control" required></div>
+            <div class="mb-3"><label class="form-label">URL *</label><input type="url" name="url_video" id="vUrl" class="form-control" required placeholder="https://..."></div>
+            <div class="mb-3"><label class="form-label">Description</label><textarea name="description" id="vDesc" class="form-control" rows="2"></textarea></div>
+            <div class="mb-3"><label class="form-label">Ordre</label><input type="number" name="ordre" id="vOrdre" class="form-control" value="0"></div>
+            <div class="mb-3"><label class="form-label">Statut</label><select name="actif" id="vActif" class="form-select"><option value="1">Actif</option><option value="0">Inactif</option></select></div>
+            <div class="mb-3"><label class="form-label">Miniature</label><input type="file" name="miniature" class="form-control" accept="image/*" id="vMiniature"><small class="text-muted">Laissez vide pour garder</small></div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button><button type="submit" class="btn btn-primary">Enregistrer</button></div>
+    </form>
+</div></div></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function clearVideoForm(){
+    document.getElementById('vTitle').textContent = 'Ajouter une vidéo';
+    document.getElementById('videoForm').action = "{{ url_for('admin.video_add') }}";
+    document.getElementById('vTitre').value = '';
+    document.getElementById('vUrl').value = '';
+    document.getElementById('vDesc').value = '';
+    document.getElementById('vOrdre').value = '0';
+    document.getElementById('vActif').value = '1';
+}
+function editVideo(id, titre, url, desc, ordre, actif){
+    document.getElementById('vTitle').textContent = 'Modifier';
+    document.getElementById('videoForm').action = "/admin/video/" + id + "/edit";
+    document.getElementById('vTitre').value = titre;
+    document.getElementById('vUrl').value = url;
+    document.getElementById('vDesc').value = desc;
+    document.getElementById('vOrdre').value = ordre;
+    document.getElementById('vActif').value = actif ? '1' : '0';
+    new bootstrap.Modal(document.getElementById('addModal')).show();
+}
+</script>
+{% endblock %}

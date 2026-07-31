@@ -1,0 +1,74 @@
+{% extends 'admin/base.html' %}
+{% block title %}Témoignages{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="bi bi-star me-2"></i>Témoignages</h4>
+        <button class="btn btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#addModal" onclick="clearTForm()">
+            <i class="bi bi-plus-lg me-1"></i>Ajouter
+        </button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light"><tr><th>Photo</th><th>Nom</th><th>Profession</th><th>Note</th><th>Statut</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for t in temoignages %}
+                <tr>
+                    <td>{% if t.photo %}<img src="{{ url_for('static', filename='uploads/temoignages/' + t.photo) }}" width="50" class="rounded-circle" alt="">{% else %}<div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center" style="width:50px;height:50px;">{{ t.nom[:1] }}</div>{% endif %}</td>
+                    <td>{{ t.nom }}</td>
+                    <td>{{ t.profession or '—' }}</td>
+                    <td>{% for i in range(t.note) %}⭐{% endfor %}</td>
+                    <td><span class="badge bg-{{ 'success' if t.actif else 'danger' }}">{{ 'Actif' if t.actif else 'Inactif' }}</span></td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <button class="btn btn-sm btn-outline-secondary" onclick="editT({{ t.id }}, '{{ t.nom|e }}', '{{ t.profession|default('')|e }}', '{{ t.contenu|e }}', {{ t.note }}, {{ t.actif|tojson }})"><i class="bi bi-pencil"></i></button>
+                            <form method="POST" action="{{ url_for('admin.temoignage_delete', id=t.id) }}" onsubmit="return confirm('Supprimer ?')"><button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button></form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="addModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+    <form id="tForm" method="POST" action="{{ url_for('admin.temoignage_add') }}" enctype="multipart/form-data">
+        <div class="modal-header"><h5 class="modal-title" id="tTitle">Ajouter un témoignage</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+            <div class="mb-3"><label class="form-label">Nom *</label><input type="text" name="nom" id="tNom" class="form-control" required></div>
+            <div class="mb-3"><label class="form-label">Profession</label><input type="text" name="profession" id="tProf" class="form-control"></div>
+            <div class="mb-3"><label class="form-label">Message *</label><textarea name="contenu" id="tContenu" class="form-control" rows="3" required></textarea></div>
+            <div class="mb-3"><label class="form-label">Note</label><input type="number" name="note" id="tNote" class="form-control" min="1" max="5" value="5"></div>
+            <div class="mb-3"><label class="form-label">Statut</label><select name="actif" id="tActif" class="form-select"><option value="1">Actif</option><option value="0">Inactif</option></select></div>
+            <div class="mb-3"><label class="form-label">Photo</label><input type="file" name="photo" class="form-control" accept="image/*"></div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button><button type="submit" class="btn btn-primary">Enregistrer</button></div>
+    </form>
+</div></div></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function clearTForm(){
+    document.getElementById('tTitle').textContent = 'Ajouter un témoignage';
+    document.getElementById('tForm').action = "{{ url_for('admin.temoignage_add') }}";
+    document.getElementById('tNom').value = '';
+    document.getElementById('tProf').value = '';
+    document.getElementById('tContenu').value = '';
+    document.getElementById('tNote').value = '5';
+    document.getElementById('tActif').value = '1';
+}
+function editT(id, nom, prof, contenu, note, actif){
+    document.getElementById('tTitle').textContent = 'Modifier';
+    document.getElementById('tForm').action = "/admin/temoignage/" + id + "/edit";
+    document.getElementById('tNom').value = nom;
+    document.getElementById('tProf').value = prof;
+    document.getElementById('tContenu').value = contenu;
+    document.getElementById('tNote').value = note;
+    document.getElementById('tActif').value = actif ? '1' : '0';
+    new bootstrap.Modal(document.getElementById('addModal')).show();
+}
+</script>
+{% endblock %}

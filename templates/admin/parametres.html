@@ -1,0 +1,69 @@
+{% extends 'admin/base.html' %}
+{% block title %}Paramètres du site{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-4">
+    <h4><i class="bi bi-gear me-2"></i>Paramètres du site</h4>
+
+    <form method="POST" class="mt-4">
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-transparent"><h6 class="mb-0"><i class="bi bi-building me-2"></i>Informations du site</h6></div>
+                    <div class="card-body">
+                        <div class="mb-3"><label class="form-label">Nom du site</label><input type="text" name="site_nom" class="form-control" value="{{ params.get('site_nom', '') }}"></div>
+                        <div class="mb-3"><label class="form-label">Adresse</label><input type="text" name="contact_adresse" class="form-control" value="{{ params.get('contact_adresse', '') }}"></div>
+                        <div class="mb-3"><label class="form-label">Téléphone 1</label><input type="text" name="contact_telephone1" class="form-control" value="{{ params.get('contact_telephone1', '') }}"></div>
+                        <div class="mb-3"><label class="form-label">Téléphone 2</label><input type="text" name="contact_telephone2" class="form-control" value="{{ params.get('contact_telephone2', '') }}"></div>
+                        <div class="mb-3"><label class="form-label">Email</label><input type="email" name="contact_email" class="form-control" value="{{ params.get('contact_email', '') }}"></div>
+                        <div class="mb-3"><label class="form-label">Google Maps URL</label><input type="url" name="contact_maps_url" class="form-control" value="{{ params.get('contact_maps_url', '') }}"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-transparent"><h6 class="mb-0"><i class="bi bi-share me-2"></i>Réseaux sociaux</h6></div>
+                    <div class="card-body">
+                        <div class="mb-3"><label class="form-label">TikTok</label><input type="url" name="social_tiktok" class="form-control" value="{{ params.get('social_tiktok', '') }}"></div>
+                        <div class="mb-3"><label class="form-label">Facebook</label><input type="url" name="social_facebook" class="form-control" value="{{ params.get('social_facebook', '') }}"></div>
+                        <div class="mb-3"><label class="form-label">Instagram</label><input type="url" name="social_instagram" class="form-control" value="{{ params.get('social_instagram', '') }}"></div>
+                        <div class="mb-3"><label class="form-label">LinkedIn</label><input type="url" name="social_linkedin" class="form-control" value="{{ params.get('social_linkedin', '') }}"></div>
+                    </div>
+                </div>
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-transparent"><h6 class="mb-0"><i class="bi bi-clock me-2"></i>Horaires</h6></div>
+                    <div class="card-body">
+                        <div class="mb-3"><label class="form-label">Horaires semaine</label><input type="text" name="horaires_semaine" class="form-control" value="{{ params.get('horaires_semaine', '') }}" placeholder="Lun-Ven 8h-18h"></div>
+                        <div class="mb-3"><label class="form-label">Horaires samedi</label><input type="text" name="horaires_samedi" class="form-control" value="{{ params.get('horaires_samedi', '') }}" placeholder="Sam 8h-12h"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-transparent"><h6 class="mb-0"><i class="bi bi-code-slash me-2"></i>SEO & Analytics</h6></div>
+                    <div class="card-body">
+                        <div class="mb-3"><label class="form-label">Meta Title</label><input type="text" name="meta_title" class="form-control" value="{{ params.get('meta_title', '') }}"></div>
+                        <div class="mb-3"><label class="form-label">Meta Description</label><textarea name="meta_description" class="form-control" rows="2">{{ params.get('meta_description', '') }}</textarea></div>
+                        <div class="mb-3"><label class="form-label">Google Analytics ID</label><input type="text" name="google_analytics" class="form-control" value="{{ params.get('google_analytics', '') }}" placeholder="G-XXXXXXXXXX"></div>
+                        <div class="mb-3"><label class="form-label">Google Search Console</label><input type="text" name="google_search_console" class="form-control" value="{{ params.get('google_search_console', '') }}"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-transparent"><h6 class="mb-0"><i class="bi bi-envelope me-2"></i>SMTP</h6></div>
+                    <div class="card-body">
+                        <div class="mb-3"><label class="form-label">SMTP Host</label><input type="text" name="smtp_host" class="form-control" value="{{ params.get('smtp_host', '') }}"></div>
+                        <div class="mb-3"><label class="form-label">SMTP Port</label><input type="number" name="smtp_port" class="form-control" value="{{ params.get('smtp_port', '') }}"></div>
+                        <div class="mb-3"><label class="form-label">SMTP User</label><input type="text" name="smtp_user" class="form-control" value="{{ params.get('smtp_user', '') }}"></div>
+                        <div class="mb-3"><label class="form-label">SMTP Password</label><input type="password" name="smtp_password" class="form-control" value="{{ params.get('smtp_password', '') }}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-end mt-4">
+            <button type="submit" class="btn btn-primary rounded-pill px-5"><i class="bi bi-check-lg me-2"></i>Enregistrer les paramètres</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,5 +1,7 @@
-from extensions import db
+from extensions import db, login_manager
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 
 
 class Formation(db.Model):
@@ -132,6 +134,36 @@ class Statistique(db.Model):
 
     def __repr__(self):
         return f'<Statistique {self.cle}>'
+
+
+class AdminUser(UserMixin, db.Model):
+    __tablename__ = 'admin_users'
+    id = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(200), nullable=False)
+    email = db.Column(db.String(200), unique=True, nullable=False)
+    password_hash = db.Column(db.String(300), nullable=False)
+    role = db.Column(db.String(50), default='administrateur')
+    actif = db.Column(db.Boolean, default=True)
+    last_login = db.Column(db.DateTime, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    @property
+    def is_super_admin(self):
+        return self.role == 'super_admin'
+
+    def __repr__(self):
+        return f'<AdminUser {self.email}>'
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return AdminUser.query.get(int(user_id))
 
 
 class ContactMessage(db.Model):

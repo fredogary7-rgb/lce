@@ -1,0 +1,95 @@
+{% extends 'admin/base.html' %}
+{% block title %}Administrateurs{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="bi bi-shield-lock me-2"></i>Administrateurs</h4>
+        <button class="btn btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#addModal" onclick="clearAdminForm()">
+            <i class="bi bi-plus-lg me-1"></i>Ajouter
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr><th>#</th><th>Nom</th><th>Email</th><th>Rôle</th><th>Actif</th><th>Dernière connexion</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for admin in admins %}
+                <tr>
+                    <td>{{ admin.id }}</td>
+                    <td>{{ admin.nom }}</td>
+                    <td>{{ admin.email }}</td>
+                    <td><span class="badge bg-{{ 'success' if admin.role == 'super_admin' else 'primary' }}">{{ admin.role }}</span></td>
+                    <td><span class="badge bg-{{ 'success' if admin.actif else 'danger' }}">{{ 'Oui' if admin.actif else 'Non' }}</span></td>
+                    <td>{{ admin.last_login.strftime('%d/%m/%Y %H:%M') if admin.last_login else '—' }}</td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <button class="btn btn-sm btn-outline-secondary" onclick="editAdmin({{ admin.id }}, '{{ admin.nom|e }}', '{{ admin.email|e }}', '{{ admin.role|e }}', {{ admin.actif|tojson }})"><i class="bi bi-pencil"></i></button>
+                            {% if admin.id != current_user.id %}
+                            <form method="POST" action="{{ url_for('admin.administrateur_delete', id=admin.id) }}" onsubmit="return confirm('Supprimer cet administrateur ?')">
+                                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- MODAL ADD/EDIT -->
+<div class="modal fade" id="addModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+    <form id="adminForm" method="POST" action="{{ url_for('admin.administrateur_add') }}">
+        <div class="modal-header"><h5 class="modal-title" id="adminTitle">Ajouter un administrateur</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+            <div class="mb-3"><label class="form-label">Nom *</label><input type="text" name="nom" id="aNom" class="form-control" required></div>
+            <div class="mb-3"><label class="form-label">Email *</label><input type="email" name="email" id="aEmail" class="form-control" required></div>
+            <div class="mb-3"><label class="form-label">Mot de passe <span class="text-danger" id="pwRequired">*</span></label><input type="password" name="password" id="aPassword" class="form-control"><small class="text-muted">Laissez vide pour ne pas changer</small></div>
+            <div class="mb-3"><label class="form-label">Rôle</label>
+                <select name="role" id="aRole" class="form-select">
+                    <option value="super_admin">Super Admin</option>
+                    <option value="administrateur">Administrateur</option>
+                    <option value="editeur">Éditeur</option>
+                </select>
+            </div>
+            <div class="mb-3"><label class="form-label">Actif</label><select name="actif" id="aActif" class="form-select"><option value="1">Oui</option><option value="0">Non</option></select></div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button><button type="submit" class="btn btn-primary">Enregistrer</button></div>
+    </form>
+</div></div></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function clearAdminForm(){
+    document.getElementById('adminTitle').textContent = 'Ajouter un administrateur';
+    document.getElementById('adminForm').action = "{{ url_for('admin.administrateur_add') }}";
+    document.getElementById('aNom').value = '';
+    document.getElementById('aEmail').value = '';
+    document.getElementById('aPassword').value = '';
+    document.getElementById('aRole').value = 'administrateur';
+    document.getElementById('aActif').value = '1';
+    document.getElementById('pwRequired').style.display = 'inline';
+}
+function editAdmin(id, nom, email, role, actif){
+    document.getElementById('adminTitle').textContent = 'Modifier';
+    document.getElementById('adminForm').action = "/admin/administrateur/" + id + "/edit";
+    document.getElementById('aNom').value = nom;
+    document.getElementById('aEmail').value = email;
+    document.getElementById('aEmail').readOnly = true;
+    document.getElementById('aPassword').value = '';
+    document.getElementById('aRole').value = role;
+    document.getElementById('aActif').value = actif ? '1' : '0';
+    document.getElementById('pwRequired').style.display = 'none';
+    new bootstrap.Modal(document.getElementById('addModal')).show();
+}
+document.getElementById('addModal').addEventListener('hidden.bs.modal', function(){
+    document.getElementById('aEmail').readOnly = false;
+    document.getElementById('pwRequired').style.display = 'inline';
+});
+</script>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'admin/base.html' %}
+{% block title %}Équipe{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="bi bi-people me-2"></i>Équipe</h4>
+        <button class="btn btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#addModal" onclick="clearEqForm()">
+            <i class="bi bi-plus-lg me-1"></i>Ajouter
+        </button>
+    </div>
+
+    <div class="row g-3">
+        {% for m in membres %}
+        <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                {% if m.photo %}<img src="{{ url_for('static', filename='uploads/equipe/' + m.photo) }}" class="card-img-top" style="height:180px;object-fit:cover;" alt="{{ m.nom }}">{% else %}<div class="bg-light d-flex align-items-center justify-content-center" style="height:180px;"><i class="bi bi-person fs-1 text-muted"></i></div>{% endif %}
+                <div class="card-body">
+                    <h6 class="card-title">{{ m.nom }}</h6>
+                    <p class="small text-muted">{{ m.fonction }}</p>
+                    <span class="badge bg-{{ 'success' if m.actif else 'danger' }}">{{ 'Actif' if m.actif else 'Inactif' }}</span>
+                </div>
+                <div class="card-footer bg-transparent d-flex gap-1">
+                    <button class="btn btn-sm btn-outline-secondary flex-grow-1" onclick="editEq({{ m.id }}, '{{ m.nom|e }}', '{{ m.fonction|e }}', '{{ m.description|default('')|e }}', {{ m.ordre }}, {{ m.actif|tojson }})"><i class="bi bi-pencil"></i></button>
+                    <form method="POST" action="{{ url_for('admin.equipe_delete', id=m.id) }}" onsubmit="return confirm('Supprimer ?')"><button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button></form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="modal fade" id="addModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+    <form id="eqForm" method="POST" action="{{ url_for('admin.equipe_add') }}" enctype="multipart/form-data">
+        <div class="modal-header"><h5 class="modal-title" id="eqTitle">Ajouter un membre</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+            <div class="mb-3"><label class="form-label">Nom *</label><input type="text" name="nom" id="eNom" class="form-control" required></div>
+            <div class="mb-3"><label class="form-label">Fonction *</label><input type="text" name="fonction" id="eFonction" class="form-control" required></div>
+            <div class="mb-3"><label class="form-label">Description</label><textarea name="description" id="eDesc" class="form-control" rows="2"></textarea></div>
+            <div class="mb-3"><label class="form-label">Ordre</label><input type="number" name="ordre" id="eOrdre" class="form-control" value="0"></div>
+            <div class="mb-3"><label class="form-label">Statut</label><select name="actif" id="eActif" class="form-select"><option value="1">Actif</option><option value="0">Inactif</option></select></div>
+            <div class="mb-3"><label class="form-label">Photo</label><input type="file" name="photo" class="form-control" accept="image/*"><small class="text-muted">Laissez vide pour garder</small></div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button><button type="submit" class="btn btn-primary">Enregistrer</button></div>
+    </form>
+</div></div></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function clearEqForm(){
+    document.getElementById('eqTitle').textContent = 'Ajouter un membre';
+    document.getElementById('eqForm').action = "{{ url_for('admin.equipe_add') }}";
+    document.getElementById('eNom').value = '';
+    document.getElementById('eFonction').value = '';
+    document.getElementById('eDesc').value = '';
+    document.getElementById('eOrdre').value = '0';
+    document.getElementById('eActif').value = '1';
+}
+function editEq(id, nom, fonction, desc, ordre, actif){
+    document.getElementById('eqTitle').textContent = 'Modifier';
+    document.getElementById('eqForm').action = "/admin/equipe/" + id + "/edit";
+    document.getElementById('eNom').value = nom;
+    document.getElementById('eFonction').value = fonction;
+    document.getElementById('eDesc').value = desc;
+    document.getElementById('eOrdre').value = ordre;
+    document.getElementById('eActif').value = actif ? '1' : '0';
+    new bootstrap.Modal(document.getElementById('addModal')).show();
+}
+</script>
+{% endblock %}

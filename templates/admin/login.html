@@ -1,0 +1,52 @@
+{% extends 'admin/base.html' %}
+{% block title %}Connexion{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-logo">
+            <span class="sidebar-logo">LCE</span>
+        </div>
+        <h3 class="login-title">Administration</h3>
+        <p class="login-subtitle">Leader Chiffre Entreprise</p>
+
+        <form method="POST" class="mt-4">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                    <input type="email" name="email" id="email" class="form-control" placeholder="admin@lcetg.com" required autofocus>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Mot de passe</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    <input type="password" name="password" id="password" class="form-control" placeholder="••••••••" required>
+                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" name="remember" id="remember" class="form-check-input" value="1">
+                <label for="remember" class="form-check-label">Se souvenir de moi</label>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 rounded-pill py-2">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('togglePassword').addEventListener('click', function(){
+    const pw = document.getElementById('password');
+    const icon = this.querySelector('i');
+    if(pw.type === 'password'){ pw.type='text'; icon.className='bi bi-eye-slash'; }
+    else { pw.type='password'; icon.className='bi bi-eye'; }
+});
+</script>
+{% endblock %}

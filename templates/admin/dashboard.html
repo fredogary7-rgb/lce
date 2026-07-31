@@ -1,0 +1,137 @@
+{% extends 'admin/base.html' %}
+{% block title %}Tableau de bord{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-4">
+    <h4 class="mb-4">Tableau de bord</h4>
+
+    <!-- STATS CARDS -->
+    <div class="row g-3 mb-4">
+        <div class="col-xl-2 col-lg-3 col-md-4 col-6">
+            <div class="stat-card">
+                <div class="stat-icon bg-primary-subtle text-primary"><i class="bi bi-book"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value">{{ nb_formations }}</span>
+                    <span class="stat-label">Formations</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-lg-3 col-md-4 col-6">
+            <div class="stat-card">
+                <div class="stat-icon bg-warning-subtle text-warning"><i class="bi bi-envelope"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value">{{ nb_messages }}</span>
+                    <span class="stat-label">Messages non lus</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-lg-3 col-md-4 col-6">
+            <div class="stat-card">
+                <div class="stat-icon bg-success-subtle text-success"><i class="bi bi-pencil-square"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value">{{ nb_inscriptions }}</span>
+                    <span class="stat-label">Inscriptions</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-lg-3 col-md-4 col-6">
+            <div class="stat-card">
+                <div class="stat-icon bg-info-subtle text-info"><i class="bi bi-images"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value">{{ nb_galerie }}</span>
+                    <span class="stat-label">Images galerie</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-lg-3 col-md-4 col-6">
+            <div class="stat-card">
+                <div class="stat-icon bg-danger-subtle text-danger"><i class="bi bi-play-circle"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value">{{ nb_videos }}</span>
+                    <span class="stat-label">Vidéos</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-lg-3 col-md-4 col-6">
+            <div class="stat-card">
+                <div class="stat-icon bg-secondary-subtle text-secondary"><i class="bi bi-star"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value">{{ nb_temoignages }}</span>
+                    <span class="stat-label">Témoignages</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title mb-3"><i class="bi bi-graph-up me-2"></i>Inscriptions (7 derniers jours)</h6>
+                    <canvas id="inscriptionsChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title mb-3"><i class="bi bi-chat-dots me-2"></i>Messages (7 derniers jours)</h6>
+                    <canvas id="messagesChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Data passed from backend via data attributes or inline
+const inscData = {{ inscriptions_chart_data | tojson if inscriptions_chart_data else [0,0,0,0,0,0,0] }};
+const msgData = {{ messages_chart_data | tojson if messages_chart_data else [0,0,0,0,0,0,0] }};
+const days = ['J-6','J-5','J-4','J-3','J-2','Hier',"Aujourd'hui"];
+
+const ctx1 = document.getElementById('inscriptionsChart').getContext('2d');
+new Chart(ctx1, {
+    type: 'bar',
+    data: {
+        labels: days,
+        datasets: [{
+            label: 'Inscriptions',
+            data: inscData,
+            backgroundColor: 'rgba(13, 71, 199, 0.7)',
+            borderRadius: 6
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+    }
+});
+
+const ctx2 = document.getElementById('messagesChart').getContext('2d');
+new Chart(ctx2, {
+    type: 'line',
+    data: {
+        labels: days,
+        datasets: [{
+            label: 'Messages',
+            data: msgData,
+            borderColor: '#f39c12',
+            backgroundColor: 'rgba(243, 156, 18, 0.2)',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 4,
+            pointBackgroundColor: '#f39c12'
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+    }
+});
+</script>
+{% endblock %}

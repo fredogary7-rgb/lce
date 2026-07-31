@@ -1,0 +1,146 @@
+{% extends 'admin/base.html' %}
+{% block title %}Gestion des formations{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="bi bi-book me-2"></i>Formations</h4>
+        <button class="btn btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#formationModal" onclick="clearForm()">
+            <i class="bi bi-plus-lg me-1"></i>Ajouter
+        </button>
+    </div>
+
+    <div class="row g-3">
+        {% for f in formations %}
+        <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="card formation-admin-card h-100 border-0 shadow-sm">
+                {% if f.image %}
+                <div class="formation-admin-img" style="background-image:url('{{ url_for('static', filename='uploads/formations/' + f.image) }}'); height:140px; background-size:cover; background-position:center;"></div>
+                {% else %}
+                <div class="formation-admin-img d-flex align-items-center justify-content-center bg-light" style="height:140px;">
+                    <i class="bi bi-image fs-1 text-muted"></i>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <h6 class="card-title">{{ f.nom }}</h6>
+                    <p class="card-text small text-muted">{{ f.description[:80] if f.description else '' }}...</p>
+                    <div class="d-flex gap-1 flex-wrap mb-2">
+                        {% if f.duree %}<span class="badge bg-light text-dark">{{ f.duree }}</span>{% endif %}
+                        {% if f.categorie %}<span class="badge bg-light text-dark">{{ f.categorie }}</span>{% endif %}
+                        <span class="badge bg-{{ 'success' if f.actif else 'danger' }}">{{ 'Actif' if f.actif else 'Inactif' }}</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top-0 d-flex gap-1">
+                    <button class="btn btn-sm btn-outline-secondary flex-grow-1" onclick="editFormation({{ f.id }}, '{{ f.nom|e }}', '{{ f.description|default('')|e }}', '{{ f.duree|default('')|e }}', '{{ f.prix|default('')|e }}', '{{ f.categorie|default('')|e }}', {{ f.ordre_affichage }}, {{ f.actif|tojson }})">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-warning" onclick="toggleFormation({{ f.id }})" title="{{ 'Désactiver' if f.actif else 'Activer' }}">
+                        <i class="bi bi-{{ 'toggle-on' if f.actif else 'toggle-off' }}"></i>
+                    </button>
+                    <form method="POST" action="{{ url_for('admin.formation_delete', id=f.id) }}" onsubmit="return confirm('Supprimer cette formation ?')" class="d-inline">
+                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- MODAL ADD/EDIT -->
+<div class="modal fade" id="formationModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="formationForm" method="POST" enctype="multipart/form-data">
+                <div class="modal-header"><h5 class="modal-title" id="formTitle">Ajouter une formation</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nom *</label>
+                            <input type="text" name="nom" id="fNom" class="form-control" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Durée</label>
+                            <input type="text" name="duree" id="fDuree" class="form-control" placeholder="ex: 4 semaines">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Prix</label>
+                            <input type="text" name="prix" id="fPrix" class="form-control" placeholder="ex: 150.000 FCFA">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Catégorie</label>
+                            <input type="text" name="categorie" id="fCat" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Ordre</label>
+                            <input type="number" name="ordre" id="fOrdre" class="form-control" value="0">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Statut</label>
+                            <select name="actif" id="fActif" class="form-select">
+                                <option value="1">Actif</option>
+                                <option value="0">Inactif</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" id="fDesc" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Image</label>
+                            <input type="file" name="image" class="form-control" accept="image/*">
+                            <small class="text-muted">Laissez vide pour garder l'image actuelle</small>
+                            <div id="imgPreview" class="mt-2 d-none">
+                                <img src="" alt="Preview" style="max-height:100px;border-radius:8px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function clearForm(){
+    document.getElementById('formTitle').textContent = 'Ajouter une formation';
+    document.getElementById('formationForm').action = "{{ url_for('admin.formation_add') }}";
+    document.getElementById('fNom').value = '';
+    document.getElementById('fDuree').value = '';
+    document.getElementById('fPrix').value = '';
+    document.getElementById('fCat').value = '';
+    document.getElementById('fOrdre').value = '0';
+    document.getElementById('fActif').value = '1';
+    document.getElementById('fDesc').value = '';
+    document.getElementById('imgPreview').classList.add('d-none');
+}
+
+function editFormation(id, nom, desc, duree, prix, cat, ordre, actif){
+    document.getElementById('formTitle').textContent = 'Modifier la formation';
+    document.getElementById('formationForm').action = "/admin/formation/" + id + "/edit";
+    document.getElementById('fNom').value = nom;
+    document.getElementById('fDuree').value = duree;
+    document.getElementById('fPrix').value = prix;
+    document.getElementById('fCat').value = cat;
+    document.getElementById('fOrdre').value = ordre;
+    document.getElementById('fActif').value = actif ? '1' : '0';
+    document.getElementById('fDesc').value = desc;
+    document.getElementById('imgPreview').classList.add('d-none');
+    new bootstrap.Modal(document.getElementById('formationModal')).show();
+}
+
+async function toggleFormation(id){
+    try {
+        const resp = await fetch('/admin/formation/' + id + '/toggle', {method:'POST'});
+        const data = await resp.json();
+        location.reload();
+    } catch(e) { alert('Erreur'); }
+}
+</script>
+{% endblock %}
