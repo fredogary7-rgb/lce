@@ -16,6 +16,20 @@ def create_app(config_name=None):
     login_manager.init_app(app)
     mail.init_app(app)
 
+    # Réparation automatique des tables au démarrage
+    with app.app_context():
+        from sqlalchemy import text, inspect
+        inspector = inspect(db.engine)
+        try:
+            # Test: tenter un SELECT simple sur temoignages
+            if 'temoignages' in inspector.get_table_names():
+                db.session.execute(text("SELECT 1 FROM temoignages LIMIT 1"))
+        except Exception:
+            # La table existe mais a un schéma incompatible -> DROP
+            db.session.execute(text("DROP TABLE IF EXISTS temoignages CASCADE"))
+            db.session.commit()
+        db.create_all()
+
     # Register blueprints
     from routes import main_bp
     app.register_blueprint(main_bp)
