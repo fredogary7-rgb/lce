@@ -7,6 +7,7 @@
   const main = document.getElementById('adminMain');
   const sidebarCollapse = document.getElementById('sidebarCollapse');
   const sidebarToggle = document.getElementById('sidebarToggle');
+  const sidebarToggleMobile = document.getElementById('sidebarToggleMobile');
 
   // Create overlay for mobile
   let overlay = document.createElement('div');
@@ -39,6 +40,7 @@
 
   if (sidebarCollapse) sidebarCollapse.addEventListener('click', toggleDesktop);
   if (sidebarToggle) sidebarToggle.addEventListener('click', toggleSidebar);
+  if (sidebarToggleMobile) sidebarToggleMobile.addEventListener('click', toggleSidebar);
   if (overlay) overlay.addEventListener('click', closeSidebar);
 
   // Restore desktop state
