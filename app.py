@@ -41,6 +41,16 @@ def create_app(config_name=None):
     from admin import admin_bp
     app.register_blueprint(admin_bp)
 
+    # CSRF protection context processor
+    from flask import session
+    import secrets
+
+    @app.context_processor
+    def inject_csrf():
+        if 'csrf_token' not in session:
+            session['csrf_token'] = secrets.token_hex(32)
+        return {'csrf_token': session['csrf_token']}
+
     # SEO routes
     @app.route('/robots.txt')
     def robots():

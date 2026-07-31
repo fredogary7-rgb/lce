@@ -153,7 +153,7 @@
                 <div class="card border-0 shadow-lg rounded-4" data-aos="fade-up">
                     <div class="card-body p-4 p-lg-5">
                         <form id="inscriptionForm" method="POST" action="{{ url_for('main.inscription') }}" enctype="multipart/form-data" novalidate>
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
                             <!-- STEP 1: Informations personnelles -->
                             <div class="form-step" id="step1">
