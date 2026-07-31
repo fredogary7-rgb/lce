@@ -41,10 +41,8 @@ class Temoignage(db.Model):
     __tablename__ = 'temoignages'
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(200), nullable=False)
-    profession = db.Column(db.String(200), nullable=True)
     fonction = db.Column(db.String(200), nullable=True)
     photo = db.Column(db.String(300), nullable=True)
-    message = db.Column(db.Text, nullable=True)
     contenu = db.Column(db.Text, nullable=False)
     note = db.Column(db.Integer, default=5)
     actif = db.Column(db.Boolean, default=True)
