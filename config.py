@@ -6,6 +6,12 @@ load_dotenv()
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key')
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+    if not SQLALCHEMY_DATABASE_URI:
+        raise RuntimeError(
+            "❌ DATABASE_URL n'est pas définie dans les variables d'environnement.\n"
+            "   Sur Railway : Settings → Variables → ajouter DATABASE_URL\n"
+            "   En local : fichier .env avec DATABASE_URL=..."
+        )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
         'pool_pre_ping': True,
