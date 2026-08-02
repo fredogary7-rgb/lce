@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, send_file
 from models import Formation, Message, Temoignage, Inscription, Galerie, ParametreSite, ContactMessage, Video, Equipe, Statistique
-from extensions import db, mail
+from extensions import db
 from datetime import datetime
 import os
 import uuid
@@ -15,7 +15,8 @@ from reportlab.platypus import Paragraph, Frame, Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.colors import HexColor, black, white, grey
 from PIL import Image, ImageDraw, ImageFont
-from flask_mail import Message as MailMessage
+import requests
+import json
 
 main_bp = Blueprint('main', __name__)
 
@@ -458,6 +459,44 @@ def inscription():
         return redirect(url_for('main.s_inscrire_page'))
 
 
+def _send_resend_email(to_email, subject, html_body, attachment_path=None, attachment_name=None):
+    """Envoie un email via l'API Resend."""
+    api_key = current_app.config.get('RESEND_API_KEY')
+    from_email = current_app.config.get('RESEND_FROM', 'LCE <contact@lcetg.com>')
+
+    if not api_key:
+        current_app.logger.error("RESEND_API_KEY non configurée")
+        raise Exception("RESEND_API_KEY non configurée")
+
+    url = 'https://api.resend.com/emails'
+    headers = {
+        'Authorization': f'Bearer {api_key}',
+        'Content-Type': 'application/json',
+    }
+
+    payload = {
+        'from': from_email,
+        'to': [to_email],
+        'subject': subject,
+        'html': html_body,
+    }
+
+    # Pièce jointe
+    if attachment_path and os.path.exists(attachment_path):
+        with open(attachment_path, 'rb') as f:
+            file_content = f.read()
+        payload['attachments'] = [{
+            'filename': attachment_name or os.path.basename(attachment_path),
+            'content': base64.b64encode(file_content).decode('utf-8'),
+        }]
+
+    response = requests.post(url, headers=headers, json=payload, timeout=15)
+    if response.status_code >= 400:
+        current_app.logger.error(f"Resend API error: {response.status_code} - {response.text}")
+        raise Exception(f"Resend API error: {response.text}")
+    return response.json()
+
+
 def send_confirmation_email(inscription, pdf_path):
     nom = inscription.nom_complet or inscription.nom
     html_body = f'''
@@ -491,21 +530,13 @@ def send_confirmation_email(inscription, pdf_path):
         </div>
     </div></body></html>'''
 
-    msg = MailMessage(
+    _send_resend_email(
+        to_email=inscription.email,
         subject='Confirmation de votre demande d\'inscription - Leader Chiffre Entreprise',
-        recipients=[inscription.email or ''],
-        html=html_body
+        html_body=html_body,
+        attachment_path=pdf_path if pdf_path and os.path.exists(pdf_path) else None,
+        attachment_name=f'Recu_{inscription.numero_inscription}.pdf'
     )
-    if pdf_path and os.path.exists(pdf_path):
-        with current_app.open_resource(pdf_path.replace('uploads/recus/', '').replace('uploads/recus\\', '')) as fp:
-            pass
-        import mimetypes
-        msg.attach(
-            filename=f'Recu_{inscription.numero_inscription}.pdf',
-            content_type='application/pdf',
-            data=open(pdf_path, 'rb').read()
-        )
-    mail.send(msg)
 
 
 def send_admin_notification(inscription):
@@ -534,12 +565,11 @@ def send_admin_notification(inscription):
         </div>
     </div></body></html>'''
 
-    msg = MailMessage(
+    _send_resend_email(
+        to_email='contact@lcetg.com',
         subject=f'Nouvelle inscription - {nom}',
-        recipients=['contact@lcetg.com'],
-        html=html_body
+        html_body=html_body,
     )
-    mail.send(msg)
 
 
 @main_bp.route('/telecharger-recu/<int:inscription_id>')

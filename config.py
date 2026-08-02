@@ -22,13 +22,10 @@ class Config:
     }
     SITE_NAME = "LCE - Leader Chiffre Entreprise"
     SITE_DESCRIPTION = "Centre professionnel de formation en conduite d'engins de manutention, logistique et transport."
-    # Flask-Mail
-    MAIL_SERVER = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
-    MAIL_PORT = int(os.getenv('MAIL_PORT', 587))
-    MAIL_USE_TLS = os.getenv('MAIL_USE_TLS', 'True').lower() == 'true'
-    MAIL_USERNAME = os.getenv('MAIL_USERNAME', '')
-    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', '')
-    MAIL_DEFAULT_SENDER = os.getenv('MAIL_DEFAULT_SENDER', 'contact@lcetg.com')
+    # Resend Email API
+    RESEND_API_KEY = os.getenv('RESEND_API_KEY', '')
+    RESEND_FROM = os.getenv('RESEND_FROM', 'LCE <contact@lcetg.com>')
+    RESEND_DOMAIN = os.getenv('RESEND_DOMAIN', 'lcetg.com')
     UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'uploads')
     MAX_CONTENT_LENGTH = 10 * 1024 * 1024  # 10 MB
 
