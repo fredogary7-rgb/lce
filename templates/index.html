@@ -33,6 +33,35 @@
     </div>
 </section>
 
+<!-- STATISTIQUES EN DIRECT -->
+<section class="stats-live section-padding-sm bg-primary text-white">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-md-4" data-aos="fade-up">
+                <div class="stats-live-card">
+                    <i class="bi bi-people-fill stats-live-icon"></i>
+                    <div class="stats-live-number">{{ total_inscriptions }}</div>
+                    <div class="stats-live-label">Personnes inscrites</div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="stats-live-card">
+                    <i class="bi bi-mortarboard-fill stats-live-icon"></i>
+                    <div class="stats-live-number">12</div>
+                    <div class="stats-live-label">Formations disponibles</div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="stats-live-card">
+                    <i class="bi bi-chat-dots-fill stats-live-icon"></i>
+                    <div class="stats-live-number">{{ commentaires|length }}</div>
+                    <div class="stats-live-label">Commentaires</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- POURQUOI CHOISIR LCE -->
 <section class="pourquoi section-padding" id="pourquoi">
     <div class="container">
@@ -366,6 +395,83 @@
                 </div>
             </div>
         </div>
+    </div>
+</section>
+
+<!-- COMMENTAIRES DES VISITEURS -->
+<section class="commentaires section-padding bg-light" id="commentaires">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Avis & Commentaires</span>
+            <h2 class="section-title">Ce que disent nos visiteurs</h2>
+            <p class="section-subtitle">Laissez-nous votre avis, il sera affiché après validation</p>
+        </div>
+
+        <!-- Messages flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Formulaire commentaire -->
+        <div class="commentaire-form-wrapper mb-5" data-aos="fade-up">
+            <form action="{{ url_for('main.ajouter_commentaire') }}" method="POST" class="commentaire-form">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Votre nom <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="nom" required placeholder="Votre nom">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email (optionnel)</label>
+                        <input type="email" class="form-control" name="email" placeholder="votre@email.com">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Votre commentaire <span class="text-danger">*</span></label>
+                        <textarea class="form-control" name="commentaire" rows="3" required placeholder="Partagez votre expérience..."></textarea>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">
+                            <i class="bi bi-send-fill me-1"></i> Publier mon commentaire
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Liste des commentaires -->
+        {% if commentaires %}
+        <div class="row g-4">
+            {% for c in commentaires %}
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ (loop.index % 3) * 100 }}">
+                <div class="commentaire-card">
+                    <div class="commentaire-card-header">
+                        <div class="commentaire-avatar">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        <div>
+                            <div class="commentaire-nom">{{ c.nom }}</div>
+                            <div class="commentaire-date">{{ c.created_at.strftime('%d/%m/%Y') if c.created_at else '' }}</div>
+                        </div>
+                    </div>
+                    <div class="commentaire-text">
+                        {{ c.commentaire }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center text-muted" data-aos="fade-up">
+            <i class="bi bi-chat-square-text d-block mb-3" style="font-size: 3rem;"></i>
+            <p>Soyez le premier à laisser un commentaire !</p>
+        </div>
+        {% endif %}
     </div>
 </section>
 

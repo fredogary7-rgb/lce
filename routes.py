@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, send_file, jsonify
-from models import Formation, Message, Temoignage, Inscription, Galerie, ParametreSite, ContactMessage, Video, Equipe, Statistique, PushSubscription
+from models import Formation, Message, Temoignage, Inscription, Galerie, ParametreSite, ContactMessage, Video, Equipe, Statistique, PushSubscription, CommentairePublic
 from extensions import db
 from datetime import datetime
 import os
@@ -52,7 +52,36 @@ FORMATIONS_DATA = [
 def index():
     formations = FORMATIONS_DATA
     temoignages = Temoignage.query.filter_by(actif=True).order_by(Temoignage.created_at.desc()).all()
-    return render_template('index.html', formations=formations, temoignages=temoignages)
+    total_inscriptions = Inscription.query.count()
+    commentaires = CommentairePublic.query.filter_by(actif=True).order_by(CommentairePublic.created_at.desc()).limit(20).all()
+    return render_template('index.html', formations=formations, temoignages=temoignages, total_inscriptions=total_inscriptions, commentaires=commentaires)
+
+
+@main_bp.route('/api/commentaire', methods=['POST'])
+def ajouter_commentaire():
+    """Ajoute un commentaire public depuis la page index."""
+    nom = request.form.get('nom', '').strip()
+    email = request.form.get('email', '').strip()
+    commentaire = request.form.get('commentaire', '').strip()
+
+    if not nom or not commentaire:
+        flash('Veuillez remplir votre nom et votre commentaire.', 'danger')
+        return redirect(url_for('main.index', _anchor='commentaires'))
+
+    if len(commentaire) < 5:
+        flash('Votre commentaire est trop court.', 'danger')
+        return redirect(url_for('main.index', _anchor='commentaires'))
+
+    try:
+        c = CommentairePublic(nom=nom, email=email, commentaire=commentaire)
+        db.session.add(c)
+        db.session.commit()
+        flash('Merci pour votre commentaire ! Il sera visible après validation.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Une erreur est survenue. Veuillez réessayer.', 'danger')
+
+    return redirect(url_for('main.index', _anchor='commentaires'))
 
 
 @main_bp.route('/formations')

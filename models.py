@@ -204,6 +204,20 @@ class ContactMessage(db.Model):
         return f'<ContactMessage {self.nom}>'
 
 
+class CommentairePublic(db.Model):
+    """Commentaires laissés par les visiteurs sur la page d'accueil."""
+    __tablename__ = 'commentaires_publics'
+    id = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(200), nullable=True)
+    commentaire = db.Column(db.Text, nullable=False)
+    actif = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<CommentairePublic {self.nom}>'
+
+
 class PushSubscription(db.Model):
     __tablename__ = 'push_subscriptions'
     id = db.Column(db.Integer, primary_key=True)
