@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, send_file, jsonify
-from models import Formation, Message, Temoignage, Inscription, Galerie, ParametreSite, ContactMessage, Video, Equipe, Statistique, PushSubscription, CommentairePublic
+from models import Formation, Message, Temoignage, Inscription, Galerie, ParametreSite, ContactMessage, Video, Equipe, Statistique, PushSubscription, CommentairePublic, DemandeVoyage
 from extensions import db
 from datetime import datetime
 import os
@@ -219,6 +219,90 @@ def contact_message():
         flash('Une erreur est survenue. Veuillez réessayer.', 'danger')
 
     return redirect(url_for('main.contact_page', _anchor='contact-form'))
+
+
+@main_bp.route('/voyages')
+def voyages_page():
+    destinations = [
+        {'nom': 'Brésil', 'drapeau': '🇧🇷', 'slug': 'bresil',
+         'description': 'Un pays dynamique avec des opportunités dans les secteurs de l\'industrie, de l\'agriculture et des services. Le Brésil attire de nombreux professionnels internationaux.',
+         'opportunites': 'Emploi, Stages, Formation'},
+        {'nom': 'Dubaï', 'drapeau': '🇦🇪', 'slug': 'dubai',
+         'description': 'Un hub économique et commercial mondial avec une forte demande dans la construction, le tourisme et la technologie.',
+         'opportunites': 'Emploi, Tourisme, Commerce'},
+        {'nom': 'Canada', 'drapeau': '🇨🇦', 'slug': 'canada',
+         'description': 'Réputé pour sa qualité de vie et ses nombreuses opportunités d\'emploi, d\'études et d\'immigration.',
+         'opportunites': 'Emploi, Études, Immigration'},
+        {'nom': 'Belgique', 'drapeau': '🇧🇪', 'slug': 'belgique',
+         'description': 'Au cœur de l\'Europe, la Belgique offre un cadre de vie agréable et des opportunités dans les institutions européennes.',
+         'opportunites': 'Emploi, Études, Stages'},
+        {'nom': 'Allemagne', 'drapeau': '🇩🇪', 'slug': 'allemagne',
+         'description': 'Première économie européenne, l\'Allemagne propose des opportunités dans l\'industrie, l\'ingénierie et la technologie.',
+         'opportunites': 'Emploi, Études, Formation'},
+    ]
+    services = [
+        {'icon': 'bi-info-circle-fill', 'label': 'Information sur les démarches'},
+        {'icon': 'bi-file-earmark-text-fill', 'label': 'Accompagnement administratif'},
+        {'icon': 'bi-folder2-open', 'label': 'Constitution du dossier'},
+        {'icon': 'bi-chat-dots-fill', 'label': 'Préparation aux entretiens'},
+        {'icon': 'bi-lightbulb-fill', 'label': 'Conseils personnalisés'},
+        {'icon': 'bi-graph-up-arrow', 'label': 'Suivi du dossier'},
+    ]
+    etapes = [
+        {'num': '1', 'titre': 'Premier contact', 'desc': 'Nous échangeons pour comprendre votre projet et vos attentes.'},
+        {'num': '2', 'titre': 'Analyse du projet', 'desc': 'Nous analysons votre profil et vos objectifs.'},
+        {'num': '3', 'titre': 'Constitution du dossier', 'desc': 'Nous vous guidons dans la préparation des documents.'},
+        {'num': '4', 'titre': 'Dépôt de la demande', 'desc': 'Votre dossier est déposé auprès des instances concernées.'},
+        {'num': '5', 'titre': 'Suivi administratif', 'desc': 'Nous assurons le suivi de votre dossier.'},
+        {'num': '6', 'titre': 'Départ', 'desc': 'Si le dossier est accepté par les autorités compétentes.'},
+    ]
+    documents = [
+        {'icon': 'bi-passport-fill', 'nom': 'Passeport'},
+        {'icon': 'bi-person-bounding-box', 'nom': 'Photos d\'identité'},
+        {'icon': 'bi-mortarboard-fill', 'nom': 'Diplômes'},
+        {'icon': 'bi-file-earmark-person-fill', 'nom': 'CV'},
+        {'icon': 'bi-pen-fill', 'nom': 'Lettre de motivation'},
+        {'icon': 'bi-person-vcard-fill', 'nom': 'Pièce d\'identité'},
+        {'icon': 'bi-file-earmark-plus-fill', 'nom': 'Documents complémentaires selon la destination'},
+    ]
+    faq = [
+        ('Quels pays sont proposés ?', 'Nous accompagnons actuellement les projets vers le Brésil, Dubaï, le Canada, la Belgique et l\'Allemagne.'),
+        ('Quels documents préparer ?', 'Les documents généralement demandés : passeport, photos d\'identité, diplômes, CV, lettre de motivation et pièce d\'identité.'),
+        ('Combien de temps prend une procédure ?', 'Les délais varient selon le pays et le type de demande. Comptez généralement plusieurs semaines à plusieurs mois.'),
+        ('Comment prendre rendez-vous ?', 'Vous pouvez nous contacter par téléphone, WhatsApp, ou via le formulaire de cette page.'),
+        ('Puis-je être accompagné dans mes démarches ?', 'Oui, notre équipe vous accompagne de la constitution du dossier jusqu\'au suivi administratif.'),
+    ]
+    return render_template('voyages.html', destinations=destinations, services=services, etapes=etapes, documents=documents, faq=faq)
+
+
+@main_bp.route('/api/demande-voyage', methods=['POST'])
+def demande_voyage():
+    nom = request.form.get('nom', '').strip()
+    telephone = request.form.get('telephone', '').strip()
+    whatsapp = request.form.get('whatsapp', '').strip()
+    email = request.form.get('email', '').strip()
+    pays = request.form.get('pays', '').strip()
+    type_projet = request.form.get('type_projet', '').strip()
+    message = request.form.get('message', '').strip()
+
+    if not nom or not telephone:
+        flash('Veuillez remplir votre nom et votre téléphone.', 'danger')
+        return redirect(url_for('main.voyages_page', _anchor='demande'))
+
+    try:
+        dv = DemandeVoyage(
+            nom=nom, telephone=telephone, whatsapp=whatsapp,
+            email=email, pays=pays, type_projet=type_projet,
+            message=message, statut='en_attente'
+        )
+        db.session.add(dv)
+        db.session.commit()
+        flash('Votre demande de voyage a été envoyée avec succès ! Notre équipe vous contactera dans les plus brefs délais.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Une erreur est survenue. Veuillez réessayer.', 'danger')
+
+    return redirect(url_for('main.voyages_page', _anchor='demande'))
 
 
 @main_bp.route('/a-propos')

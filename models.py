@@ -204,6 +204,25 @@ class ContactMessage(db.Model):
         return f'<ContactMessage {self.nom}>'
 
 
+class DemandeVoyage(db.Model):
+    """Demandes de voyage international."""
+    __tablename__ = 'demandes_voyage'
+    id = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(200), nullable=False)
+    telephone = db.Column(db.String(50), nullable=False)
+    whatsapp = db.Column(db.String(50), nullable=True)
+    email = db.Column(db.String(200), nullable=True)
+    pays = db.Column(db.String(100), nullable=True)
+    type_projet = db.Column(db.String(50), nullable=True)
+    message = db.Column(db.Text, nullable=True)
+    statut = db.Column(db.String(50), default='en_attente')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<DemandeVoyage {self.nom} - {self.pays}>'
+
+
 class CommentairePublic(db.Model):
     """Commentaires laissés par les visiteurs sur la page d'accueil."""
     __tablename__ = 'commentaires_publics'

@@ -9,7 +9,7 @@ from extensions import db
 from models import (
     AdminUser, Formation, Message, Temoignage, Inscription,
     Galerie, Video, Equipe, ParametreSite, ContactMessage,
-    PushSubscription
+    PushSubscription, DemandeVoyage, CommentairePublic
 )
 
 
@@ -756,6 +756,81 @@ def push_vapid_public_key():
     pk = current_app.config.get('VAPID_PUBLIC_KEY', '')
     current_app.logger.info(f'[PUSH ADMIN] VAPID key demandée (longueur={len(pk)})')
     return jsonify({'publicKey': pk})
+
+
+# --- VOYAGES ---
+@admin_bp.route('/voyages')
+@admin_required
+def voyages():
+    search = request.args.get('q', '').strip()
+    statut = request.args.get('statut', '').strip()
+    pays = request.args.get('pays', '').strip()
+    page = request.args.get('page', 1, type=int)
+    per_page = 20
+
+    query = DemandeVoyage.query.order_by(DemandeVoyage.created_at.desc())
+    if search:
+        query = query.filter(
+            db.or_(
+                DemandeVoyage.nom.ilike(f'%{search}%'),
+                DemandeVoyage.email.ilike(f'%{search}%'),
+                DemandeVoyage.telephone.ilike(f'%{search}%'),
+            )
+        )
+    if statut:
+        query = query.filter(DemandeVoyage.statut == statut)
+    if pays:
+        query = query.filter(DemandeVoyage.pays == pays)
+
+    demandes = query.paginate(page=page, per_page=per_page, error_out=False)
+    statuts = ['en_attente', 'contacte', 'en_cours', 'termine']
+    pays_list = [row[0] for row in db.session.query(DemandeVoyage.pays).filter(DemandeVoyage.pays.isnot(None)).distinct().all()]
+
+    return render_template('admin/voyages.html', demandes=demandes, search=search,
+                           statut_filter=statut, pays_filter=pays,
+                           statuts=statuts, pays_list=pays_list)
+
+
+@admin_bp.route('/voyages/<int:id>/statut', methods=['POST'])
+@admin_required
+def voyages_update_statut(id):
+    demande = DemandeVoyage.query.get_or_404(id)
+    data = request.get_json() or {}
+    nouveau = data.get('statut', '').strip()
+    if nouveau in ['en_attente', 'contacte', 'en_cours', 'termine']:
+        demande.statut = nouveau
+        demande.updated_at = datetime.utcnow()
+        db.session.commit()
+        return jsonify({'success': True})
+    return jsonify({'success': False, 'error': 'Statut invalide'}), 400
+
+
+@admin_bp.route('/voyages/<int:id>/delete', methods=['POST'])
+@admin_required
+def voyages_delete(id):
+    demande = DemandeVoyage.query.get_or_404(id)
+    db.session.delete(demande)
+    db.session.commit()
+    flash('Demande de voyage supprimée.', 'success')
+    return redirect(url_for('admin.voyages'))
+
+
+@admin_bp.route('/voyages/export-excel')
+@admin_required
+def voyages_export_excel():
+    import io as _io
+    demandes = DemandeVoyage.query.order_by(DemandeVoyage.created_at.desc()).all()
+    output = _io.StringIO()
+    output.write('\ufeffNom;Téléphone;WhatsApp;Email;Pays;Type de projet;Message;Statut;Date\n')
+    for d in demandes:
+        output.write(f'{d.nom};{d.telephone};{d.whatsapp or ""};{d.email or ""};{d.pays or ""};{d.type_projet or ""};{d.message or ""};{d.statut};{d.created_at.strftime("%d/%m/%Y %H:%M")}\n')
+    output.seek(0)
+    from flask import Response
+    return Response(
+        output.getvalue().encode('utf-8-sig'),
+        mimetype='text/csv',
+        headers={'Content-Disposition': 'attachment; filename=demandes_voyage.csv'}
+    )
 
 
 @admin_bp.route('/api/notifications/stats')

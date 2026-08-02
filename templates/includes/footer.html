@@ -12,10 +12,11 @@
                 <h6 class="footer-title">Liens rapides</h6>
                 <ul class="footer-links">
                     <li><a href="{{ url_for('main.index') }}">Accueil</a></li>
-                    <li><a href="#formations">Formations</a></li>
-                    <li><a href="#galerie">Galerie</a></li>
-                    <li><a href="#a-propos">À propos</a></li>
-                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="{{ url_for('main.formations_page') }}">Formations</a></li>
+                    <li><a href="{{ url_for('main.voyages_page') }}">Voyages</a></li>
+                    <li><a href="{{ url_for('main.galerie_page') }}">Galerie</a></li>
+                    <li><a href="{{ url_for('main.s_inscrire_page') }}">S'inscrire</a></li>
+                    <li><a href="{{ url_for('main.contact_page') }}">Contact</a></li>
                 </ul>
             </div>
             <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">

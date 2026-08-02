@@ -1639,6 +1639,295 @@ section {
 }
 
 /* ============================================================
+   PAGE VOYAGES INTERNATIONAUX
+   ============================================================ */
+
+/* Hero Voyages */
+.voyages-hero {
+    position: relative;
+    background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-primary) 50%, var(--blue-light) 100%);
+    overflow: hidden;
+}
+.voyages-hero-overlay {
+    position: absolute; inset: 0; z-index: 1;
+    background: url('../images/lc.JPG') center / cover no-repeat;
+    opacity: 0.06;
+}
+.voyages-hero-title {
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: var(--white);
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+@media (max-width: 768px) { .voyages-hero-title { font-size: 1.9rem; } }
+.voyages-hero-subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 600px;
+}
+
+/* Destination Cards */
+.destination-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.destination-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+}
+.destination-card-img-wrapper {
+    height: 160px;
+    background: linear-gradient(135deg, #e8f0fe, #d4e2fc);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+.destination-flag {
+    font-size: 5rem;
+    line-height: 1;
+    animation: flagWave 3s ease-in-out infinite;
+    transition: var(--transition);
+}
+.destination-card:hover .destination-flag {
+    transform: scale(1.15);
+}
+@keyframes flagWave {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(2deg); }
+    75% { transform: rotate(-2deg); }
+}
+.destination-card-body {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.destination-title {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--blue-dark);
+    margin-bottom: 8px;
+}
+.destination-text {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    line-height: 1.6;
+    flex: 1;
+}
+.destination-opportunites {
+    margin: 10px 0;
+}
+.destination-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(13, 71, 199, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    opacity: 0;
+    transition: var(--transition);
+    color: var(--white);
+    z-index: 2;
+}
+.destination-card-overlay i {
+    font-size: 2.5rem;
+    animation: pulse 2s infinite;
+}
+.destination-card-overlay span {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+.destination-card:hover .destination-card-overlay {
+    opacity: 1;
+}
+
+/* Service Cards Voyage */
+.service-card-voyage {
+    text-align: center;
+    padding: 35px 20px;
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    height: 100%;
+    border: 1px solid transparent;
+}
+.service-card-voyage:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(13, 71, 199, 0.15);
+}
+.service-card-voyage-icon {
+    width: 65px; height: 65px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--blue-primary), var(--blue-light));
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 1.5rem; color: var(--white);
+    box-shadow: 0 4px 15px rgba(13, 71, 199, 0.3);
+}
+.service-card-voyage h4 {
+    font-weight: 700; font-size: 1rem; color: var(--blue-dark); margin: 0;
+}
+
+/* Timeline Voyages */
+.voyages-timeline {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+    padding-left: 40px;
+}
+.voyages-timeline::before {
+    content: '';
+    position: absolute;
+    left: 27px;
+    top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--blue-primary), var(--blue-light));
+    border-radius: 2px;
+}
+.voyages-timeline-item {
+    position: relative;
+    margin-bottom: 32px;
+    padding-left: 44px;
+}
+.voyages-timeline-item:last-child { margin-bottom: 0; }
+.voyages-timeline-marker {
+    position: absolute;
+    left: -35px;
+    top: 2px;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue-primary), var(--blue-light));
+    color: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 1.1rem;
+    box-shadow: 0 4px 15px rgba(13, 71, 199, 0.4);
+    border: 3px solid var(--white);
+}
+.voyages-timeline-content {
+    background: var(--white);
+    padding: 20px 24px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+.voyages-timeline-content:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateX(6px);
+}
+.voyages-timeline-content h4 {
+    font-weight: 700; color: var(--blue-dark); margin-bottom: 4px; font-size: 1rem;
+}
+.voyages-timeline-content p {
+    color: var(--text-muted); margin: 0; font-size: 0.9rem;
+}
+
+/* Document Cards */
+.doc-card {
+    text-align: center;
+    padding: 30px 18px;
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    height: 100%;
+    border: 1px solid transparent;
+}
+.doc-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(13, 71, 199, 0.1);
+}
+.doc-card-icon {
+    font-size: 2.2rem;
+    color: var(--blue-primary);
+    margin-bottom: 12px;
+    transition: var(--transition);
+}
+.doc-card:hover .doc-card-icon {
+    color: var(--blue-light);
+    transform: scale(1.15);
+}
+.doc-card span {
+    font-weight: 600; font-size: 0.95rem; color: var(--text-dark); display: block;
+}
+
+/* Important Box */
+.important-box {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #FFF7ED;
+    border: 2px solid #F59E0B;
+    border-left: 8px solid #F59E0B;
+    border-radius: var(--radius);
+    padding: 40px 35px;
+    text-align: center;
+}
+.important-box-icon {
+    font-size: 2.5rem;
+    color: #F59E0B;
+    margin-bottom: 16px;
+}
+.important-box-title {
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: #92400E;
+    margin-bottom: 12px;
+}
+.important-box-text {
+    color: #78350F;
+    line-height: 1.7;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* Voyage Form */
+.voyage-form-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+}
+.voyage-form {
+    background: var(--white);
+    padding: 35px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+}
+.voyage-form .form-control,
+.voyage-form .form-select {
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    transition: var(--transition);
+}
+.voyage-form .form-control:focus,
+.voyage-form .form-select:focus {
+    border-color: var(--blue-primary);
+    box-shadow: 0 0 0 3px rgba(13, 71, 199, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .voyages-timeline { padding-left: 28px; }
+    .voyages-timeline-item { padding-left: 32px; }
+    .voyages-timeline-marker { left: -32px; width: 36px; height: 36px; font-size: 0.95rem; }
+    .important-box { padding: 28px 20px; }
+    .voyage-form { padding: 24px; }
+}
+
+/* ============================================================
    PAGE À PROPOS
    ============================================================ */
 

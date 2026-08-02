@@ -1,0 +1,378 @@
+{% extends 'base.html' %}
+{% block title %}Voyages Internationaux - Leader Chiffre Entreprise{% endblock %}
+{% block meta_description %}LCE vous accompagne dans vos projets de mobilité internationale : Brésil, Dubaï, Canada, Belgique, Allemagne. Orientation, démarches administratives et suivi personnalisé.{% endblock %}
+{% block og_title %}Voyages Internationaux - Leader Chiffre Entreprise{% endblock %}
+{% block og_description %}LCETG accompagne les candidats dans leurs projets de mobilité internationale en les orientant et en les aidant dans leurs démarches administratives.{% endblock %}
+{% block og_url %}{{ url_for('main.voyages_page', _external=True) }}{% endblock %}
+{% block canonical %}{{ url_for('main.voyages_page', _external=True) }}{% endblock %}
+{% block extra_head %}
+<!-- Schema.org Breadcrumb -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Accueil",
+    "item": "{{ url_for('main.index', _external=True) }}"
+  }, {
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Voyages Internationaux",
+    "item": "{{ url_for('main.voyages_page', _external=True) }}"
+  }]
+}
+</script>
+<!-- JSON-LD Service -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": "Accompagnement Voyages Internationaux",
+  "provider": {
+    "@type": "Organization",
+    "name": "Leader Chiffre Entreprise",
+    "url": "{{ url_for('main.index', _external=True) }}"
+  },
+  "description": "Accompagnement des candidats dans leurs projets de mobilité internationale : orientation, démarches administratives, constitution de dossier et suivi.",
+  "areaServed": ["Brésil", "Dubaï", "Canada", "Belgique", "Allemagne"]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO VOYAGES -->
+<section class="voyages-hero min-vh-50 d-flex align-items-center position-relative">
+    <div class="voyages-hero-overlay"></div>
+    <div class="container position-relative z-2">
+        <div class="row align-items-center">
+            <div class="col-lg-8" data-aos="fade-right" data-aos-duration="800">
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Accueil</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Voyages</li>
+                    </ol>
+                </nav>
+                <h1 class="voyages-hero-title">Voyages Internationaux</h1>
+                <p class="voyages-hero-subtitle">Nous accompagnons les candidats dans leurs projets de mobilité internationale en les orientant et en les aidant dans leurs démarches administratives.</p>
+                <div class="mt-4">
+                    <a href="#demande" class="btn btn-white btn-lg rounded-pill px-4 me-2">
+                        <i class="bi bi-send-fill me-2"></i>Faire une demande
+                    </a>
+                    <a href="#destinations" class="btn btn-outline-white btn-lg rounded-pill px-4">
+                        <i class="bi bi-globe2 me-2"></i>Découvrir les destinations
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- INTRODUCTION -->
+<section class="section-padding">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6" data-aos="fade-right">
+                <span class="section-badge">Notre mission</span>
+                <h2 class="section-title">Votre projet international, notre accompagnement</h2>
+                <p class="about-lead mt-3">Leader Chiffre Entreprise accompagne les personnes souhaitant poursuivre un projet professionnel, académique ou personnel à l'international.</p>
+                <p class="about-text">Notre équipe vous informe sur les démarches, les documents et les procédures selon votre destination. Nous vous guidons à chaque étape pour maximiser vos chances de succès.</p>
+                <div class="mt-4">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <div class="avantage-card-about">
+                                <div class="avantage-card-icon"><i class="bi bi-check-circle-fill"></i></div>
+                                <div>
+                                    <h5>Accompagnement complet</h5>
+                                    <p>De la préparation au suivi</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="avantage-card-about">
+                                <div class="avantage-card-icon"><i class="bi bi-globe-americas"></i></div>
+                                <div>
+                                    <h5>5 destinations</h5>
+                                    <p>Brésil, Dubaï, Canada, Belgique, Allemagne</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="about-img-wrapper">
+                    <img src="{{ url_for('static', filename='images/voyages-intro.jpg') }}" alt="Voyages Internationaux LCE" class="about-img-main" onerror="this.style.display='none'" loading="lazy">
+                    <div class="about-img-decoration"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- DESTINATIONS -->
+<section class="destinations section-padding bg-light" id="destinations">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Destinations</span>
+            <h2 class="section-title">Nos destinations</h2>
+            <p class="section-subtitle">Découvrez les pays vers lesquels nous accompagnons les candidats</p>
+        </div>
+        <div class="row g-4">
+            {% for d in destinations %}
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ loop.index * 80 }}">
+                <div class="destination-card">
+                    <div class="destination-card-img-wrapper">
+                        <div class="destination-flag">{{ d.drapeau }}</div>
+                    </div>
+                    <div class="destination-card-body">
+                        <h3 class="destination-title">{{ d.nom }}</h3>
+                        <p class="destination-text">{{ d.description }}</p>
+                        <div class="destination-opportunites">
+                            <span class="badge bg-primary-subtle text-primary">{{ d.opportunites }}</span>
+                        </div>
+                        <a href="#demande" class="btn btn-outline-primary btn-sm rounded-pill mt-3">
+                            En savoir plus <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                    <div class="destination-card-overlay">
+                        <i class="bi bi-globe2"></i>
+                        <span>En savoir plus</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- NOS SERVICES -->
+<section class="section-padding">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Services</span>
+            <h2 class="section-title">Nos services</h2>
+            <p class="section-subtitle">Un accompagnement complet à chaque étape de votre projet</p>
+        </div>
+        <div class="row g-4">
+            {% for s in services %}
+            <div class="col-md-4 col-sm-6" data-aos="zoom-in" data-aos-delay="{{ loop.index * 60 }}">
+                <div class="service-card-voyage">
+                    <div class="service-card-voyage-icon">
+                        <i class="bi {{ s.icon }}"></i>
+                    </div>
+                    <h4>{{ s.label }}</h4>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- PROCESSUS D'ACCOMPAGNEMENT -->
+<section class="section-padding bg-light">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Processus</span>
+            <h2 class="section-title">Processus d'accompagnement</h2>
+            <p class="section-subtitle">Notre méthodologie structurée pour vous accompagner</p>
+        </div>
+        <div class="voyages-timeline">
+            {% for e in etapes %}
+            <div class="voyages-timeline-item" data-aos="fade-{{ 'right' if loop.index % 2 == 1 else 'left' }}">
+                <div class="voyages-timeline-marker">{{ e.num }}</div>
+                <div class="voyages-timeline-content">
+                    <h4>{{ e.titre }}</h4>
+                    <p>{{ e.desc }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- DOCUMENTS GÉNÉRALEMENT DEMANDÉS -->
+<section class="section-padding">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Documents</span>
+            <h2 class="section-title">Documents généralement demandés</h2>
+            <p class="section-subtitle">Préparez ces documents pour constituer votre dossier</p>
+        </div>
+        <div class="row g-4">
+            {% for doc in documents %}
+            <div class="col-md-4 col-sm-6" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 }}">
+                <div class="doc-card">
+                    <div class="doc-card-icon"><i class="bi {{ doc.icon }}"></i></div>
+                    <span>{{ doc.nom }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-5" data-aos="fade-up">
+            <div class="alert alert-info border-0 rounded-4 shadow-sm" role="alert">
+                <i class="bi bi-info-circle-fill me-2"></i>
+                <strong>Note :</strong> Les documents peuvent varier selon le pays et le type de demande. Notre équipe vous précisera la liste exacte lors de votre accompagnement.
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- IMPORTANT -->
+<section class="section-padding bg-light">
+    <div class="container">
+        <div class="important-box" data-aos="zoom-in">
+            <div class="important-box-icon">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <h3 class="important-box-title">Information importante</h3>
+            <p class="important-box-text">
+                Leader Chiffre Entreprise accompagne les candidats dans leurs démarches administratives. L'obtention d'un visa, d'un permis de travail, d'une admission ou d'une autorisation de séjour dépend exclusivement des autorités compétentes du pays concerné. <strong>Aucun résultat ne peut être garanti.</strong>
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- FORMULAIRE DE DEMANDE -->
+<section class="section-padding" id="demande">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">Demande</span>
+            <h2 class="section-title">Formulaire de demande</h2>
+            <p class="section-subtitle">Remplissez ce formulaire pour être accompagné dans votre projet de mobilité internationale</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="voyage-form-wrapper" data-aos="fade-up">
+            <form action="{{ url_for('main.demande_voyage') }}" method="POST" class="voyage-form">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Nom complet <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="nom" required placeholder="Votre nom complet">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Téléphone <span class="text-danger">*</span></label>
+                        <input type="tel" class="form-control" name="telephone" required placeholder="+228 XX XX XX XX">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">WhatsApp</label>
+                        <input type="tel" class="form-control" name="whatsapp" placeholder="+228 XX XX XX XX">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email" placeholder="votre@email.com">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Pays souhaité</label>
+                        <select class="form-select" name="pays">
+                            <option value="">Choisissez un pays...</option>
+                            {% for d in destinations %}
+                            <option value="{{ d.nom }}">{{ d.drapeau }} {{ d.nom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Type de projet</label>
+                        <select class="form-select" name="type_projet">
+                            <option value="">Choisissez...</option>
+                            <option value="Travail">Travail</option>
+                            <option value="Études">Études</option>
+                            <option value="Visite">Visite</option>
+                            <option value="Autre">Autre</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Commentaire</label>
+                        <textarea class="form-control" name="message" rows="4" placeholder="Décrivez votre projet, vos questions..."></textarea>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5" id="btnDemandeVoyage">
+                            <span class="btn-icon"><i class="bi bi-send-fill me-2"></i></span>
+                            <span class="btn-text">Envoyer ma demande</span>
+                            <span class="btn-loader" style="display:none"><span class="spinner-border spinner-border-sm me-2" role="status"></span> Envoi...</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="section-padding bg-light">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <span class="section-badge">FAQ</span>
+            <h2 class="section-title">Questions fréquentes</h2>
+            <p class="section-subtitle">Les réponses à vos questions les plus courantes</p>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="accordion" id="faqAccordion" data-aos="fade-up">
+                    {% for q, a in faq %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button {% if not loop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#faq{{ loop.index }}">
+                                {{ q }}
+                            </button>
+                        </h2>
+                        <div id="faq{{ loop.index }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">{{ a }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <div class="container text-center position-relative z-2">
+        <h2 class="cta-title" data-aos="fade-up">Vous souhaitez concrétiser votre projet de mobilité internationale ?</h2>
+        <p class="cta-subtitle mt-3" data-aos="fade-up" data-aos-delay="100">Contactez notre équipe afin d'obtenir des informations adaptées à votre situation.</p>
+        <div class="cta-buttons mt-4" data-aos="fade-up" data-aos-delay="200">
+            <a href="{{ url_for('main.contact_page') }}" class="btn btn-white btn-lg rounded-pill px-4 me-2">Nous contacter</a>
+            <a href="#demande" class="btn btn-outline-white btn-lg rounded-pill px-4">Faire une demande</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Loader sur le bouton demande voyage
+    const btnDemande = document.getElementById('btnDemandeVoyage');
+    if (btnDemande) {
+        const form = btnDemande.closest('form');
+        if (form) {
+            form.addEventListener('submit', function () {
+                const icon = btnDemande.querySelector('.btn-icon');
+                const text = btnDemande.querySelector('.btn-text');
+                const loader = btnDemande.querySelector('.btn-loader');
+                if (icon) icon.style.display = 'none';
+                if (text) text.style.display = 'none';
+                if (loader) loader.style.display = 'inline-flex';
+                btnDemande.disabled = true;
+                btnDemande.style.opacity = '0.7';
+            });
+        }
+    }
+});
+</script>
+{% endblock %}
