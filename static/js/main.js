@@ -158,6 +158,26 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ============================================================
+    // LOADER BOUTON PUBLIER COMMENTAIRE
+    // ============================================================
+    const btnPublier = document.getElementById('btnPublierCommentaire');
+    if (btnPublier) {
+        const form = btnPublier.closest('form');
+        if (form) {
+            form.addEventListener('submit', function () {
+                const icon = btnPublier.querySelector('.btn-icon');
+                const text = btnPublier.querySelector('.btn-text');
+                const loader = btnPublier.querySelector('.btn-loader');
+                if (icon) icon.style.display = 'none';
+                if (text) text.style.display = 'none';
+                if (loader) loader.style.display = 'inline-flex';
+                btnPublier.disabled = true;
+                btnPublier.style.opacity = '0.7';
+            });
+        }
+    }
+
+    // ============================================================
     // SMOOTH SCROLL FOR ALL ANCHOR LINKS
     // ============================================================
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
