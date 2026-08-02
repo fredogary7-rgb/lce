@@ -127,6 +127,17 @@ def create_app(config_name=None):
         from flask import render_template
         return render_template('offline.html')
 
+    @app.route('/favicon.ico')
+    def favicon_ico():
+        """Servir favicon.ico à partir du PNG 32x32."""
+        return app.send_static_file('images/favicon-32.png')
+
+    @app.route('/apple-touch-icon-precomposed.png')
+    @app.route('/apple-touch-icon-240x240-precomposed.png')
+    def apple_touch_icon_precomposed():
+        """Rediriger les icônes Apple legacy vers apple-touch-icon.png."""
+        return app.send_static_file('images/apple-touch-icon.png')
+
     @app.route('/sw.js')
     def service_worker():
         from flask import make_response, Response
