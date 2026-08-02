@@ -8,7 +8,8 @@ from admin import admin_bp
 from extensions import db
 from models import (
     AdminUser, Formation, Message, Temoignage, Inscription,
-    Galerie, Video, Equipe, ParametreSite, ContactMessage
+    Galerie, Video, Equipe, ParametreSite, ContactMessage,
+    PushSubscription
 )
 
 
@@ -654,3 +655,115 @@ def administrateur_delete(id):
     db.session.commit()
     flash('Administrateur supprimé.', 'success')
     return redirect(url_for('admin.administrateurs'))
+
+
+# ========== NOTIFICATIONS PUSH ==========
+
+@admin_bp.route('/notifications-push')
+@admin_required
+def notifications_push():
+    subs = PushSubscription.query.order_by(PushSubscription.created_at.desc()).all()
+    count = len([s for s in subs if s.actif])
+    return render_template('admin/notifications.html', subs=subs, count=count)
+
+
+@admin_bp.route('/api/push/subscribe', methods=['POST'])
+@login_required
+def push_subscribe():
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'Données manquantes'}), 400
+
+    endpoint = data.get('endpoint')
+    keys = data.get('keys', {})
+    p256dh = keys.get('p256dh')
+    auth = keys.get('auth')
+    navigateur = data.get('navigateur', '?')
+    plateforme = data.get('plateforme', '?')
+
+    if not endpoint or not p256dh or not auth:
+        return jsonify({'error': 'Données de souscription incomplètes'}), 400
+
+    existing = PushSubscription.query.filter_by(endpoint=endpoint).first()
+    if existing:
+        existing.p256dh = p256dh
+        existing.auth = auth
+        existing.navigateur = navigateur
+        existing.plateforme = plateforme
+        existing.actif = True
+        existing.admin_id = current_user.id
+        existing.updated_at = datetime.utcnow()
+    else:
+        sub = PushSubscription(
+            admin_id=current_user.id,
+            endpoint=endpoint,
+            p256dh=p256dh,
+            auth=auth,
+            navigateur=navigateur,
+            plateforme=plateforme,
+            actif=True,
+        )
+        db.session.add(sub)
+
+    db.session.commit()
+    return jsonify({'status': 'ok', 'message': 'Souscription enregistrée'})
+
+
+@admin_bp.route('/api/push/unsubscribe', methods=['POST'])
+@login_required
+def push_unsubscribe():
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'Données manquantes'}), 400
+    endpoint = data.get('endpoint')
+    if endpoint:
+        sub = PushSubscription.query.filter_by(endpoint=endpoint).first()
+        if sub:
+            sub.actif = False
+            db.session.commit()
+    return jsonify({'status': 'ok'})
+
+
+@admin_bp.route('/api/push/test', methods=['POST'])
+@admin_required
+def push_test():
+    from push_notification import send_push_to_all_admins
+    sent = send_push_to_all_admins(
+        title='Notification test',
+        body='Ceci est une notification test depuis le panneau d\'administration LCE.',
+        url='/admin',
+        tag='lce-test',
+        require_interaction=False,
+        vibrate=[200, 50, 100],
+    )
+    flash(f'Notification test envoyée à {sent} appareil(s).', 'success')
+    return redirect(url_for('admin.notifications_push'))
+
+
+@admin_bp.route('/api/push/delete/<int:id>', methods=['POST'])
+@admin_required
+def push_delete(id):
+    sub = PushSubscription.query.get_or_404(id)
+    db.session.delete(sub)
+    db.session.commit()
+    flash('Souscription supprimée.', 'success')
+    return redirect(url_for('admin.notifications_push'))
+
+
+@admin_bp.route('/api/push/vapid-public-key')
+@login_required
+def push_vapid_public_key():
+    return jsonify({'publicKey': current_app.config.get('VAPID_PUBLIC_KEY', '')})
+
+
+@admin_bp.route('/api/notifications/stats')
+@login_required
+def notifications_stats():
+    nouvelles_inscriptions = Inscription.query.filter(
+        Inscription.created_at >= datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    ).count()
+    nouveaux_messages = ContactMessage.query.filter_by(lu=False).count()
+    return jsonify({
+        'inscriptions': nouvelles_inscriptions,
+        'messages': nouveaux_messages,
+    })

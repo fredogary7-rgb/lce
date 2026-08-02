@@ -122,4 +122,12 @@ def create_app(config_name=None):
     def sitemap():
         return app.send_static_file('sitemap.xml')
 
+    @app.route('/offline')
+    def offline():
+        return app.send_static_file('../templates/offline.html')
+
+    @app.route('/sw.js')
+    def service_worker():
+        return app.send_static_file('service-worker.js')
+
     return app

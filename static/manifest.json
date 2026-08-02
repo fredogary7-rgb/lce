@@ -1,17 +1,43 @@
 {
-    "name": "LCE - Leader Chiffre Entreprise",
+    "name": "Leader Chiffre Entreprise",
     "short_name": "LCE",
     "description": "Centre professionnel de formation en conduite d'engins de manutention, logistique et transport.",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#0D47C7",
+    "orientation": "portrait",
+    "background_color": "#FFFFFF",
     "theme_color": "#0D47C7",
+    "lang": "fr-FR",
+    "scope": "/",
+    "categories": ["education", "business"],
     "icons": [
         {
             "src": "/static/images/lc.JPG",
+            "sizes": "192x192",
+            "type": "image/jpeg",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/static/images/lc.JPG",
             "sizes": "512x512",
-            "type": "image/jpeg"
+            "type": "image/jpeg",
+            "purpose": "any maskable"
         }
     ],
-    "lang": "fr-FR"
+    "shortcuts": [
+        {
+            "name": "Formations",
+            "short_name": "Formations",
+            "description": "Voir nos formations",
+            "url": "/formations",
+            "icons": [{ "src": "/static/images/lc.JPG", "sizes": "192x192" }]
+        },
+        {
+            "name": "S'inscrire",
+            "short_name": "Inscription",
+            "description": "Demande d'inscription",
+            "url": "/s-inscrire",
+            "icons": [{ "src": "/static/images/lc.JPG", "sizes": "192x192" }]
+        }
+    ]
 }

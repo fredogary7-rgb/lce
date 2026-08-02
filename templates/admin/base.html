@@ -72,6 +72,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="{{ url_for('admin.notifications_push') }}" class="nav-link {% if request.endpoint == 'admin.notifications_push' %}active{% endif %}">
+                        <i class="bi bi-bell me-2"></i> Notifications Push
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{{ url_for('admin.parametres') }}" class="nav-link {% if request.endpoint == 'admin.parametres' %}active{% endif %}">
                         <i class="bi bi-gear me-2"></i> Paramètres
                     </a>
@@ -156,6 +161,119 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <!-- Admin JS -->
     <script src="{{ url_for('admin.static', filename='js/main.js') }}"></script>
+
+    <!-- Push Notifications -->
+    <script>
+    (function() {
+        'use strict';
+
+        // --- Service Worker Registration ---
+        if ('serviceWorker' in navigator) {
+            // 1. Unregister les anciens SW (hors scope /admin)
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                registrations.forEach(function(reg) {
+                    if (!reg.scope.startsWith(window.location.origin + '/admin')) {
+                        reg.unregister().catch(function(){});
+                    }
+                });
+            });
+
+            // 2. Register SW admin scope
+            fetch('/sw.js?' + Date.now(), { cache: 'no-store' })
+                .then(function() {
+                    return navigator.serviceWorker.register('/sw.js', { scope: '/admin/' });
+                })
+                .then(function(registration) {
+                    console.log('SW registered successfully (admin scope)');
+                    registration.update().catch(function(){});
+                    initPush(registration);
+                })
+                .catch(function(e) {
+                    console.warn('SW registration failed:', e && e.message);
+                });
+        }
+
+        // --- Push Notifications ---
+        function urlBase64ToUint8Array(base64String) {
+            var padding = '='.repeat((4 - base64String.length % 4) % 4);
+            var base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+            var rawData = window.atob(base64);
+            var outputArray = new Uint8Array(rawData.length);
+            for (var i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
+        }
+
+        function sendSubscriptionToServer(subscription) {
+            var data = {
+                endpoint: subscription.endpoint,
+                keys: {
+                    p256dh: btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('p256dh')))),
+                    auth: btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('auth'))))
+                },
+                navigateur: navigator.userAgent.substring(0, 200),
+                plateforme: navigator.platform || 'unknown'
+            };
+            return fetch('/admin/api/push/subscribe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+                credentials: 'same-origin'
+            }).catch(function(e){});
+        }
+
+        function initPush(swRegistration) {
+            // Vérifier si notif déjà acceptée
+            if (Notification.permission === 'denied') return;
+
+            fetch('/admin/api/push/vapid-public-key', { credentials: 'same-origin' })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    var applicationServerKey = urlBase64ToUint8Array(data.publicKey);
+                    return swRegistration.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: applicationServerKey
+                    });
+                })
+                .then(function(subscription) {
+                    return sendSubscriptionToServer(subscription);
+                })
+                .catch(function(e) {
+                    console.warn('Push subscription skipped:', e && e.message);
+                });
+        }
+
+        window.addEventListener('load', function() {
+            // Badge compteur inscriptions
+            fetch('/admin/api/notifications/stats', { credentials: 'same-origin' })
+                .then(function(r) { return r.json(); })
+                .then(function(stats) {
+                    var badge = document.getElementById('unreadBadge');
+                    if (badge) {
+                        badge.textContent = stats.messages || 0;
+                        if (stats.messages === 0) badge.style.display = 'none';
+                    }
+                })
+                .catch(function(){});
+
+            // Auto-refresh stats every 2 minutes
+            setInterval(function() {
+                fetch('/admin/api/notifications/stats', { credentials: 'same-origin' })
+                    .then(function(r) { return r.json(); })
+                    .then(function(stats) {
+                        var badge = document.getElementById('unreadBadge');
+                        if (badge) {
+                            badge.textContent = stats.messages || 0;
+                            badge.style.display = (stats.messages === 0) ? 'none' : '';
+                        }
+                    })
+                    .catch(function(){});
+            }, 120000);
+        });
+    })();
+    </script>
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>

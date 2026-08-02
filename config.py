@@ -34,6 +34,10 @@ class Config:
     RESEND_DOMAIN = os.getenv('RESEND_DOMAIN', 'lcetg.com')
     UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'uploads')
     MAX_CONTENT_LENGTH = 10 * 1024 * 1024  # 10 MB
+    # Web Push VAPID Keys
+    VAPID_PUBLIC_KEY = os.getenv('VAPID_PUBLIC_KEY', '')
+    VAPID_PRIVATE_KEY = os.getenv('VAPID_PRIVATE_KEY', '')
+    VAPID_CLAIMS_EMAIL = os.getenv('VAPID_CLAIMS_EMAIL', 'contact@lcetg.com')
 
 class DevelopmentConfig(Config):
     DEBUG = True

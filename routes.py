@@ -115,6 +115,50 @@ def contact_message():
     email = request.form.get('email', '').strip()
     sujet = request.form.get('sujet', '').strip()
     message_text = request.form.get('message', '').strip()
+    website = request.form.get('website', '').strip()  # honeypot
+
+    # --- ANTI-SPAM ---
+    # Honeypot : si le champ invisible "website" est rempli → bot
+    if website:
+        current_app.logger.warning(f"SPAM honeypot triggered from {request.remote_addr}")
+        # Renvoyer un faux success pour ne pas informer le bot
+        flash('Votre message a été envoyé avec succès !', 'success')
+        return redirect(url_for('main.contact_page', _anchor='contact-form'))
+
+    # Téléphone trop court (>20 chiffres = faux)
+    digits_only = ''.join(c for c in telephone if c.isdigit())
+    if len(digits_only) < 6 or len(digits_only) > 20:
+        flash('Veuillez entrer un numéro de téléphone valide.', 'danger')
+        return redirect(url_for('main.contact_page', _anchor='contact-form'))
+
+    # Message trop court (< 10 chars) ou contient des URLs suspectes
+    if len(message_text) < 10:
+        flash('Votre message est trop court. Veuillez donner plus de détails.', 'danger')
+        return redirect(url_for('main.contact_page', _anchor='contact-form'))
+
+    spam_patterns = ['graph.org', 'http://', 'https://', 'www.', '.com/', '.org/', '.net/',
+                     'BALANCE', 'DOLLARS', 'TRANSACTION', '$$$', '<<<', '>>>']
+    message_upper = message_text.upper()
+    for pattern in spam_patterns:
+        if pattern in message_text.lower() or pattern.upper() in message_upper:
+            current_app.logger.warning(f"SPAM link detected from {request.remote_addr}: {pattern}")
+            flash('Votre message a été envoyé avec succès !', 'success')
+            return redirect(url_for('main.contact_page', _anchor='contact-form'))
+
+    # Nom trop court ou contient des patterns bizarres
+    if len(nom) < 3:
+        flash('Veuillez entrer votre nom complet.', 'danger')
+        return redirect(url_for('main.contact_page', _anchor='contact-form'))
+
+    # Email suspect (trop de chiffres random, domaines bizarres)
+    if email:
+        email_lower = email.lower()
+        suspicious_domains = ['web-library.net', 'temp-mail', 'guerrillamail', '10minutemail',
+                              'yopmail', 'mailinator', 'trashmail']
+        for sd in suspicious_domains:
+            if sd in email_lower:
+                flash('Votre message a été envoyé avec succès !', 'success')
+                return redirect(url_for('main.contact_page', _anchor='contact-form'))
 
     if not nom or not telephone or not email or not message_text:
         flash('Veuillez remplir tous les champs obligatoires.', 'danger')
@@ -128,6 +172,18 @@ def contact_message():
         db.session.add(msg)
         db.session.commit()
         flash('Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.', 'success')
+        # Notification push aux admins (background)
+        try:
+            from push_notification import send_push_to_all_admins
+            send_push_to_all_admins(
+                title='Nouveau message',
+                body=f'{nom} vous a envoyé un message.\nSujet: {sujet or "Sans sujet"}',
+                url='/admin/messages',
+                tag='lce-contact',
+                require_interaction=True,
+            )
+        except Exception:
+            pass  # Ne jamais bloquer le flux
     except Exception as e:
         db.session.rollback()
         flash('Une erreur est survenue. Veuillez réessayer.', 'danger')
@@ -448,6 +504,23 @@ def inscription():
             send_admin_notification(insc)
         except Exception as e:
             current_app.logger.error(f"Email admin échoué: {e}")
+
+        # Notification push aux admins (background, ne bloque jamais)
+        try:
+            from push_notification import send_push_to_all_admins
+            heure = datetime.utcnow().strftime('%d/%m/%Y à %H:%M')
+            send_push_to_all_admins(
+                title='🔔 Nouvelle inscription',
+                body=f'Une nouvelle demande d\'inscription vient d\'être reçue.\n'
+                     f'Nom: {nom_complet}\n'
+                     f'Formation: {formation_nom or "Non précisée"}\n'
+                     f'Heure: {heure}',
+                url='/admin/inscriptions',
+                tag='lce-inscription',
+                require_interaction=True,
+            )
+        except Exception:
+            pass
 
         flash('Votre demande d\'inscription a été enregistrée avec succès ! Un email de confirmation vous a été envoyé.', 'success')
         return render_template('s-inscrire.html', inscriptions=[insc], formations=Formation.query.filter_by(actif=True).order_by(Formation.ordre_affichage.asc()).all(), success=True, numero=numero)

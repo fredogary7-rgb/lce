@@ -202,3 +202,22 @@ class ContactMessage(db.Model):
 
     def __repr__(self):
         return f'<ContactMessage {self.nom}>'
+
+
+class PushSubscription(db.Model):
+    __tablename__ = 'push_subscriptions'
+    id = db.Column(db.Integer, primary_key=True)
+    admin_id = db.Column(db.Integer, db.ForeignKey('admin_users.id'), nullable=True)
+    endpoint = db.Column(db.Text, nullable=False)
+    p256dh = db.Column(db.Text, nullable=False)
+    auth = db.Column(db.Text, nullable=False)
+    navigateur = db.Column(db.String(200), nullable=True)
+    plateforme = db.Column(db.String(200), nullable=True)
+    actif = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    admin = db.relationship('AdminUser', backref=db.backref('push_subscriptions', lazy=True))
+
+    def __repr__(self):
+        return f'<PushSubscription {self.plateforme} - {self.navigateur}>'
