@@ -73,6 +73,66 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <!-- Custom JS -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <!-- PWA : Service Worker + Installation -->
+    <script>
+    (function() {
+        'use strict';
+
+        var deferredPrompt = null;
+
+        // --- Service Worker Registration (scope racine /) ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js?scope=root', { scope: '/' })
+                    .then(function(reg) {
+                        console.log('✅ Service Worker enregistré (scope: ' + reg.scope + ')');
+                        reg.update().catch(function(){});
+                    })
+                    .catch(function(e) {
+                        console.warn('Service Worker non supporté sur cette page :', e && e.message);
+                    });
+            });
+        }
+
+        // --- Capture l'événement beforeinstallprompt (bannière "Installer") ---
+        window.addEventListener('beforeinstallprompt', function(e) {
+            e.preventDefault();
+            deferredPrompt = e;
+
+            // Afficher le bouton d'installation si présent
+            var installBtn = document.getElementById('pwa-install-btn');
+            var installBanner = document.getElementById('pwa-install-banner');
+
+            if (installBtn) installBtn.style.display = 'inline-flex';
+            if (installBanner) installBanner.style.display = 'block';
+
+            if (installBtn) {
+                installBtn.addEventListener('click', function() {
+                    if (!deferredPrompt) return;
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then(function(result) {
+                        console.log('PWA install : ' + result.outcome);
+                        deferredPrompt = null;
+                        if (installBtn) installBtn.style.display = 'none';
+                        if (installBanner) installBanner.style.display = 'none';
+                    });
+                });
+            }
+        });
+
+        // --- Cacher la bannière si déjà installé ---
+        window.addEventListener('appinstalled', function() {
+            deferredPrompt = null;
+            var installBtn = document.getElementById('pwa-install-btn');
+            var installBanner = document.getElementById('pwa-install-banner');
+            if (installBtn) installBtn.style.display = 'none';
+            if (installBanner) installBanner.style.display = 'none';
+            console.log('✅ PWA installée avec succès');
+        });
+    })();
+    </script>
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>

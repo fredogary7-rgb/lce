@@ -1965,3 +1965,39 @@ section {
 .certif-card p {
     color: var(--text-muted); font-size: 0.85rem; margin: 0; line-height: 1.6;
 }
+
+/* ============================================================
+   PWA INSTALL BANNER
+   ============================================================ */
+.pwa-install-banner {
+    background: var(--blue-dark, #0A2E8B);
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1100;
+    padding: 12px 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25);
+    animation: slideUpBanner 0.4s ease-out;
+}
+@keyframes slideUpBanner {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+}
+.pwa-install-banner strong {
+    font-size: 0.95rem;
+}
+.pwa-install-banner p {
+    font-size: 0.78rem;
+}
+.pwa-install-banner .btn-light {
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
+    transition: all 0.2s;
+}
+.pwa-install-banner .btn-light:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.35);
+}

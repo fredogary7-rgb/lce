@@ -41,4 +41,20 @@
             <p class="mb-0">&copy; {{ now().year if now is defined else '2026' }} LCE - Leader Chiffre Entreprise. Tous droits réservés.</p>
         </div>
     </div>
+
+    <!-- Bannière d'installation PWA -->
+    <div id="pwa-install-banner" class="pwa-install-banner" style="display:none">
+        <div class="container d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <img src="{{ url_for('static', filename='images/lc.JPG') }}" alt="LCE" width="40" height="40" class="rounded">
+                <div>
+                    <strong class="text-white">Téléchargez l'application LCE</strong>
+                    <p class="mb-0 small text-white-50">Accès rapide, mode hors-ligne et notifications</p>
+                </div>
+            </div>
+            <button id="pwa-install-btn" class="btn btn-light rounded-pill px-3" style="display:none">
+                <i class="bi bi-download me-1"></i> Installer
+            </button>
+        </div>
+    </div>
 </footer>
