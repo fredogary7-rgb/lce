@@ -190,35 +190,69 @@
         }
 
         function doSubscribe(reg) {
-            console.log('📡 [ÉTAPE 1] Fetch VAPID key depuis /api/push/vapid-public-key...');
-            fetch('/api/push/vapid-public-key')
-                .then(function(r) {
-                    console.log('📡 [ÉTAPE 1] Réponse VAPID: HTTP ' + r.status);
-                    if (!r.ok) {
-                        throw new Error('VAPID échec HTTP ' + r.status);
-                    }
-                    return r.json();
-                })
-                .then(function(data) {
-                    console.log('📡 [ÉTAPE 1] VAPID reçue, longueur=' + (data.publicKey ? data.publicKey.length : 0));
-                    console.log('📡 [ÉTAPE 2] Appel pushManager.subscribe()...');
-                    var applicationServerKey = urlBase64ToUint8Array(data.publicKey);
-                    return reg.pushManager.subscribe({
-                        userVisibleOnly: true,
-                        applicationServerKey: applicationServerKey
+            console.log('═══════════════════════════════════');
+            console.log('📡 [ÉTAPE 0] doSubscribe() appelé');
+            console.log('   Notification.permission = ' + Notification.permission);
+            console.log('   reg.scope = ' + reg.scope);
+            console.log('   reg.active = ' + (reg.active ? 'oui' : 'non'));
+            console.log('   reg.pushManager = ' + (reg.pushManager ? 'OK' : 'NULL!'));
+
+            // 1. Vérifier si une souscription existe déjà
+            console.log('📡 [ÉTAPE 0.5] getSubscription()...');
+            reg.pushManager.getSubscription().then(function(existingSub) {
+                if (existingSub) {
+                    console.log('📡 [ÉTAPE 0.5] SOUSCRIPTION EXISTANTE TROUVÉE !');
+                    console.log('   endpoint=' + existingSub.endpoint.substring(0, 80) + '...');
+                    console.log('   → Envoi direct au serveur sans re-subscribe');
+                    return sendSubscriptionToServer(existingSub);
+                }
+                console.log('📡 [ÉTAPE 0.5] Aucune souscription existante → subscribe() nécessaire');
+
+                // 2. Récupérer la VAPID key
+                console.log('📡 [ÉTAPE 1] Fetch VAPID key depuis /api/push/vapid-public-key...');
+                return fetch('/api/push/vapid-public-key')
+                    .then(function(r) {
+                        console.log('📡 [ÉTAPE 1] Réponse VAPID: HTTP ' + r.status);
+                        if (!r.ok) {
+                            console.error('📡 [ÉTAPE 1] ERREUR HTTP ' + r.status);
+                            return r.text().then(function(t) { console.error('Body:', t); throw new Error('VAPID HTTP ' + r.status); });
+                        }
+                        return r.json();
+                    })
+                    .then(function(data) {
+                        console.log('📡 [ÉTAPE 1] VAPID reçue. publicKey=' + (data.publicKey ? 'OK (len=' + data.publicKey.length + ')' : 'NULL!'));
+                        if (!data.publicKey) {
+                            throw new Error('publicKey manquante dans la réponse VAPID');
+                        }
+                        var applicationServerKey = urlBase64ToUint8Array(data.publicKey);
+                        console.log('📡 [ÉTAPE 1] Uint8Array créé, length=' + applicationServerKey.length);
+
+                        // 3. subscribe()
+                        console.log('📡 [ÉTAPE 2] pushManager.subscribe() appel...');
+                        return reg.pushManager.subscribe({
+                            userVisibleOnly: true,
+                            applicationServerKey: applicationServerKey
+                        });
+                    })
+                    .then(function(subscription) {
+                        console.log('📡 [ÉTAPE 2] ✅ subscribe() RÉUSSI !');
+                        console.log('   subscription =', subscription);
+                        console.log('   endpoint=' + subscription.endpoint.substring(0, 80) + '...');
+                        console.log('   p256dh=' + (subscription.getKey('p256dh') ? 'OK (len=' + new Uint8Array(subscription.getKey('p256dh')).length + ')' : 'MANQUANT'));
+                        console.log('   auth=' + (subscription.getKey('auth') ? 'OK (len=' + new Uint8Array(subscription.getKey('auth')).length + ')' : 'MANQUANT'));
+
+                        // 4. Envoyer au serveur
+                        return sendSubscriptionToServer(subscription);
                     });
-                })
-                .then(function(subscription) {
-                    console.log('📡 [ÉTAPE 2] SUCCÈS — PushSubscription créée !');
-                    console.log('   endpoint=' + subscription.endpoint.substring(0, 80) + '...');
-                    console.log('   p256dh=' + (subscription.getKey('p256dh') ? 'OK (len=' + new Uint8Array(subscription.getKey('p256dh')).length + ')' : 'MANQUANT'));
-                    console.log('   auth=' + (subscription.getKey('auth') ? 'OK (len=' + new Uint8Array(subscription.getKey('auth')).length + ')' : 'MANQUANT'));
-                    return sendSubscriptionToServer(subscription);
-                })
-                .catch(function(e) {
-                    console.error('❌ ERREUR doSubscribe:', e);
-                    console.error('❌ Stack:', e.stack);
-                });
+            }).catch(function(e) {
+                console.error('❌❌❌ ERREUR FATALE doSubscribe:');
+                console.error('   message:', e.message);
+                console.error('   name:', e.name);
+                console.error('   stack:', e.stack);
+                console.error('   type:', typeof e);
+                console.error('   toString:', e.toString());
+                console.error('═══════════════════════════════════');
+            });
         }
 
         // --- Capture l'événement beforeinstallprompt (bannière "Installer") ---
