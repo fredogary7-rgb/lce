@@ -649,14 +649,18 @@ def send_admin_notification(inscription):
 @main_bp.route('/api/push/vapid-public-key')
 def api_push_vapid_public_key_public():
     """Renvoie la clé publique VAPID pour les visiteurs du site."""
-    return jsonify({'publicKey': current_app.config.get('VAPID_PUBLIC_KEY', '')})
+    key = current_app.config.get('VAPID_PUBLIC_KEY', '')
+    current_app.logger.info(f"[PUSH PUBLIC] VAPID public key demandée (longueur={len(key)})")
+    return jsonify({'publicKey': key})
 
 
 @main_bp.route('/api/push/subscribe', methods=['POST'])
 def api_push_subscribe_public():
     """Enregistre une souscription push visiteur."""
     data = request.get_json(force=True)
+    current_app.logger.info(f"[PUSH PUBLIC SUBSCRIBE] Données reçues: endpoint={'OUI' if data and data.get('endpoint') else 'NON'}")
     if not data or not data.get('endpoint') or not data.get('keys'):
+        current_app.logger.warning("[PUSH PUBLIC SUBSCRIBE] Données invalides reçues")
         return jsonify({'success': False, 'error': 'Données invalides'}), 400
 
     existing = PushSubscription.query.filter_by(endpoint=data['endpoint']).first()
@@ -680,6 +684,7 @@ def api_push_subscribe_public():
         )
         db.session.add(sub)
     db.session.commit()
+    current_app.logger.info(f"[PUSH PUBLIC SUBSCRIBE] Souscription enregistrée: endpoint={data['endpoint'][:50]}...")
     return jsonify({'success': True})
 
 

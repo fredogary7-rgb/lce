@@ -124,10 +124,45 @@ def create_app(config_name=None):
 
     @app.route('/offline')
     def offline():
-        return app.send_static_file('../templates/offline.html')
+        from flask import render_template
+        return render_template('offline.html')
 
     @app.route('/sw.js')
     def service_worker():
-        return app.send_static_file('service-worker.js')
+        from flask import make_response, Response
+        sw = app.send_static_file('service-worker.js')
+        return sw
+
+    @app.route('/sw-admin.js')
+    def service_worker_admin():
+        """Service Worker dédié admin pour éviter conflit de scope."""
+        from flask import make_response
+        content = """self.addEventListener('push', function(e) {
+    var data = e.data ? e.data.json() : {};
+    var title = data.title || 'LCE Admin';
+    var options = {
+        body: data.body || '',
+        icon: data.icon || '/static/images/lc.JPG',
+        badge: data.badge || '/static/images/lc.JPG',
+        vibrate: data.vibrate || [200, 100, 200],
+        tag: data.tag || 'lce-admin',
+        requireInteraction: data.requireInteraction !== false,
+        data: { url: data.url || '/admin/inscriptions' },
+        actions: data.actions || [
+            { action: 'view', title: "Voir" },
+            { action: 'close', title: 'Fermer' }
+        ]
+    };
+    e.waitUntil(self.registration.showNotification(title, options));
+});
+self.addEventListener('notificationclick', function(e) {
+    e.notification.close();
+    var url = (e.notification.data && e.notification.data.url) || '/admin/inscriptions';
+    if (e.action === 'close') return;
+    e.waitUntil(clients.openWindow(url));
+});
+"""
+        from flask import Response
+        return Response(content, mimetype='application/javascript')
 
     return app

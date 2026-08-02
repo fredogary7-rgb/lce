@@ -12,14 +12,20 @@
     "categories": ["education", "business"],
     "icons": [
         {
-            "src": "/static/images/lc.JPG",
+            "src": "/static/images/lc-192x192.png",
             "sizes": "192x192",
-            "type": "image/jpeg",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/static/images/lc-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
             "purpose": "any maskable"
         },
         {
             "src": "/static/images/lc.JPG",
-            "sizes": "512x512",
+            "sizes": "1536x1536",
             "type": "image/jpeg",
             "purpose": "any maskable"
         }
@@ -30,7 +36,7 @@
             "short_name": "Formations",
             "description": "Voir nos formations",
             "url": "/formations",
-            "icons": [{ "src": "/static/images/lc.JPG", "sizes": "192x192" }]
+            "icons": [{ "src": "/static/images/lc-192x192.png", "sizes": "192x192" }]
         },
         {
             "name": "S'inscrire",
