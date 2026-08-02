@@ -97,7 +97,7 @@
             {% for d in destinations %}
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ loop.index * 80 }}">
                 <div class="dest-card">
-                    <div class="dest-card-img" style="background-image:url('{{ d.image }}')">
+                    <div class="dest-card-img" style="background-image:url('{{ url_for('static', filename=d.image) }}')">
                         <div class="dest-card-badge">{{ d.drapeau }} {{ d.nom }}</div>
                     </div>
                     <div class="dest-card-body">
