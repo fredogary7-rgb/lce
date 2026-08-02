@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, send_file
-from models import Formation, Message, Temoignage, Inscription, Galerie, ParametreSite, ContactMessage, Video, Equipe, Statistique
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, send_file, jsonify
+from models import Formation, Message, Temoignage, Inscription, Galerie, ParametreSite, ContactMessage, Video, Equipe, Statistique, PushSubscription
 from extensions import db
 from datetime import datetime
 import os
@@ -643,6 +643,58 @@ def send_admin_notification(inscription):
         subject=f'Nouvelle inscription - {nom}',
         html_body=html_body,
     )
+
+
+# --- API NOTIFICATIONS PUSH (visiteurs/public) ---
+@main_bp.route('/api/push/vapid-public-key')
+def api_push_vapid_public_key_public():
+    """Renvoie la clé publique VAPID pour les visiteurs du site."""
+    return jsonify({'publicKey': current_app.config.get('VAPID_PUBLIC_KEY', '')})
+
+
+@main_bp.route('/api/push/subscribe', methods=['POST'])
+def api_push_subscribe_public():
+    """Enregistre une souscription push visiteur."""
+    data = request.get_json(force=True)
+    if not data or not data.get('endpoint') or not data.get('keys'):
+        return jsonify({'success': False, 'error': 'Données invalides'}), 400
+
+    existing = PushSubscription.query.filter_by(endpoint=data['endpoint']).first()
+    if existing:
+        existing.p256dh = data['keys'].get('p256dh', '')
+        existing.auth = data['keys'].get('auth', '')
+        existing.actif = True
+        existing.navigateur = data.get('navigateur', '')
+        existing.plateforme = data.get('plateforme', '')
+        from datetime import datetime
+        existing.updated_at = datetime.utcnow()
+    else:
+        sub = PushSubscription(
+            endpoint=data['endpoint'],
+            p256dh=data['keys'].get('p256dh', ''),
+            auth=data['keys'].get('auth', ''),
+            navigateur=data.get('navigateur', ''),
+            plateforme=data.get('plateforme', ''),
+            admin_id=None,
+            actif=True,
+        )
+        db.session.add(sub)
+    db.session.commit()
+    return jsonify({'success': True})
+
+
+@main_bp.route('/api/push/unsubscribe', methods=['POST'])
+def api_push_unsubscribe_public():
+    """Désactive une souscription push visiteur."""
+    data = request.get_json(force=True)
+    if not data or not data.get('endpoint'):
+        return jsonify({'success': False, 'error': 'Données invalides'}), 400
+
+    sub = PushSubscription.query.filter_by(endpoint=data['endpoint']).first()
+    if sub:
+        sub.actif = False
+        db.session.commit()
+    return jsonify({'success': True})
 
 
 @main_bp.route('/telecharger-recu/<int:inscription_id>')

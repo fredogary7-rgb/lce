@@ -74,12 +74,13 @@
     <!-- Custom JS -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
-    <!-- PWA : Service Worker + Installation -->
+    <!-- PWA : Service Worker + Installation + Notifications Push -->
     <script>
     (function() {
         'use strict';
 
         var deferredPrompt = null;
+        var swRegistration = null;
 
         // --- Service Worker Registration (scope racine /) ---
         if ('serviceWorker' in navigator) {
@@ -87,7 +88,10 @@
                 navigator.serviceWorker.register('/sw.js?scope=root', { scope: '/' })
                     .then(function(reg) {
                         console.log('✅ Service Worker enregistré (scope: ' + reg.scope + ')');
+                        swRegistration = reg;
                         reg.update().catch(function(){});
+                        // Activer les notifications push après enregistrement du SW
+                        initPushNotifications(reg);
                     })
                     .catch(function(e) {
                         console.warn('Service Worker non supporté sur cette page :', e && e.message);
@@ -95,12 +99,76 @@
             });
         }
 
+        // --- Notifications Push (visiteurs) ---
+        function urlBase64ToUint8Array(base64String) {
+            var padding = '='.repeat((4 - base64String.length % 4) % 4);
+            var base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+            var rawData = window.atob(base64);
+            var outputArray = new Uint8Array(rawData.length);
+            for (var i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
+        }
+
+        function sendSubscriptionToServer(subscription) {
+            var data = {
+                endpoint: subscription.endpoint,
+                keys: {
+                    p256dh: btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('p256dh')))),
+                    auth: btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('auth'))))
+                },
+                navigateur: navigator.userAgent.substring(0, 200),
+                plateforme: navigator.platform || 'unknown'
+            };
+            return fetch('/api/push/subscribe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).catch(function(e){});
+        }
+
+        function initPushNotifications(reg) {
+            if (!('PushManager' in window) || Notification.permission === 'denied') return;
+
+            // Demander la permission après 5 secondes (pour ne pas spammer)
+            setTimeout(function() {
+                if (Notification.permission === 'granted') {
+                    doSubscribe(reg);
+                } else if (Notification.permission === 'default') {
+                    Notification.requestPermission().then(function(permission) {
+                        if (permission === 'granted') {
+                            doSubscribe(reg);
+                        }
+                    });
+                }
+            }, 5000);
+        }
+
+        function doSubscribe(reg) {
+            fetch('/api/push/vapid-public-key')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    var applicationServerKey = urlBase64ToUint8Array(data.publicKey);
+                    return reg.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: applicationServerKey
+                    });
+                })
+                .then(function(subscription) {
+                    console.log('✅ Notifications push activées');
+                    return sendSubscriptionToServer(subscription);
+                })
+                .catch(function(e) {
+                    console.warn('Push subscription skipped:', e && e.message);
+                });
+        }
+
         // --- Capture l'événement beforeinstallprompt (bannière "Installer") ---
         window.addEventListener('beforeinstallprompt', function(e) {
             e.preventDefault();
             deferredPrompt = e;
 
-            // Afficher le bouton d'installation si présent
             var installBtn = document.getElementById('pwa-install-btn');
             var installBanner = document.getElementById('pwa-install-banner');
 
