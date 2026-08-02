@@ -22,12 +22,14 @@
     <meta name="twitter:description" content="Centre professionnel de formation en conduite d'engins de manutention, logistique et transport.">
     <meta name="twitter:image" content="{{ url_for('static', filename='images/logo.jpg', _external=True) }}">
 
-    <!-- Favicon / Logo -->
-    <link rel="icon" type="image/jpeg" sizes="32x32" href="{{ url_for('static', filename='images/logo.jpg') }}">
-    <link rel="icon" type="image/jpeg" sizes="96x96" href="{{ url_for('static', filename='images/logo.jpg') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/logo.jpg') }}">
+    <!-- Favicon / PWA Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32.png') }}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ url_for('static', filename='images/favicon-96.png') }}">
+    <link rel="icon" type="image/png" sizes="152x152" href="{{ url_for('static', filename='images/favicon-152.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
-    <meta name="msapplication-TileImage" content="{{ url_for('static', filename='images/logo.jpg', _external=True) }}">
+    <meta name="msapplication-TileImage" content="{{ url_for('static', filename='images/favicon-152.png', _external=True) }}">
+    <meta name="msapplication-TileColor" content="#0D47C7">
     <meta name="theme-color" content="#0D47C7">
 
     <!-- Bootstrap 5 CSS -->
@@ -168,7 +170,7 @@
         }
 
         function showNotificationPrompt(reg) {
-            // Créer un bouton flottant "Activer les notifications"
+            console.log('🔔 [PROMPT] Création du bouton flottant...');
             var prompt = document.createElement('div');
             prompt.id = 'push-prompt';
             prompt.style.cssText = 'position:fixed;bottom:100px;right:20px;z-index:9999;background:#0D47C7;color:#fff;padding:12px 20px;border-radius:30px;box-shadow:0 4px 12px rgba(0,0,0,0.3);cursor:pointer;font-size:14px;font-weight:600;transition:transform 0.2s;display:flex;align-items:center;gap:8px;';
@@ -176,83 +178,93 @@
             prompt.onmouseover = function() { this.style.transform = 'scale(1.05)'; };
             prompt.onmouseout = function() { this.style.transform = 'scale(1)'; };
             prompt.onclick = function() {
+                console.log('🔔 [PROMPT] Bouton cliqué !');
+                console.log('🔔 [PROMPT] Notification.permission AVANT requestPermission =', Notification.permission);
                 this.style.display = 'none';
                 Notification.requestPermission().then(function(permission) {
+                    console.log('🔔 [PROMPT] Notification.permission APRÈS requestPermission =', permission);
                     if (permission === 'granted') {
-                        console.log('✅ Permission accordée, souscription...');
+                        console.log('✅ Permission accordée, appel de doSubscribe...');
                         doSubscribe(reg);
+                    } else if (permission === 'denied') {
+                        console.warn('🔕 Permission refusée par l\'utilisateur');
                     } else {
-                        console.warn('Permission refusée');
+                        console.warn('🔕 Permission =', permission, '(ni granted ni denied)');
                     }
+                }).catch(function(err) {
+                    console.error('❌ [PROMPT] Erreur requestPermission:', err);
                 });
             };
             document.body.appendChild(prompt);
+            console.log('🔔 [PROMPT] Bouton ajouté au DOM, id=', prompt.id);
         }
 
-        function doSubscribe(reg) {
+        async function doSubscribe(reg) {
             console.log('═══════════════════════════════════');
-            console.log('📡 [ÉTAPE 0] doSubscribe() appelé');
-            console.log('   Notification.permission = ' + Notification.permission);
-            console.log('   reg.scope = ' + reg.scope);
-            console.log('   reg.active = ' + (reg.active ? 'oui' : 'non'));
-            console.log('   reg.pushManager = ' + (reg.pushManager ? 'OK' : 'NULL!'));
+            console.log('📡 [ÉTAPE 0] doSubscribe() appelé (async)');
+            console.log('   Notification.permission =', Notification.permission);
+            console.log('   reg.scope =', reg.scope);
+            console.log('   reg.active =', reg.active ? 'oui' : 'non');
+            console.log('   reg.pushManager =', reg.pushManager ? 'OK' : 'NULL!');
 
-            // 1. Vérifier si une souscription existe déjà
-            console.log('📡 [ÉTAPE 0.5] getSubscription()...');
-            reg.pushManager.getSubscription().then(function(existingSub) {
+            try {
+                // 0.5 Vérifier si une souscription existe déjà
+                console.log('📡 [ÉTAPE 0.5] getSubscription()...');
+                var existingSub = await reg.pushManager.getSubscription();
+                console.log('📡 [ÉTAPE 0.5] existingSub =', existingSub);
                 if (existingSub) {
-                    console.log('📡 [ÉTAPE 0.5] SOUSCRIPTION EXISTANTE TROUVÉE !');
-                    console.log('   endpoint=' + existingSub.endpoint.substring(0, 80) + '...');
-                    console.log('   → Envoi direct au serveur sans re-subscribe');
-                    return sendSubscriptionToServer(existingSub);
+                    console.log('📡 [ÉTAPE 0.5] SOUSCRIPTION EXISTANTE TROUVÉE ! endpoint=' + existingSub.endpoint.substring(0, 80) + '...');
+                    console.log('📡 [ÉTAPE 0.5] → Envoi direct au serveur sans re-subscribe');
+                    await sendSubscriptionToServer(existingSub);
+                    console.log('═══════════════════════════════════');
+                    return;
                 }
                 console.log('📡 [ÉTAPE 0.5] Aucune souscription existante → subscribe() nécessaire');
 
-                // 2. Récupérer la VAPID key
+                // 1. Récupérer la VAPID key
                 console.log('📡 [ÉTAPE 1] Fetch VAPID key depuis /api/push/vapid-public-key...');
-                return fetch('/api/push/vapid-public-key')
-                    .then(function(r) {
-                        console.log('📡 [ÉTAPE 1] Réponse VAPID: HTTP ' + r.status);
-                        if (!r.ok) {
-                            console.error('📡 [ÉTAPE 1] ERREUR HTTP ' + r.status);
-                            return r.text().then(function(t) { console.error('Body:', t); throw new Error('VAPID HTTP ' + r.status); });
-                        }
-                        return r.json();
-                    })
-                    .then(function(data) {
-                        console.log('📡 [ÉTAPE 1] VAPID reçue. publicKey=' + (data.publicKey ? 'OK (len=' + data.publicKey.length + ')' : 'NULL!'));
-                        if (!data.publicKey) {
-                            throw new Error('publicKey manquante dans la réponse VAPID');
-                        }
-                        var applicationServerKey = urlBase64ToUint8Array(data.publicKey);
-                        console.log('📡 [ÉTAPE 1] Uint8Array créé, length=' + applicationServerKey.length);
+                var vapidResp = await fetch('/api/push/vapid-public-key');
+                console.log('📡 [ÉTAPE 1] Réponse VAPID: HTTP', vapidResp.status);
+                if (!vapidResp.ok) {
+                    var vapidBody = await vapidResp.text();
+                    console.error('📡 [ÉTAPE 1] Body:', vapidBody);
+                    throw new Error('VAPID HTTP ' + vapidResp.status + ': ' + vapidBody);
+                }
+                var vapidData = await vapidResp.json();
+                console.log('📡 [ÉTAPE 1] VAPID reçue. publicKey=' + (vapidData.publicKey ? 'OK (len=' + vapidData.publicKey.length + ')' : 'NULL!'));
+                if (!vapidData.publicKey) {
+                    throw new Error('publicKey manquante dans la réponse VAPID');
+                }
+                var applicationServerKey = urlBase64ToUint8Array(vapidData.publicKey);
+                console.log('📡 [ÉTAPE 1] Uint8Array créé, length=' + applicationServerKey.length);
 
-                        // 3. subscribe()
-                        console.log('📡 [ÉTAPE 2] pushManager.subscribe() appel...');
-                        return reg.pushManager.subscribe({
-                            userVisibleOnly: true,
-                            applicationServerKey: applicationServerKey
-                        });
-                    })
-                    .then(function(subscription) {
-                        console.log('📡 [ÉTAPE 2] ✅ subscribe() RÉUSSI !');
-                        console.log('   subscription =', subscription);
-                        console.log('   endpoint=' + subscription.endpoint.substring(0, 80) + '...');
-                        console.log('   p256dh=' + (subscription.getKey('p256dh') ? 'OK (len=' + new Uint8Array(subscription.getKey('p256dh')).length + ')' : 'MANQUANT'));
-                        console.log('   auth=' + (subscription.getKey('auth') ? 'OK (len=' + new Uint8Array(subscription.getKey('auth')).length + ')' : 'MANQUANT'));
+                // 2. subscribe()
+                console.log('📡 [ÉTAPE 2] pushManager.subscribe() appel...');
+                var subStart = Date.now();
+                var subscription = await reg.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: applicationServerKey
+                });
+                var subDuration = Date.now() - subStart;
+                console.log('📡 [ÉTAPE 2] ✅ subscribe() RÉUSSI en ' + subDuration + 'ms !');
+                console.log('📡 [ÉTAPE 2] subscription =', subscription);
+                console.log('📡 [ÉTAPE 2] endpoint=' + subscription.endpoint.substring(0, 80) + '...');
+                console.log('📡 [ÉTAPE 2] p256dh=' + (subscription.getKey('p256dh') ? 'OK (len=' + new Uint8Array(subscription.getKey('p256dh')).length + ')' : 'MANQUANT'));
+                console.log('📡 [ÉTAPE 2] auth=' + (subscription.getKey('auth') ? 'OK (len=' + new Uint8Array(subscription.getKey('auth')).length + ')' : 'MANQUANT'));
 
-                        // 4. Envoyer au serveur
-                        return sendSubscriptionToServer(subscription);
-                    });
-            }).catch(function(e) {
+                // 4. Envoyer au serveur
+                console.log('📡 [ÉTAPE 3] Envoi POST /api/push/subscribe...');
+                var postResp = await sendSubscriptionToServer(subscription);
+                console.log('📡 [ÉTAPE 3] POST terminé, réponse =', postResp);
+            } catch(err) {
                 console.error('❌❌❌ ERREUR FATALE doSubscribe:');
-                console.error('   message:', e.message);
-                console.error('   name:', e.name);
-                console.error('   stack:', e.stack);
-                console.error('   type:', typeof e);
-                console.error('   toString:', e.toString());
-                console.error('═══════════════════════════════════');
-            });
+                console.error('   message:', err.message);
+                console.error('   name:', err.name);
+                console.error('   stack:', err.stack);
+                console.error('   type:', typeof err);
+                console.error('   toString:', err.toString());
+            }
+            console.log('═══════════════════════════════════');
         }
 
         // --- Capture l'événement beforeinstallprompt (bannière "Installer") ---
