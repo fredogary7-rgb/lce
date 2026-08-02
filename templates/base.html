@@ -121,11 +121,31 @@
                 navigateur: navigator.userAgent.substring(0, 200),
                 plateforme: navigator.platform || 'unknown'
             };
+            console.log('📡 [ÉTAPE 3] Envoi POST /api/push/subscribe...');
+            console.log('   payload keys.p256dh length=' + data.keys.p256dh.length);
+            console.log('   payload keys.auth length=' + data.keys.auth.length);
             return fetch('/api/push/subscribe', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
-            }).catch(function(e){});
+            })
+            .then(function(response) {
+                console.log('📡 [ÉTAPE 3] Réponse HTTP ' + response.status + ' — Content-Type: ' + response.headers.get('Content-Type'));
+                return response.json().then(function(json) {
+                    console.log('📡 [ÉTAPE 3] Corps JSON:', json);
+                    if (!response.ok) {
+                        throw new Error('Erreur serveur: ' + JSON.stringify(json));
+                    }
+                    return json;
+                });
+            })
+            .then(function(json) {
+                console.log('✅ Souscription enregistrée côté serveur. Compteur DB: ' + (json.count || 'inconnu'));
+            })
+            .catch(function(e) {
+                console.error('❌ ERREUR sendSubscriptionToServer:', e);
+                console.error('❌ Stack:', e.stack);
+            });
         }
 
         function initPushNotifications(reg) {
@@ -170,9 +190,18 @@
         }
 
         function doSubscribe(reg) {
+            console.log('📡 [ÉTAPE 1] Fetch VAPID key depuis /api/push/vapid-public-key...');
             fetch('/api/push/vapid-public-key')
-                .then(function(r) { return r.json(); })
+                .then(function(r) {
+                    console.log('📡 [ÉTAPE 1] Réponse VAPID: HTTP ' + r.status);
+                    if (!r.ok) {
+                        throw new Error('VAPID échec HTTP ' + r.status);
+                    }
+                    return r.json();
+                })
                 .then(function(data) {
+                    console.log('📡 [ÉTAPE 1] VAPID reçue, longueur=' + (data.publicKey ? data.publicKey.length : 0));
+                    console.log('📡 [ÉTAPE 2] Appel pushManager.subscribe()...');
                     var applicationServerKey = urlBase64ToUint8Array(data.publicKey);
                     return reg.pushManager.subscribe({
                         userVisibleOnly: true,
@@ -180,11 +209,15 @@
                     });
                 })
                 .then(function(subscription) {
-                    console.log('✅ Notifications push activées');
+                    console.log('📡 [ÉTAPE 2] SUCCÈS — PushSubscription créée !');
+                    console.log('   endpoint=' + subscription.endpoint.substring(0, 80) + '...');
+                    console.log('   p256dh=' + (subscription.getKey('p256dh') ? 'OK (len=' + new Uint8Array(subscription.getKey('p256dh')).length + ')' : 'MANQUANT'));
+                    console.log('   auth=' + (subscription.getKey('auth') ? 'OK (len=' + new Uint8Array(subscription.getKey('auth')).length + ')' : 'MANQUANT'));
                     return sendSubscriptionToServer(subscription);
                 })
                 .catch(function(e) {
-                    console.warn('Push subscription skipped:', e && e.message);
+                    console.error('❌ ERREUR doSubscribe:', e);
+                    console.error('❌ Stack:', e.stack);
                 });
         }
 

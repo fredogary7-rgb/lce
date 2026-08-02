@@ -657,36 +657,81 @@ def api_push_vapid_public_key_public():
 
 @main_bp.route('/api/push/subscribe', methods=['POST'])
 def api_push_subscribe_public():
-    """Enregistre une souscription push visiteur."""
-    data = request.get_json(force=True)
-    current_app.logger.info(f"[PUSH PUBLIC SUBSCRIBE] Données reçues: endpoint={'OUI' if data and data.get('endpoint') else 'NON'}")
-    if not data or not data.get('endpoint') or not data.get('keys'):
-        current_app.logger.warning("[PUSH PUBLIC SUBSCRIBE] Données invalides reçues")
-        return jsonify({'success': False, 'error': 'Données invalides'}), 400
+    """Enregistre une souscription push visiteur — DIAGNOSTIC COMPLET."""
+    import traceback as tb
+    import json as _json
 
-    existing = PushSubscription.query.filter_by(endpoint=data['endpoint']).first()
-    if existing:
-        existing.p256dh = data['keys'].get('p256dh', '')
-        existing.auth = data['keys'].get('auth', '')
-        existing.actif = True
-        existing.navigateur = data.get('navigateur', '')
-        existing.plateforme = data.get('plateforme', '')
-        from datetime import datetime
-        existing.updated_at = datetime.utcnow()
-    else:
-        sub = PushSubscription(
-            endpoint=data['endpoint'],
-            p256dh=data['keys'].get('p256dh', ''),
-            auth=data['keys'].get('auth', ''),
-            navigateur=data.get('navigateur', ''),
-            plateforme=data.get('plateforme', ''),
-            admin_id=None,
-            actif=True,
-        )
-        db.session.add(sub)
-    db.session.commit()
-    current_app.logger.info(f"[PUSH PUBLIC SUBSCRIBE] Souscription enregistrée: endpoint={data['endpoint'][:50]}...")
-    return jsonify({'success': True})
+    current_app.logger.critical("=" * 60)
+    current_app.logger.critical("=== /api/push/subscribe APPELÉE (public) ===")
+    current_app.logger.critical(f"Méthode: {request.method}")
+    current_app.logger.critical(f"Content-Type: {request.content_type}")
+
+    raw_data = request.get_data(as_text=True)[:500]
+    current_app.logger.critical(f"Requête brute: {raw_data}")
+
+    try:
+        data = request.get_json(force=True)
+    except Exception:
+        current_app.logger.critical(f"JSON invalide: {tb.format_exc()}")
+        return jsonify({'success': False, 'error': 'JSON parsing échoué'}), 400
+
+    if not data:
+        current_app.logger.critical("Aucune donnée JSON")
+        return jsonify({'success': False, 'error': 'Aucune donnée'}), 400
+
+    endpoint = data.get('endpoint', '')
+    keys = data.get('keys', {})
+    p256dh = keys.get('p256dh', '')
+    auth = keys.get('auth', '')
+
+    current_app.logger.critical(f"endpoint={endpoint[:100]}...")
+    current_app.logger.critical(f"p256dh={'OK' if p256dh else 'MANQUANT'} (longueur={len(p256dh)})")
+    current_app.logger.critical(f"auth={'OK' if auth else 'MANQUANT'} (longueur={len(auth)})")
+
+    if not endpoint or not p256dh or not auth:
+        current_app.logger.critical("DONNÉES INCOMPLÈTES → 400")
+        return jsonify({'success': False, 'error': 'Données incomplètes'}), 400
+
+    try:
+        count_before = PushSubscription.query.count()
+        current_app.logger.critical(f"DB: souscriptions AVANT insert = {count_before}")
+
+        existing = PushSubscription.query.filter_by(endpoint=endpoint).first()
+        if existing:
+            current_app.logger.critical(f"DB: souscription EXISTANTE id={existing.id} — mise à jour")
+            existing.p256dh = p256dh
+            existing.auth = auth
+            existing.actif = True
+            existing.navigateur = data.get('navigateur', '')
+            existing.plateforme = data.get('plateforme', '')
+            existing.updated_at = datetime.utcnow()
+        else:
+            current_app.logger.critical("DB: création nouvelle souscription...")
+            sub = PushSubscription(
+                endpoint=endpoint,
+                p256dh=p256dh,
+                auth=auth,
+                navigateur=data.get('navigateur', ''),
+                plateforme=data.get('plateforme', ''),
+                admin_id=None,
+                actif=True,
+            )
+            db.session.add(sub)
+            current_app.logger.critical("DB: db.session.add() OK")
+
+        db.session.commit()
+        current_app.logger.critical("DB: db.session.commit() RÉUSSI !")
+
+        count_after = PushSubscription.query.count()
+        current_app.logger.critical(f"DB: souscriptions APRÈS insert = {count_after}")
+        current_app.logger.critical("=== /api/push/subscribe SUCCÈS ===")
+        current_app.logger.critical("=" * 60)
+
+        return jsonify({'success': True, 'count': count_after})
+    except Exception:
+        db.session.rollback()
+        current_app.logger.critical(f"ERREUR DB: {tb.format_exc()}")
+        return jsonify({'success': False, 'error': 'Erreur base de données'}), 500
 
 
 @main_bp.route('/api/push/unsubscribe', methods=['POST'])

@@ -158,14 +158,18 @@
                     <p>Remplissez ce formulaire, nous vous répondrons dans les meilleurs délais.</p>
                 </div>
                 <form action="{{ url_for('main.contact_message') }}" method="POST" class="contact-form bg-white p-4 rounded-4 shadow-sm">
+                    <!-- Honeypot anti-spam -->
+                    <div style="position:absolute;left:-9999px" aria-hidden="true">
+                        <input type="text" name="website" tabindex="-1" autocomplete="off">
+                    </div>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="ctNom" class="form-label">Nom complet <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="ctNom" name="nom" required placeholder="Votre nom complet">
+                            <input type="text" class="form-control" id="ctNom" name="nom" required placeholder="Votre nom complet" minlength="3">
                         </div>
                         <div class="col-md-6">
                             <label for="ctTel" class="form-label">Téléphone <span class="text-danger">*</span></label>
-                            <input type="tel" class="form-control" id="ctTel" name="telephone" required placeholder="+228 XX XX XX XX">
+                            <input type="tel" class="form-control" id="ctTel" name="telephone" required placeholder="+228 XX XX XX XX" pattern="[+\d\s-]{6,20}" title="N° de téléphone valide (6 à 20 chiffres)">
                         </div>
                         <div class="col-md-12">
                             <label for="ctEmail" class="form-label">Email <span class="text-danger">*</span></label>
@@ -177,7 +181,7 @@
                         </div>
                         <div class="col-12">
                             <label for="ctMessage" class="form-label">Message <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="ctMessage" name="message" rows="5" required placeholder="Votre message..."></textarea>
+                            <textarea class="form-control" id="ctMessage" name="message" rows="5" required placeholder="Votre message..." minlength="10" maxlength="2000"></textarea>
                         </div>
                         <div class="col-12">
                             <button type="submit" class="btn btn-primary rounded-pill px-5">
