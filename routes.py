@@ -311,7 +311,21 @@ def a_propos_page():
     temoignages = Temoignage.query.filter_by(actif=True).order_by(Temoignage.created_at.desc()).all()
     stats = Statistique.query.order_by(Statistique.ordre.asc()).all()
     formations = Formation.query.filter_by(actif=True).order_by(Formation.ordre_affichage.asc()).all()
-    return render_template('a-propos.html', equipiers=equipiers, temoignages=temoignages, stats=stats, formations=formations)
+    faq = [
+        ('Quel âge faut-il avoir pour faire la formation ?', 'Il faut avoir minimum 18 ans et être titulaire d\'un permis de conduire B.'),
+        ('Quel niveau d\'étude est exigé ?', 'Aucun diplôme n\'est exigé. Savoir lire et écrire suffit pour le CACES.'),
+        ('Quelle est la durée de la formation ?', '7 mois pour la formation complète sur 3 engins : Grue, Bulldozer, Pelle Hydraulique.'),
+        ('Combien coûte la formation ?', '870 000 FCFA. Avec remise 15% : 742 500 FCFA + 20 000 FCFA (inscription et kit EPI).'),
+        ('Est-ce qu\'on paie en une seule fois ?', 'Non. Possibilité de paiement échelonné. Demandez nos modalités.'),
+        ('Est-ce que vous délivrez un certificat ?', 'Oui. Attestation de formation + accompagnement pour le passage du CACES.'),
+        ('Les cours sont théoriques et pratiques ?', 'Oui. 30% théorie en salle + 70% pratique directe sur engins.'),
+        ('Est-ce que vous aidez à trouver du travail après ?', 'Oui. Nous avons un réseau d\'entreprises BTP partenaires pour le stage et l\'embauche.'),
+        ('Quels sont les horaires de formation ?', 'Horaires flexibles : matin, soir et week-end pour s\'adapter aux travailleurs.'),
+        ('Où se trouve le centre de formation ?', 'Lomé, Maritime. Site de pratique sur terrain.'),
+        ('Que comprend le kit EPI ?', 'Casque de sécurité + gilet + tenue de travail offerts à l\'inscription.'),
+        ('Puis-je faire la formation sur un seul engin ?', 'Oui. Nous proposons aussi des formations à l\'unité. Contactez-nous pour le tarif.'),
+    ]
+    return render_template('a-propos.html', equipiers=equipiers, temoignages=temoignages, stats=stats, formations=formations, faq=faq)
 
 
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'pdf'}

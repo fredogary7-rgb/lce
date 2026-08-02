@@ -378,6 +378,33 @@
     </div>
 </section>
 
+<!-- FAQ -->
+<section class="section-padding bg-light" id="faq">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="badge bg-primary/10 text-primary px-3 py-2 rounded-pill mb-3">FAQ</span>
+            <h2 class="fw-bold" style="font-size:2rem">Questions fréquentes</h2>
+            <p class="text-muted mx-auto" style="max-width:500px">Tout ce que vous devez savoir sur nos formations.</p>
+        </div>
+        <div class="mx-auto" style="max-width:800px" data-aos="fade-up">
+            <div class="accordion" id="faqAccordion">
+                {% for q, a in faq %}
+                <div class="accordion-item border-0 mb-2 rounded-3 shadow-sm">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed rounded-3 fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq{{ loop.index }}">
+                            {{ q }}
+                        </button>
+                    </h2>
+                    <div id="faq{{ loop.index }}" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-muted">{{ a }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- CTA -->
 <section class="cta-section">
     <div class="container text-center" data-aos="zoom-in">
