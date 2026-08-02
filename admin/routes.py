@@ -753,7 +753,9 @@ def push_delete(id):
 @admin_bp.route('/api/push/vapid-public-key')
 @login_required
 def push_vapid_public_key():
-    return jsonify({'publicKey': current_app.config.get('VAPID_PUBLIC_KEY', '')})
+    pk = current_app.config.get('VAPID_PUBLIC_KEY', '')
+    current_app.logger.info(f'[PUSH ADMIN] VAPID key demandée (longueur={len(pk)})')
+    return jsonify({'publicKey': pk})
 
 
 @admin_bp.route('/api/notifications/stats')

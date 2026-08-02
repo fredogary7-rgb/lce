@@ -127,6 +127,48 @@ def create_app(config_name=None):
         from flask import render_template
         return render_template('offline.html')
 
+    # --- Routes API Push (visiteurs) ---
+    @app.route('/api/push/vapid-public-key')
+    def push_vapid_public_key():
+        from flask import jsonify
+        import logging
+        pk = app.config.get('VAPID_PUBLIC_KEY', '')
+        app.logger.info(f'[PUSH PUBLIC VISITEUR] VAPID key demandée (longueur={len(pk)})')
+        return jsonify({'publicKey': pk})
+
+    @app.route('/api/push/subscribe', methods=['POST'])
+    def push_subscribe():
+        from flask import request, jsonify
+        from models import PushSubscription, db
+        import logging
+        data = request.get_json()
+        if not data:
+            app.logger.warning('[PUSH PUBLIC SUBSCRIBE] Aucune donnée reçue')
+            return jsonify({'error': 'Données manquantes'}), 400
+
+        endpoint = data.get('endpoint', '')
+        app.logger.info(f'[PUSH PUBLIC SUBSCRIBE] endpoint={endpoint[:80]}...')
+
+        existing = PushSubscription.query.filter_by(endpoint=endpoint).first()
+        if existing:
+            existing.navigateur = data.get('navigateur', existing.navigateur)
+            existing.plateforme = data.get('plateforme', existing.plateforme)
+            existing.actif = True
+            app.logger.info(f'[PUSH PUBLIC SUBSCRIBE] Souscription existante mise à jour (id={existing.id})')
+        else:
+            sub = PushSubscription(
+                endpoint=endpoint,
+                p256dh=data.get('keys', {}).get('p256dh', ''),
+                auth=data.get('keys', {}).get('auth', ''),
+                navigateur=data.get('navigateur', ''),
+                plateforme=data.get('plateforme', ''),
+                actif=True,
+            )
+            db.session.add(sub)
+            app.logger.info(f'[PUSH PUBLIC SUBSCRIBE] Nouvelle souscription enregistrée!')
+        db.session.commit()
+        return jsonify({'status': 'ok'})
+
     @app.route('/sw.js')
     def service_worker():
         from flask import make_response, Response

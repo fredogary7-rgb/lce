@@ -175,15 +175,16 @@ def contact_message():
         # Notification push aux admins (background)
         try:
             from push_notification import send_push_to_all_admins
-            send_push_to_all_admins(
-                title='Nouveau message',
+            sent = send_push_to_all_admins(
+                title='📩 Nouveau message',
                 body=f'{nom} vous a envoyé un message.\nSujet: {sujet or "Sans sujet"}',
                 url='/admin/messages',
                 tag='lce-contact',
                 require_interaction=True,
             )
-        except Exception:
-            pass  # Ne jamais bloquer le flux
+            current_app.logger.info(f'[PUSH CONTACT] Notification envoyée à {sent} appareil(s)')
+        except Exception as e:
+            current_app.logger.warning(f'[PUSH CONTACT] Échec envoi push: {e}')
     except Exception as e:
         db.session.rollback()
         flash('Une erreur est survenue. Veuillez réessayer.', 'danger')
