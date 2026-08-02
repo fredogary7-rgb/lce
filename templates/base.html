@@ -129,20 +129,44 @@
         }
 
         function initPushNotifications(reg) {
-            if (!('PushManager' in window) || Notification.permission === 'denied') return;
+            if (!('PushManager' in window)) {
+                console.warn('PushManager non supporté');
+                return;
+            }
 
-            // Demander la permission après 5 secondes (pour ne pas spammer)
-            setTimeout(function() {
-                if (Notification.permission === 'granted') {
-                    doSubscribe(reg);
-                } else if (Notification.permission === 'default') {
-                    Notification.requestPermission().then(function(permission) {
-                        if (permission === 'granted') {
-                            doSubscribe(reg);
-                        }
-                    });
-                }
-            }, 5000);
+            if (Notification.permission === 'granted') {
+                // Déjà accepté → souscrire directement
+                console.log('🔔 Permission déjà accordée, souscription...');
+                doSubscribe(reg);
+            } else if (Notification.permission === 'denied') {
+                console.warn('🔕 Notifications bloquées par l\'utilisateur');
+            } else {
+                // Permission = 'default' → afficher un bouton visible
+                console.log('🔔 Permission à demander, affichage du bouton...');
+                showNotificationPrompt(reg);
+            }
+        }
+
+        function showNotificationPrompt(reg) {
+            // Créer un bouton flottant "Activer les notifications"
+            var prompt = document.createElement('div');
+            prompt.id = 'push-prompt';
+            prompt.style.cssText = 'position:fixed;bottom:100px;right:20px;z-index:9999;background:#0D47C7;color:#fff;padding:12px 20px;border-radius:30px;box-shadow:0 4px 12px rgba(0,0,0,0.3);cursor:pointer;font-size:14px;font-weight:600;transition:transform 0.2s;display:flex;align-items:center;gap:8px;';
+            prompt.innerHTML = '🔔 Activer les notifications';
+            prompt.onmouseover = function() { this.style.transform = 'scale(1.05)'; };
+            prompt.onmouseout = function() { this.style.transform = 'scale(1)'; };
+            prompt.onclick = function() {
+                this.style.display = 'none';
+                Notification.requestPermission().then(function(permission) {
+                    if (permission === 'granted') {
+                        console.log('✅ Permission accordée, souscription...');
+                        doSubscribe(reg);
+                    } else {
+                        console.warn('Permission refusée');
+                    }
+                });
+            };
+            document.body.appendChild(prompt);
         }
 
         function doSubscribe(reg) {
