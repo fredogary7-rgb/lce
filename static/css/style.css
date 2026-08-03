@@ -200,7 +200,7 @@ section {
    ============================================================ */
 .hero {
     position: relative;
-    background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-primary) 50%, var(--blue-light) 100%);
+    background: #0A2E8B;
     min-height: 100vh;
     display: flex;
     align-items: center;
