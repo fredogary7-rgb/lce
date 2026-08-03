@@ -3,46 +3,45 @@
 
 <!-- HERO SECTION -->
 <section class="hero" id="accueil">
-    <!-- Slideshow arrière-plan -->
-    <div class="hero-slideshow">
-        <div class="hero-slide active" style="background-image: url('{{ url_for('static', filename='images/cha.JPG') }}')"></div>
-        <div class="hero-slide" style="background-image: url('{{ url_for('static', filename='images/gru.JPG') }}')"></div>
-        <div class="hero-slide" style="background-image: url('{{ url_for('static', filename='images/pelle.JPG') }}')"></div>
-        <div class="hero-slide" style="background-image: url('{{ url_for('static', filename='images/char.JPG') }}')"></div>
-        <div class="hero-slide" style="background-image: url('{{ url_for('static', filename='images/buldo.JPG') }}')"></div>
-        <div class="hero-slide" style="background-image: url('{{ url_for('static', filename='images/semi.JPG') }}')"></div>
-        <div class="hero-slide" style="background-image: url('{{ url_for('static', filename='images/benne.JPG') }}')"></div>
-        <div class="hero-slide" style="background-image: url('{{ url_for('static', filename='images/niveu.JPG') }}')"></div>
+    <!-- Engins flottants en arrière-plan -->
+    <div class="hero-engins-bg" data-parallax="0.02">
+        <img src="{{ url_for('static', filename='images/cha.JPG') }}" alt="" class="hero-bg-engin engin-pos-1" data-speed="0.015" loading="lazy">
+        <img src="{{ url_for('static', filename='images/gru.JPG') }}" alt="" class="hero-bg-engin engin-pos-2" data-speed="0.025" loading="lazy">
+        <img src="{{ url_for('static', filename='images/pelle.JPG') }}" alt="" class="hero-bg-engin engin-pos-3" data-speed="0.018" loading="lazy">
+        <img src="{{ url_for('static', filename='images/char.JPG') }}" alt="" class="hero-bg-engin engin-pos-4" data-speed="0.022" loading="lazy">
+        <img src="{{ url_for('static', filename='images/buldo.JPG') }}" alt="" class="hero-bg-engin engin-pos-5" data-speed="0.012" loading="lazy">
+        <img src="{{ url_for('static', filename='images/semi.JPG') }}" alt="" class="hero-bg-engin engin-pos-6" data-speed="0.028" loading="lazy">
+        <img src="{{ url_for('static', filename='images/benne.JPG') }}" alt="" class="hero-bg-engin engin-pos-7" data-speed="0.016" loading="lazy">
+        <img src="{{ url_for('static', filename='images/reash.JPG') }}" alt="" class="hero-bg-engin engin-pos-8" data-speed="0.024" loading="lazy">
+        <img src="{{ url_for('static', filename='images/mani.JPG') }}" alt="" class="hero-bg-engin engin-pos-9" data-speed="0.019" loading="lazy">
+        <img src="{{ url_for('static', filename='images/bus.JPG') }}" alt="" class="hero-bg-engin engin-pos-10" data-speed="0.021" loading="lazy">
     </div>
-    <div class="hero-slideshow-overlay"></div>
-    <div class="hero-overlay"></div>
+    <!-- Logo LCE géant en filigrane -->
+    <div class="hero-watermark">
+        <img src="{{ url_for('static', filename='images/lc.JPG') }}" alt="" class="hero-watermark-img">
+    </div>
+    <!-- Overlays -->
+    <div class="hero-gradient-overlay"></div>
+    <div class="hero-radial-glow"></div>
+    <!-- Contenu principal -->
     <div class="container hero-content">
         <div class="row align-items-center min-vh-100">
             <div class="col-lg-7" data-aos="fade-right" data-aos-duration="1000">
-                <img src="{{ url_for('static', filename='images/pelle.JPG') }}" alt="Engin de chantier" class="hero-engin-top d-block d-lg-none mb-3" style="width:100%;max-width:120px;border-radius:12px;opacity:0.35;filter:brightness(0.6);margin-left:auto;margin-right:30px;margin-top:50px;box-shadow:0 8px 24px rgba(0,0,0,0.3);animation:floatTop 3s ease-in-out infinite" loading="lazy">
-                <img src="{{ url_for('static', filename='images/lc.JPG') }}" alt="LCE Logo" class="hero-logo mb-4" width="100" height="100">
-                <h1 class="hero-title">Leader Chiffre Entreprise</h1>
-                <p class="hero-subtitle">Centre professionnel de formation en conduite d'engins de manutention, logistique et transport.</p>
-                <div class="hero-buttons mt-4">
+                <img src="{{ url_for('static', filename='images/lc.JPG') }}" alt="LCE Logo" class="hero-logo mb-4" width="100" height="100" data-aos="zoom-in" data-aos-duration="800">
+                <h1 class="hero-title" data-aos="fade-up" data-aos-delay="150" data-aos-duration="800">Leader Chiffre Entreprise</h1>
+                <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="250" data-aos-duration="800">Centre professionnel de formation en conduite d'engins de manutention, logistique et transport.</p>
+                <div class="hero-buttons mt-4" data-aos="fade-up" data-aos-delay="400" data-aos-duration="800">
                     <a href="#formations" class="btn btn-primary btn-lg rounded-pill me-3 px-4">Découvrir nos formations</a>
                     <a href="#contact" class="btn btn-outline-light btn-lg rounded-pill px-4">Nous contacter</a>
                 </div>
-                <img src="{{ url_for('static', filename='images/gru.JPG') }}" alt="Grue PPM" class="hero-engin-bottom d-block d-lg-none mx-auto mt-4" style="width:100%;max-width:200px;border-radius:16px;opacity:0.5;filter:brightness(0.7);box-shadow:0 8px 24px rgba(0,0,0,0.3);animation:floatBottom 4s ease-in-out infinite" loading="lazy">
-            </div>
-            <div class="col-lg-5 text-center d-none d-lg-block" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="300">
-                <div class="hero-engins">
-                    <div class="engin-circle engin-1"><img src="{{ url_for('static', filename='images/cha.JPG') }}" alt="Engin"></div>
-                    <div class="engin-circle engin-2"><img src="{{ url_for('static', filename='images/gru.JPG') }}" alt="Engin"></div>
-                    <div class="engin-circle engin-3"><img src="{{ url_for('static', filename='images/pelle.JPG') }}" alt="Engin"></div>
-                    <div class="engin-circle engin-center"><img src="{{ url_for('static', filename='images/char.JPG') }}" alt="Engin principal"></div>
-                    <div class="engin-circle engin-4"><img src="{{ url_for('static', filename='images/buldo.JPG') }}" alt="Engin"></div>
-                    <div class="engin-circle engin-5"><img src="{{ url_for('static', filename='images/semi.JPG') }}" alt="Engin"></div>
-                    <div class="engin-circle engin-6"><img src="{{ url_for('static', filename='images/reash.JPG') }}" alt="Engin"></div>
-                </div>
             </div>
         </div>
-        <div class="hero-scroll">
-            <a href="#pourquoi" class="scroll-down"><i class="bi bi-chevron-down"></i></a>
+        <!-- Indicateur de scroll moderne -->
+        <div class="hero-scroll-indicator">
+            <div class="scroll-mouse">
+                <div class="scroll-wheel"></div>
+            </div>
+            <span class="scroll-text">Défiler</span>
         </div>
     </div>
 </section>

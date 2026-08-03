@@ -29,40 +29,75 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ============================================================
-    // HERO SLIDESHOW
+    // HERO PREMIUM: PARALLAX SOURIS + ENTRÉE PROGRESSIVE
     // ============================================================
-    const slides = document.querySelectorAll('.hero-slide');
-    if (slides.length > 0) {
-        let currentSlide = 0;
-        const totalSlides = slides.length;
-        const interval = 5000; // 5 secondes par slide
+    const heroSection = document.querySelector('.hero');
+    const heroEngins = document.querySelectorAll('.hero-bg-engin');
 
-        function nextSlide() {
-            const current = slides[currentSlide];
-
-            // Ajoute l'effet zoom-out sur le slide actuel
-            current.classList.add('zoom-out');
-
-            // Passe au slide suivant
-            currentSlide = (currentSlide + 1) % totalSlides;
-            const next = slides[currentSlide];
-
-            // Prépare le prochain slide
-            next.classList.add('active');
-
-            // Après la transition de fondu, nettoie l'ancien slide
+    // --- Apparition progressive des engins ---
+    if (heroEngins.length > 0) {
+        heroEngins.forEach((engin, i) => {
             setTimeout(() => {
-                current.classList.remove('active', 'zoom-out');
-                // Réinitialise les autres slides
-                slides.forEach((s, i) => {
-                    if (i !== currentSlide) {
-                        s.classList.remove('active', 'zoom-out');
-                    }
-                });
-            }, 1800); // durée de la transition opacity
-        }
+                engin.classList.add('loaded');
+            }, 200 + i * 150); // échelonné sur ~1.7s
+        });
+    }
 
-        setInterval(nextSlide, interval);
+    // --- Parallax souris (desktop only) ---
+    if (heroSection && window.matchMedia('(min-width: 993px)').matches) {
+        heroSection.addEventListener('mousemove', (e) => {
+            const { clientX, clientY } = e;
+            const { innerWidth, innerHeight } = window;
+
+            // Coordonnées normalisées de -1 à 1
+            const x = (clientX / innerWidth) * 2 - 1;
+            const y = (clientY / innerHeight) * 2 - 1;
+
+            heroEngins.forEach((engin) => {
+                const speed = parseFloat(engin.dataset.speed) || 0.02;
+                const moveX = x * speed * 50; // px max
+                const moveY = y * speed * 50;
+                engin.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            });
+
+            // Léger parallax sur le watermark
+            const watermark = document.querySelector('.hero-watermark');
+            if (watermark) {
+                watermark.style.transform = `translate(${x * 8}px, ${y * 8}px)`;
+            }
+        });
+
+        // Réinitialiser quand la souris quitte la hero
+        heroSection.addEventListener('mouseleave', () => {
+            heroEngins.forEach((engin) => {
+                engin.style.transform = '';
+            });
+            const watermark = document.querySelector('.hero-watermark');
+            if (watermark) {
+                watermark.style.transform = '';
+            }
+        });
+    }
+
+    // --- Parallax au scroll pour mobile ---
+    if (heroSection) {
+        let scrollTicking = false;
+        window.addEventListener('scroll', () => {
+            if (!scrollTicking) {
+                requestAnimationFrame(() => {
+                    const scrollY = window.scrollY;
+                    if (scrollY < window.innerHeight) {
+                        const factor = scrollY / window.innerHeight;
+                        heroEngins.forEach((engin) => {
+                            const speed = parseFloat(engin.dataset.speed) || 0.02;
+                            engin.style.transform = `translateY(${-scrollY * speed * 0.8}px)`;
+                        });
+                    }
+                    scrollTicking = false;
+                });
+                scrollTicking = true;
+            }
+        }, { passive: true });
     }
 
     // ============================================================
