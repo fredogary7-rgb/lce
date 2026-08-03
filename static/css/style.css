@@ -210,50 +210,70 @@ section {
 /* --- Engins flottants en arrière-plan --- */
 .hero-engins-bg {
     position: absolute;
-    inset: -20px; /* déborde un peu pour le parallax */
+    inset: -10px;
     z-index: 1;
     pointer-events: none;
 }
 
 .hero-bg-engin {
     position: absolute;
-    border-radius: 16px;
+    border-radius: 14px;
     object-fit: cover;
     opacity: 0;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    filter: blur(0.6px);
     will-change: transform;
-    transition: opacity 1.2s ease;
-    animation: enginFloat 8s ease-in-out infinite;
+    transition: opacity 1.8s ease, filter 0.6s ease;
+    animation: enginFloat 16s ease-in-out infinite;
 }
 
-/* Positions */
-.engin-pos-1 { top: 4%; left: 3%; width: 160px; height: 120px; animation-delay: 0s; }
-.engin-pos-2 { top: 2%; right: 5%; width: 140px; height: 110px; animation-delay: 1.2s; }
-.engin-pos-3 { top: 38%; left: -2%; width: 130px; height: 100px; animation-delay: 2.4s; }
-.engin-pos-4 { top: 42%; right: -1%; width: 150px; height: 115px; animation-delay: 0.6s; }
-.engin-pos-5 { top: 58%; left: 4%; width: 145px; height: 108px; animation-delay: 3s; }
-.engin-pos-6 { top: 60%; right: 6%; width: 135px; height: 105px; animation-delay: 1.8s; }
-.engin-pos-7 { top: 78%; left: 8%; width: 120px; height: 95px; animation-delay: 4.2s; }
-.engin-pos-8 { top: 80%; right: 3%; width: 155px; height: 118px; animation-delay: 2.8s; }
-.engin-pos-9 { top: 20%; left: 25%; width: 110px; height: 85px; animation-delay: 3.6s; }
-.engin-pos-10 { top: 70%; right: 20%; width: 125px; height: 100px; animation-delay: 5s; }
+.hero-bg-engin.loaded {
+    opacity: 0.18;
+}
 
-/* Animation flottante premium */
+/* Effet au survol desktop */
+@media (hover: hover) {
+    .hero-bg-engin:hover {
+        opacity: 0.35 !important;
+        filter: blur(0.2px);
+        transition: opacity 0.5s ease, filter 0.5s ease;
+    }
+}
+
+/* Positions - disposition naturelle avec profondeur */
+/* Haut gauche - petit */
+.engin-pos-1 { top: 5%; left: 4%; width: 105px; height: 80px; animation-delay: 0s; }
+/* Haut droite - moyen */
+.engin-pos-2 { top: 3%; right: 7%; width: 130px; height: 98px; animation-delay: 2.3s; }
+/* Milieu-haut gauche - grand */
+.engin-pos-3 { top: 28%; left: 1%; width: 145px; height: 108px; animation-delay: 4.6s; }
+/* Milieu droite - petit */
+.engin-pos-4 { top: 35%; right: 3%; width: 110px; height: 83px; animation-delay: 6.9s; }
+/* Milieu-bas gauche - moyen */
+.engin-pos-5 { top: 52%; left: 5%; width: 128px; height: 96px; animation-delay: 1.5s; }
+/* Milieu-bas droite - grand */
+.engin-pos-6 { top: 55%; right: 6%; width: 150px; height: 113px; animation-delay: 9.2s; }
+/* Bas gauche - très petit */
+.engin-pos-7 { top: 78%; left: 3%; width: 95px; height: 72px; animation-delay: 3.8s; }
+/* Bas droite - moyen */
+.engin-pos-8 { top: 75%; right: 4%; width: 125px; height: 94px; animation-delay: 7.5s; }
+/* Coin haut très à gauche - tout petit (profondeur) */
+.engin-pos-9 { top: 15%; left: 18%; width: 82px; height: 62px; animation-delay: 10.5s; }
+/* Bas droite éloigné - petit */
+.engin-pos-10 { top: 65%; right: 18%; width: 100px; height: 76px; animation-delay: 5.8s; }
+
+/* Animation flottante très discrète */
 @keyframes enginFloat {
     0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
-    20%  { transform: translateY(-8px) rotate(0.5deg) scale(1.02); }
-    40%  { transform: translateY(-16px) rotate(-1deg) scale(0.99); }
-    60%  { transform: translateY(-6px) rotate(0.8deg) scale(1.01); }
-    80%  { transform: translateY(-14px) rotate(-0.5deg) scale(1.0); }
+    25%  { transform: translateY(-7px) rotate(0.6deg) scale(1.005); }
+    50%  { transform: translateY(-10px) rotate(-0.8deg) scale(0.995); }
+    75%  { transform: translateY(-4px) rotate(0.4deg) scale(1.0); }
 }
 
 /* Entrée progressive */
 .hero-bg-engin.loaded {
     opacity: 0.18;
 }
-.hero-bg-engin:nth-child(odd).loaded  { opacity: 0.22; }
-.hero-bg-engin:nth-child(3n).loaded   { opacity: 0.16; }
-.hero-bg-engin:nth-child(5n).loaded   { opacity: 0.25; }
 
 /* --- Logo watermark géant --- */
 .hero-watermark {
