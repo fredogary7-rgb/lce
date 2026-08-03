@@ -209,12 +209,39 @@ section {
     overflow: hidden;
 }
 
-.hero::before {
-    content: '';
+/* Slideshow arrière-plan */
+.hero-slideshow {
     position: absolute;
     inset: 0;
-    background: url('../images/lc.JPG') center / cover no-repeat;
-    opacity: 0.04;
+    z-index: 0;
+}
+
+.hero-slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transform: scale(1.12);
+    transition: opacity 1.8s cubic-bezier(0.4, 0, 0.2, 1), transform 8s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.hero-slide.active {
+    opacity: 1;
+    transform: scale(1);
+    z-index: 1;
+}
+
+.hero-slide.active.zoom-out {
+    transform: scale(1.06);
+}
+
+/* Overlay sombre par-dessus le slideshow */
+.hero-slideshow-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(135deg, rgba(10, 46, 139, 0.85) 0%, rgba(13, 71, 199, 0.75) 50%, rgba(45, 127, 249, 0.65) 100%);
 }
 
 .hero-overlay {

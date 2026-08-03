@@ -29,6 +29,43 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ============================================================
+    // HERO SLIDESHOW
+    // ============================================================
+    const slides = document.querySelectorAll('.hero-slide');
+    if (slides.length > 0) {
+        let currentSlide = 0;
+        const totalSlides = slides.length;
+        const interval = 5000; // 5 secondes par slide
+
+        function nextSlide() {
+            const current = slides[currentSlide];
+
+            // Ajoute l'effet zoom-out sur le slide actuel
+            current.classList.add('zoom-out');
+
+            // Passe au slide suivant
+            currentSlide = (currentSlide + 1) % totalSlides;
+            const next = slides[currentSlide];
+
+            // Prépare le prochain slide
+            next.classList.add('active');
+
+            // Après la transition de fondu, nettoie l'ancien slide
+            setTimeout(() => {
+                current.classList.remove('active', 'zoom-out');
+                // Réinitialise les autres slides
+                slides.forEach((s, i) => {
+                    if (i !== currentSlide) {
+                        s.classList.remove('active', 'zoom-out');
+                    }
+                });
+            }, 1800); // durée de la transition opacity
+        }
+
+        setInterval(nextSlide, interval);
+    }
+
+    // ============================================================
     // COUNTER ANIMATION
     // ============================================================
     const counters = document.querySelectorAll('.counter');
