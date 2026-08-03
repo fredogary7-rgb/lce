@@ -270,11 +270,6 @@ section {
     75%  { transform: translateY(-4px) rotate(0.4deg) scale(1.0); }
 }
 
-/* Entrée progressive */
-.hero-bg-engin.loaded {
-    opacity: 0.18;
-}
-
 /* --- Logo watermark géant --- */
 .hero-watermark {
     position: absolute;
@@ -419,7 +414,7 @@ section {
     50% { opacity: 1; }
 }
 
-/* --- Responsive: mobile --- */
+/* --- Responsive: tablette --- */
 @media (max-width: 992px) {
     .hero-bg-engin { display: none; }
     .hero-bg-engin.engin-pos-1,
@@ -429,15 +424,27 @@ section {
     .hero-bg-engin.engin-pos-8,
     .hero-bg-engin.engin-pos-10 { display: block; }
 
-    .engin-pos-1 { top: 2%;  left: -6%;  width: 100px; height: 80px; }
-    .engin-pos-2 { top: 1%;  right: -8%;  width: 95px;  height: 75px; }
-    .engin-pos-4 { top: 40%; right: -10%; width: 90px;  height: 70px; }
-    .engin-pos-6 { top: 65%; right: -6%;  width: 85px;  height: 68px; }
-    .engin-pos-8 { top: 85%; right: -5%;  width: 100px; height: 80px; }
-    .engin-pos-10 { top: 88%; left: -5%;   width: 95px;  height: 75px; }
+    .engin-pos-1  { top: 2%;  left: -5%;  width: 80px;  height: 62px; }
+    .engin-pos-2  { top: 1%;  right: -6%; width: 85px;  height: 65px; }
+    .engin-pos-4  { top: 38%; right: -8%; width: 70px;  height: 54px; }
+    .engin-pos-6  { top: 60%; right: -5%; width: 75px;  height: 58px; }
+    .engin-pos-8  { top: 82%; right: -4%; width: 82px;  height: 63px; }
+    .engin-pos-10 { top: 86%; left: -4%;  width: 72px;  height: 56px; }
 }
 
+/* --- Responsive: mobile --- */
 @media (max-width: 576px) {
+    .hero-bg-engin { display: none; }
+    .hero-bg-engin.engin-pos-2,
+    .hero-bg-engin.engin-pos-4,
+    .hero-bg-engin.engin-pos-6,
+    .hero-bg-engin.engin-pos-8 { display: block; }
+
+    .engin-pos-2 { top: 2%;  right: -5%; width: 60px; height: 46px; }
+    .engin-pos-4 { top: 40%; right: -6%; width: 55px; height: 42px; }
+    .engin-pos-6 { top: 65%; right: -4%; width: 60px; height: 46px; }
+    .engin-pos-8 { top: 85%; right: -3%; width: 65px; height: 50px; }
+
     .hero-watermark-img { width: 70vw; }
     .hero-logo { width: 75px; height: 75px; border-radius: 14px; }
 }
