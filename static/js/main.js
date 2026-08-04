@@ -29,38 +29,29 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ============================================================
-    // HERO PREMIUM: PARALLAX SOURIS + ENTRÉE PROGRESSIVE
+    // HERO PREMIUM: ENTRÉE PROGRESSIVE + PARALLAX WATERMARK
     // ============================================================
     const heroSection = document.querySelector('.hero');
     const heroEngins = document.querySelectorAll('.hero-bg-engin');
 
-    // --- Apparition progressive des engins ---
+    // --- Apparition progressive des 3 engins ---
     if (heroEngins.length > 0) {
         heroEngins.forEach((engin, i) => {
             setTimeout(() => {
                 engin.classList.add('loaded');
-            }, 200 + i * 150); // échelonné sur ~1.7s
+            }, 300 + i * 400); // échelonné : 300ms, 700ms, 1100ms
         });
     }
 
-    // --- Parallax souris (desktop only) ---
+    // --- Parallax souris watermark uniquement (desktop only) ---
     if (heroSection && window.matchMedia('(min-width: 993px)').matches) {
         heroSection.addEventListener('mousemove', (e) => {
             const { clientX, clientY } = e;
             const { innerWidth, innerHeight } = window;
-
-            // Coordonnées normalisées de -1 à 1
             const x = (clientX / innerWidth) * 2 - 1;
             const y = (clientY / innerHeight) * 2 - 1;
 
-            heroEngins.forEach((engin) => {
-                const speed = parseFloat(engin.dataset.speed) || 0.02;
-                const moveX = x * speed * 50; // px max
-                const moveY = y * speed * 50;
-                engin.style.transform = `translate(${moveX}px, ${moveY}px)`;
-            });
-
-            // Léger parallax sur le watermark
+            // Léger parallax sur le watermark seulement
             const watermark = document.querySelector('.hero-watermark');
             if (watermark) {
                 watermark.style.transform = `translate(${x * 8}px, ${y * 8}px)`;
@@ -69,9 +60,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Réinitialiser quand la souris quitte la hero
         heroSection.addEventListener('mouseleave', () => {
-            heroEngins.forEach((engin) => {
-                engin.style.transform = '';
-            });
             const watermark = document.querySelector('.hero-watermark');
             if (watermark) {
                 watermark.style.transform = '';
