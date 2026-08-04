@@ -266,85 +266,181 @@ section {
     50% { transform: scale(1.06); opacity: 0.04; }
 }
 
-/* --- ENGINS : partiels, monochromes, intégrés --- */
+/* --- Lignes graphiques reliant les engins --- */
+.hero-lines {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    opacity: 0.7;
+    animation: linesPulse 12s ease-in-out infinite;
+}
+
+@keyframes linesPulse {
+    0%, 100% { opacity: 0.5; }
+    50%      { opacity: 0.8; }
+}
+
+/* --- Halos bleus derrière chaque engin --- */
+.hero-halo {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    border-radius: 50%;
+    filter: blur(60px);
+}
+
+.hero-halo--tl {
+    top: -5%;
+    left: -2%;
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, rgba(45,127,249,0.13) 0%, transparent 70%);
+    animation: haloBreathe1 16s ease-in-out infinite;
+}
+
+.hero-halo--tr {
+    top: 35%;
+    right: -5%;
+    width: 550px;
+    height: 550px;
+    background: radial-gradient(circle, rgba(45,127,249,0.16) 0%, transparent 70%);
+    animation: haloBreathe2 19s ease-in-out infinite;
+}
+
+.hero-halo--bl {
+    bottom: -10%;
+    left: -2%;
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, rgba(45,127,249,0.10) 0%, transparent 70%);
+    animation: haloBreathe3 17s ease-in-out infinite;
+}
+
+@keyframes haloBreathe1 {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50%      { opacity: 1; transform: scale(1.12); }
+}
+
+@keyframes haloBreathe2 {
+    0%, 100% { opacity: 0.7; transform: scale(1.05); }
+    50%      { opacity: 1; transform: scale(0.92); }
+}
+
+@keyframes haloBreathe3 {
+    0%, 100% { opacity: 0.5; transform: scale(0.95); }
+    50%      { opacity: 0.9; transform: scale(1.08); }
+}
+
+/* --- ENGINS : hiérarchie visuelle, 3 profondeurs --- */
 .hero-engin {
     position: absolute;
     display: block;
-    will-change: transform, opacity;
+    will-change: transform, opacity, filter;
     opacity: 0;
-    pointer-events: none;
-    transition: opacity 2s ease-out;
+    pointer-events: auto;
+    cursor: default;
+    transition: opacity 2s ease-out, filter 0.6s ease;
 }
 
 .hero-engin.visible {
     opacity: var(--engin-opacity, 0.28);
 }
 
-/* Top-Left : chariot élévateur — avant uniquement, coupé en haut à gauche */
+/* --- Profondeur 1 : Arrière — top-left, 90% --- */
 .hero-engin--tl {
-    --engin-opacity: 0.25;
+    --engin-opacity: 0.18;
     top: -8%;
     left: -6%;
-    width: clamp(400px, 38vw, 600px);
+    width: clamp(360px, 34vw, 540px);
     height: auto;
     z-index: 3;
     clip-path: inset(0 25% 30% 0);
-    animation: enginBreathe1 14s ease-in-out infinite;
+    filter: blur(0.6px);
+    animation: enginBreathe1 17s ease-in-out infinite;
     animation-delay: 0s;
 }
 
-/* Top-Right : grue — cabine uniquement, coupée à droite */
+/* --- Profondeur 2 : Principal — right, 120% --- */
 .hero-engin--tr {
-    --engin-opacity: 0.22;
-    top: 38%;
+    --engin-opacity: 0.28;
+    top: 36%;
     right: -8%;
-    width: clamp(380px, 36vw, 550px);
+    width: clamp(450px, 43vw, 660px);
     height: auto;
-    z-index: 3;
-    clip-path: inset(0 10% 25% 30%);
-    animation: enginBreathe2 16s ease-in-out infinite;
-    animation-delay: 1s;
+    z-index: 5;
+    clip-path: inset(0 8% 25% 28%);
+    filter: blur(0px);
+    animation: enginBreathe2 20s ease-in-out infinite;
+    animation-delay: 0s;
 }
 
-/* Bottom-Left : pelle — bras uniquement, coupé en bas à gauche */
+/* --- Profondeur 3 : Avant — bottom-left, 75% --- */
 .hero-engin--bl {
-    --engin-opacity: 0.20;
+    --engin-opacity: 0.22;
     bottom: -12%;
     left: -4%;
-    width: clamp(350px, 34vw, 520px);
+    width: clamp(260px, 26vw, 390px);
     height: auto;
-    z-index: 3;
+    z-index: 4;
     clip-path: inset(30% 20% 0 0);
-    animation: enginBreathe3 15s ease-in-out infinite;
-    animation-delay: 2s;
+    filter: blur(0.3px);
+    animation: enginBreathe3 21s ease-in-out infinite;
+    animation-delay: 0s;
 }
 
-/* --- Animations respiration (très subtiles) --- */
+/* --- Hover desktop : engin principal --- */
+@media (hover: hover) and (pointer: fine) {
+    .hero-engin--tr:hover {
+        --engin-opacity: 0.34;
+        filter: blur(0px) brightness(1.15);
+        transform: scale(1.025);
+        animation-duration: 14s; /* légère accélération */
+    }
+    .hero-engin--tl:hover {
+        --engin-opacity: 0.22;
+        filter: blur(0.3px) brightness(1.10);
+        transform: scale(1.02);
+        animation-duration: 13s;
+    }
+    .hero-engin--bl:hover {
+        --engin-opacity: 0.26;
+        filter: blur(0.1px) brightness(1.10);
+        transform: scale(1.02);
+        animation-duration: 16s;
+    }
+}
+
+/* --- Animations : décalées, subtiles, jamais simultanées --- */
 @keyframes enginBreathe1 {
-    0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-    33%      { transform: translate3d(2px, -4px, 0) rotate(0.4deg); }
-    66%      { transform: translate3d(-2px, -2px, 0) rotate(-0.4deg); }
+     0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+    22%       { transform: translate3d(2px, -5px, 0) rotate(0.5deg); }
+    48%       { transform: translate3d(0px, 0px, 0) rotate(0deg); }
+    72%       { transform: translate3d(-2px, -3px, 0) rotate(-0.4deg); }
 }
 
 @keyframes enginBreathe2 {
-    0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-    30%      { transform: translate3d(-4px, -3px, 0) rotate(-0.5deg); }
-    60%      { transform: translate3d(2px, -5px, 0) rotate(0.3deg); }
-    85%      { transform: translate3d(-2px, -1px, 0) rotate(-0.3deg); }
+     0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+    18%       { transform: translate3d(0px, 0px, 0) rotate(0deg); }
+    42%       { transform: translate3d(-4px, -3px, 0) rotate(-0.5deg); }
+    68%       { transform: translate3d(0px, 0px, 0) rotate(0deg); }
+    86%       { transform: translate3d(3px, -4px, 0) rotate(0.3deg); }
 }
 
 @keyframes enginBreathe3 {
-    0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-    25%      { transform: translate3d(4px, -3px, 0) rotate(0.6deg); }
-    55%      { transform: translate3d(-3px, -5px, 0) rotate(-0.4deg); }
-    80%      { transform: translate3d(2px, -2px, 0) rotate(0.3deg); }
+     0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+    28%       { transform: translate3d(0px, 0px, 0) rotate(0deg); }
+    56%       { transform: translate3d(3px, -4px, 0) rotate(0.5deg); }
+    82%       { transform: translate3d(0px, 0px, 0) rotate(0deg); }
 }
 
 /* --- Particules lumineuses (discrètes, max 8) --- */
 .hero-particles {
     position: absolute;
     inset: 0;
-    z-index: 4;
+    z-index: 6;
     pointer-events: none;
     overflow: hidden;
 }
@@ -373,7 +469,7 @@ section {
 /* --- Contenu principal --- */
 .hero-content {
     position: relative;
-    z-index: 5;
+    z-index: 7;
 }
 
 .hero-logo {
