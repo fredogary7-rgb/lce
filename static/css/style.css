@@ -207,7 +207,7 @@ section {
     overflow: hidden;
 }
 
-/* --- 3 Cartes engins flottantes --- */
+/* --- Couche 3 : Engins intégrés --- */
 .hero-engins-bg {
     position: absolute;
     inset: 0;
@@ -216,86 +216,109 @@ section {
     overflow: hidden;
 }
 
-.hero-engine-card {
+.hero-engin {
     position: absolute;
-    border-radius: 24px;
-    overflow: hidden;
-    opacity: 0;
-    will-change: transform;
-    transition: opacity 2s ease;
-    box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.35),
-        0 2px 8px rgba(255, 255, 255, 0.1);
-}
-
-.hero-engine-card.loaded {
-    opacity: 0.95;
-}
-
-.hero-engine-card img {
     display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: brightness(1.05) saturate(1.1);
+    will-change: transform;
+    opacity: 0;
+    transition: opacity 1.8s ease-out;
+    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));
+    mix-blend-mode: normal;
 }
 
-/* --- Position 1 : Haut gauche, partiellement hors écran --- */
-.engin-pos-1 {
-    top: -6%;
-    left: -7%;
-    width: 155px;
-    height: 116px;
-    animation: floatCard1 14s ease-in-out infinite;
+.hero-engin.visible {
+    opacity: 0.45;
+}
+
+/* Engin 1 : Haut gauche - pelle/chargeuse */
+.engin-1 {
+    top: -8%;
+    left: -6%;
+    width: clamp(180px, 18vw, 280px);
+    height: auto;
+    animation: enginFloat1 22s cubic-bezier(0.45, 0, 0.55, 1) infinite;
     animation-delay: 0s;
+    transform-origin: center center;
 }
 
-/* --- Position 2 : Milieu droite, dépasse vers l'extérieur --- */
-.engin-pos-2 {
-    top: 42%;
+/* Engin 2 : Milieu droite - grue */
+.engin-2 {
+    top: 40%;
     right: -5%;
-    width: 145px;
-    height: 108px;
-    animation: floatCard2 16s ease-in-out infinite;
-    animation-delay: 1.2s;
+    width: clamp(160px, 16vw, 250px);
+    height: auto;
+    animation: enginFloat2 25s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+    animation-delay: 2s;
+    transform-origin: center center;
 }
 
-/* --- Position 3 : Bas gauche, partiellement hors écran --- */
-.engin-pos-3 {
-    bottom: -5%;
-    left: -5%;
-    width: 130px;
-    height: 97px;
-    animation: floatCard3 18s ease-in-out infinite;
-    animation-delay: 2.4s;
+/* Engin 3 : Bas gauche */
+.engin-3 {
+    bottom: -6%;
+    left: -4%;
+    width: clamp(150px, 15vw, 230px);
+    height: auto;
+    animation: enginFloat3 20s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+    animation-delay: 4s;
+    transform-origin: center center;
 }
 
-/* ---------- ANIMATIONS CARTES (60 FPS) ---------- */
-
-/* Carte 1 : flottement vertical + rotation 1° */
-@keyframes floatCard1 {
-    0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-    25%      { transform: translate3d(2px, -8px, 0) rotate(0.5deg); }
-    50%      { transform: translate3d(-1px, -4px, 0) rotate(1deg); }
-    75%      { transform: translate3d(3px, -6px, 0) rotate(0.3deg); }
+/* --- Animations naturelles --- */
+@keyframes enginFloat1 {
+    0%, 100% {
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    }
+    20% {
+        transform: translate3d(12px, -18px, 0) rotate(1.5deg) scale(1.03);
+    }
+    40% {
+        transform: translate3d(-8px, -28px, 0) rotate(-0.5deg) scale(0.98);
+    }
+    60% {
+        transform: translate3d(-14px, -8px, 0) rotate(-2deg) scale(1.02);
+    }
+    80% {
+        transform: translate3d(6px, -22px, 0) rotate(1deg) scale(0.99);
+    }
 }
 
-/* Carte 2 : flottement horizontal + vertical léger */
-@keyframes floatCard2 {
-    0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-    33%      { transform: translate3d(-6px, -4px, 0) rotate(-0.5deg); }
-    66%      { transform: translate3d(4px, -6px, 0) rotate(1deg); }
+@keyframes enginFloat2 {
+    0%, 100% {
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    }
+    17% {
+        transform: translate3d(-14px, -10px, 0) rotate(-1.2deg) scale(1.04);
+    }
+    35% {
+        transform: translate3d(6px, -22px, 0) rotate(0.8deg) scale(0.97);
+    }
+    52% {
+        transform: translate3d(16px, -6px, 0) rotate(2deg) scale(1.02);
+    }
+    70% {
+        transform: translate3d(-10px, -18px, 0) rotate(-1.5deg) scale(0.98);
+    }
+    87% {
+        transform: translate3d(4px, -12px, 0) rotate(0.5deg) scale(1.01);
+    }
 }
 
-/* Carte 3 : flottement diagonal + rotation */
-@keyframes floatCard3 {
-    0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-    30%      { transform: translate3d(5px, -8px, 0) rotate(-0.8deg); }
-    60%      { transform: translate3d(-2px, -3px, 0) rotate(0.6deg); }
-    85%      { transform: translate3d(4px, -6px, 0) rotate(-0.4deg); }
+@keyframes enginFloat3 {
+    0%, 100% {
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    }
+    25% {
+        transform: translate3d(10px, -20px, 0) rotate(-1deg) scale(1.02);
+    }
+    50% {
+        transform: translate3d(-6px, -10px, 0) rotate(1.8deg) scale(0.97);
+    }
+    75% {
+        transform: translate3d(-12px, -24px, 0) rotate(-0.8deg) scale(1.03);
+    }
 }
 
-/* --- Logo watermark géant --- */
+/* --- Couche 2 : Logo watermark géant --- */
 .hero-watermark {
     position: absolute;
     inset: 0;
@@ -304,50 +327,81 @@ section {
     align-items: center;
     justify-content: center;
     pointer-events: none;
-    opacity: 0.04;
-    animation: watermarkBreathe 15s ease-in-out infinite;
+    opacity: 0.035;
+    animation: watermarkBreathe 18s ease-in-out infinite;
 }
 
 .hero-watermark-img {
     width: min(500px, 55vw);
     height: auto;
     border-radius: 28px;
-    filter: blur(1px) brightness(0.7);
+    filter: blur(1.5px) brightness(0.65);
 }
 
 @keyframes watermarkBreathe {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.04); }
+    0%, 100% { transform: scale(1); opacity: 0.035; }
+    50% { transform: scale(1.05); opacity: 0.05; }
 }
 
-/* --- Overlays --- */
-.hero-gradient-overlay {
+/* --- Couche 4 : Halo lumineux derrière le contenu --- */
+.hero-glow {
     position: absolute;
-    inset: 0;
-    z-index: 2;
-    background: linear-gradient(
-        160deg,
-        rgba(6, 26, 74, 0.82) 0%,
-        rgba(10, 46, 139, 0.72) 35%,
-        rgba(13, 71, 199, 0.58) 70%,
-        rgba(45, 127, 249, 0.5) 100%
-    );
-}
-
-.hero-radial-glow {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    background:
-        radial-gradient(ellipse 600px 400px at 35% 50%, rgba(45,127,249,0.25), transparent 70%),
-        radial-gradient(ellipse 400px 300px at 30% 40%, rgba(255,255,255,0.06), transparent 60%);
+    z-index: 4;
     pointer-events: none;
+    top: 15%;
+    left: 5%;
+    width: 55%;
+    height: 65%;
+    background:
+        radial-gradient(ellipse 500px 350px at 35% 45%, rgba(45,127,249,0.18), transparent 70%),
+        radial-gradient(circle 300px at 30% 40%, rgba(255,255,255,0.05), transparent 60%),
+        radial-gradient(circle 200px at 25% 35%, rgba(45,127,249,0.12), transparent 50%);
+    animation: glowPulse 8s ease-in-out infinite;
 }
 
-/* --- Contenu principal --- */
+@keyframes glowPulse {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+}
+
+/* --- Particules lumineuses --- */
+.hero-particles {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.hero-particle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    animation: particleDrift linear infinite;
+    box-shadow: 0 0 6px 2px rgba(45, 127, 249, 0.4);
+}
+
+@keyframes particleDrift {
+    0% {
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.7;
+    }
+    90% {
+        opacity: 0.1;
+    }
+    100% {
+        transform: translateY(-100vh) translateX(40px) scale(0.3);
+        opacity: 0;
+    }
+}
+
+/* --- Couche 5-7 : Contenu principal --- */
 .hero-content {
     position: relative;
-    z-index: 4;
+    z-index: 6;
 }
 
 .hero-logo {
@@ -441,18 +495,16 @@ section {
 
 /* --- Responsive: tablette --- */
 @media (max-width: 992px) {
-    .hero-engine-card { display: block; }
-    .engin-pos-1 { top: -6%; left: -15%; width: 130px; height: 97px; }
-    .engin-pos-2 { top: 36%; right: -14%; width: 120px; height: 90px; }
-    .engin-pos-3 { bottom: -8%; left: -12%; width: 145px; height: 108px; }
+    .engin-1 { width: clamp(140px, 20vw, 200px); top: -6%; left: -12%; }
+    .engin-2 { width: clamp(120px, 18vw, 180px); top: 38%; right: -10%; }
+    .engin-3 { width: clamp(110px, 16vw, 160px); bottom: -5%; left: -10%; }
 }
 
 /* --- Responsive: mobile --- */
 @media (max-width: 576px) {
-    .hero-engine-card { display: block; }
-    .engin-pos-1 { top: -5%; left: -18%; width: 150px; height: 112px; }
-    .engin-pos-2 { top: 34%; right: -16%; width: 140px; height: 105px; }
-    .engin-pos-3 { bottom: -6%; left: -14%; width: 120px; height: 90px; }
+    .engin-1 { width: clamp(100px, 32vw, 150px); top: -4%; left: -14%; }
+    .engin-2 { width: clamp(90px, 28vw, 130px); top: 35%; right: -12%; }
+    .engin-3 { width: clamp(85px, 26vw, 120px); bottom: -4%; left: -12%; }
 
     .hero-watermark-img { width: 70vw; }
     .hero-logo { width: 75px; height: 75px; border-radius: 14px; }

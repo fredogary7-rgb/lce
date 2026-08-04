@@ -3,26 +3,23 @@
 
 <!-- HERO SECTION -->
 <section class="hero" id="accueil">
-    <!-- Cartes engins flottantes (3) -->
-    <div class="hero-engins-bg">
-        <div class="hero-engine-card engin-pos-1">
-            <img src="{{ url_for('static', filename='images/cha.JPG') }}" alt="" loading="lazy">
-        </div>
-        <div class="hero-engine-card engin-pos-2">
-            <img src="{{ url_for('static', filename='images/gru.JPG') }}" alt="" loading="lazy">
-        </div>
-        <div class="hero-engine-card engin-pos-3">
-            <img src="{{ url_for('static', filename='images/pelle.JPG') }}" alt="" loading="lazy">
-        </div>
-    </div>
-    <!-- Logo LCE géant en filigrane -->
+    <!-- Couche 1 : dégradé bleu (géré par .hero background) -->
+    <!-- Couche 2 : logo LCE en filigrane -->
     <div class="hero-watermark">
         <img src="{{ url_for('static', filename='images/lc.JPG') }}" alt="" class="hero-watermark-img">
     </div>
-    <!-- Overlays -->
-    <div class="hero-gradient-overlay"></div>
-    <div class="hero-radial-glow"></div>
-    <!-- Contenu principal -->
+    <!-- Couche 3 : engins intégrés au décor -->
+    <div class="hero-engins-bg">
+        <img src="{{ url_for('static', filename='images/cha.JPG') }}" alt="" class="hero-engin engin-1" loading="lazy">
+        <img src="{{ url_for('static', filename='images/gru.JPG') }}" alt="" class="hero-engin engin-2" loading="lazy">
+        <img src="{{ url_for('static', filename='images/pelle.JPG') }}" alt="" class="hero-engin engin-3" loading="lazy">
+    </div>
+    <!-- Couche 4 : halo lumineux -->
+    <div class="hero-glow"></div>
+    <!-- Particules lumineuses -->
+    <div class="hero-particles" id="heroParticles"></div>
+    <!-- Couche 5 : logo LCE petit -->
+    <!-- Couche 6-7 : contenu texte + boutons -->
     <div class="container hero-content">
         <div class="row align-items-center min-vh-100">
             <div class="col-lg-7" data-aos="fade-right" data-aos-duration="1000">
@@ -35,7 +32,7 @@
                 </div>
             </div>
         </div>
-        <!-- Indicateur de scroll moderne -->
+        <!-- Indicateur de scroll -->
         <div class="hero-scroll-indicator">
             <div class="scroll-mouse">
                 <div class="scroll-wheel"></div>

@@ -29,21 +29,41 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ============================================================
-    // HERO PREMIUM: ENTRÉE PROGRESSIVE + PARALLAX WATERMARK
+    // HERO PREMIUM: ENTRÉE PROGRESSIVE ENGINS + PARTICULES
     // ============================================================
     const heroSection = document.querySelector('.hero');
-    const heroEngins = document.querySelectorAll('.hero-engine-card');
+    const heroEngins = document.querySelectorAll('.hero-engin');
 
     // --- Apparition progressive des 3 engins ---
     if (heroEngins.length > 0) {
         heroEngins.forEach((engin, i) => {
             setTimeout(() => {
-                engin.classList.add('loaded');
-            }, 300 + i * 400); // échelonné : 300ms, 700ms, 1100ms
+                engin.classList.add('visible');
+            }, 200 + i * 500); // 200ms, 700ms, 1200ms
         });
     }
 
-    // --- Parallax souris watermark uniquement (desktop only) ---
+    // --- Particules lumineuses ---
+    const particlesContainer = document.getElementById('heroParticles');
+    if (heroSection && particlesContainer) {
+        const particleCount = 18;
+        const fragment = document.createDocumentFragment();
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('hero-particle');
+            const size = Math.random() * 3 + 1.5; // 1.5px - 4.5px
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.bottom = -(Math.random() * 30 + 5) + '%'; // start below
+            particle.style.animationDuration = (Math.random() * 10 + 10) + 's'; // 10-20s
+            particle.style.animationDelay = (Math.random() * 12) + 's';
+            fragment.appendChild(particle);
+        }
+        particlesContainer.appendChild(fragment);
+    }
+
+    // --- Parallax souris engins (desktop only) ---
     if (heroSection && window.matchMedia('(min-width: 993px)').matches) {
         heroSection.addEventListener('mousemove', (e) => {
             const { clientX, clientY } = e;
@@ -51,41 +71,30 @@ document.addEventListener('DOMContentLoaded', function () {
             const x = (clientX / innerWidth) * 2 - 1;
             const y = (clientY / innerHeight) * 2 - 1;
 
-            // Léger parallax sur le watermark seulement
+            // Parallax sur les engins
+            heroEngins.forEach((engin, i) => {
+                const strength = (i + 1) * 6;
+                if (engin.classList.contains('visible')) {
+                    engin.style.transform = `translate3d(${x * strength}px, ${y * strength}px, 0)`;
+                }
+            });
+
+            // Parallax watermark
             const watermark = document.querySelector('.hero-watermark');
             if (watermark) {
-                watermark.style.transform = `translate(${x * 8}px, ${y * 8}px)`;
+                watermark.style.transform = `translate(${x * 10}px, ${y * 10}px)`;
             }
         });
 
-        // Réinitialiser quand la souris quitte la hero
         heroSection.addEventListener('mouseleave', () => {
+            heroEngins.forEach((engin) => {
+                if (engin.classList.contains('visible')) {
+                    engin.style.transform = '';
+                }
+            });
             const watermark = document.querySelector('.hero-watermark');
-            if (watermark) {
-                watermark.style.transform = '';
-            }
+            if (watermark) watermark.style.transform = '';
         });
-    }
-
-    // --- Parallax au scroll pour mobile ---
-    if (heroSection) {
-        let scrollTicking = false;
-        window.addEventListener('scroll', () => {
-            if (!scrollTicking) {
-                requestAnimationFrame(() => {
-                    const scrollY = window.scrollY;
-                    if (scrollY < window.innerHeight) {
-                        const factor = scrollY / window.innerHeight;
-                        heroEngins.forEach((engin) => {
-                            const speed = parseFloat(engin.dataset.speed) || 0.02;
-                            engin.style.transform = `translateY(${-scrollY * speed * 0.8}px)`;
-                        });
-                    }
-                    scrollTicking = false;
-                });
-                scrollTicking = true;
-            }
-        }, { passive: true });
     }
 
     // ============================================================
