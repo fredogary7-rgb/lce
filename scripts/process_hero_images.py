@@ -30,7 +30,7 @@ CONFIGS = [
         'dst': 'pelle.webp',
         # Show arm/bucket of the excavator (bottom-left area)
         'crop': (30, 60, 360, 420),
-        'width': 500,
+        'width': 650,
     },
 ]
 
@@ -70,8 +70,8 @@ for cfg in CONFIGS:
     enhancer = ImageEnhance.Color(img)
     img = enhancer.enhance(0.30)  # 30% of original saturation
 
-    # Soft blur for atmospheric depth
-    img = img.filter(ImageFilter.GaussianBlur(radius=2.5))
+    # Very subtle blur for atmospheric depth
+    img = img.filter(ImageFilter.GaussianBlur(radius=0.8))
 
     # Slight brightness reduction
     enhancer_b = ImageEnhance.Brightness(img)
