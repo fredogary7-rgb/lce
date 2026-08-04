@@ -43,6 +43,50 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // --- Hero counter animation ---
+    const heroStats = document.querySelectorAll('.hero-stat-num');
+    let heroCounted = false;
+
+    function animateHeroCounters() {
+        if (heroCounted) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            // Skip animation, show final values immediately
+            heroStats.forEach(el => {
+                el.textContent = el.getAttribute('data-hero-target');
+            });
+            heroCounted = true;
+            return;
+        }
+        if (!heroSection) return;
+        const rect = heroSection.getBoundingClientRect();
+        // Start when 15% of hero is visible
+        if (rect.top < window.innerHeight * 0.85 && rect.bottom > 0) {
+            heroCounted = true;
+            heroStats.forEach(el => {
+                const target = +el.getAttribute('data-hero-target');
+                const duration = 1800;
+                const start = performance.now();
+
+                function update(now) {
+                    const elapsed = now - start;
+                    const progress = Math.min(elapsed / duration, 1);
+                    // easeOutCubic
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    el.textContent = Math.floor(eased * target);
+                    if (progress < 1) {
+                        requestAnimationFrame(update);
+                    } else {
+                        el.textContent = target;
+                    }
+                }
+                requestAnimationFrame(update);
+            });
+        }
+    }
+
+    window.addEventListener('scroll', animateHeroCounters);
+    animateHeroCounters();
+
     // --- Particules lumineuses (8 max, subtiles) ---
     const particlesContainer = document.getElementById('heroParticles');
     if (heroSection && particlesContainer) {
