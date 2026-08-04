@@ -207,7 +207,7 @@ section {
     overflow: hidden;
 }
 
-/* --- 3 Engins décoratifs premium --- */
+/* --- 3 Cartes engins flottantes --- */
 .hero-engins-bg {
     position: absolute;
     inset: 0;
@@ -216,80 +216,87 @@ section {
     overflow: hidden;
 }
 
-.hero-bg-engin {
+.hero-engine-card {
     position: absolute;
-    object-fit: cover;
-    border-radius: 30px;
+    border-radius: 24px;
+    overflow: hidden;
     opacity: 0;
     will-change: transform;
-    transition: opacity 2.4s ease;
-    /* Glassmorphism + overlay bleu */
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    filter: blur(1.2px) brightness(0.65) saturate(0.6);
-    /* Overlay bleu via pseudo-element en JS impossible => on utilise une couleur de fond sur le conteneur */
-    background: rgba(13, 71, 199, 0.18);
-    mix-blend-mode: overlay;
+    transition: opacity 2s ease;
+    /* Carte premium : fond blanc discret + ombre */
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow:
+        0 4px 24px rgba(0, 0, 0, 0.25),
+        0 1px 3px rgba(0, 0, 0, 0.12);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
 }
 
-.hero-bg-engin.loaded {
-    opacity: 0.22;
+.hero-engine-card.loaded {
+    opacity: 0.85;
 }
 
-/* --- Position 1 : Haut gauche, partiellement hors écran (~40% visible) --- */
+.hero-engine-card img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.9);
+}
+
+/* --- Position 1 : Haut gauche, partiellement hors écran --- */
 .engin-pos-1 {
-    top: -8%;
-    left: -12%;
-    width: 320px;
-    height: 240px;
-    animation: floatTopLeft 18s ease-in-out infinite;
+    top: -6%;
+    left: -7%;
+    width: 155px;
+    height: 116px;
+    animation: floatCard1 14s ease-in-out infinite;
     animation-delay: 0s;
 }
 
 /* --- Position 2 : Milieu droite, dépasse vers l'extérieur --- */
 .engin-pos-2 {
-    top: 38%;
-    right: -10%;
-    width: 340px;
-    height: 255px;
-    animation: floatRight 22s ease-in-out infinite;
-    animation-delay: 1.5s;
+    top: 42%;
+    right: -5%;
+    width: 145px;
+    height: 108px;
+    animation: floatCard2 16s ease-in-out infinite;
+    animation-delay: 1.2s;
 }
 
 /* --- Position 3 : Bas gauche, partiellement hors écran --- */
 .engin-pos-3 {
-    bottom: -10%;
-    left: -8%;
-    width: 300px;
-    height: 225px;
-    animation: floatBottomLeft 20s ease-in-out infinite;
-    animation-delay: 3s;
+    bottom: -5%;
+    left: -5%;
+    width: 130px;
+    height: 97px;
+    animation: floatCard3 18s ease-in-out infinite;
+    animation-delay: 2.4s;
 }
 
-/* ---------- ANIMATIONS PREMIUM (60 FPS) ---------- */
+/* ---------- ANIMATIONS CARTES (60 FPS) ---------- */
 
-/* Haut gauche : flottement vertical + rotation 2° */
-@keyframes floatTopLeft {
+/* Carte 1 : flottement vertical + rotation 1° */
+@keyframes floatCard1 {
     0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-    25%      { transform: translate3d(3px, -14px, 0) rotate(1deg); }
-    50%      { transform: translate3d(-2px, -8px, 0) rotate(2deg); }
-    75%      { transform: translate3d(5px, -18px, 0) rotate(0.5deg); }
+    25%      { transform: translate3d(2px, -8px, 0) rotate(0.5deg); }
+    50%      { transform: translate3d(-1px, -4px, 0) rotate(1deg); }
+    75%      { transform: translate3d(3px, -6px, 0) rotate(0.3deg); }
 }
 
-/* Milieu droite : mouvement horizontal lent + zoom 100%→104%→100% */
-@keyframes floatRight {
-    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-    33%      { transform: translate3d(-12px, -6px, 0) scale(1.04); }
-    66%      { transform: translate3d(6px, -10px, 0) scale(1.02); }
-}
-
-/* Bas gauche : flottement diagonal + rotation */
-@keyframes floatBottomLeft {
+/* Carte 2 : flottement horizontal + vertical léger */
+@keyframes floatCard2 {
     0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-    30%      { transform: translate3d(10px, -12px, 0) rotate(-1.5deg); }
-    60%      { transform: translate3d(-4px, -6px, 0) rotate(1deg); }
-    85%      { transform: translate3d(7px, -16px, 0) rotate(-0.8deg); }
+    33%      { transform: translate3d(-6px, -4px, 0) rotate(-0.5deg); }
+    66%      { transform: translate3d(4px, -6px, 0) rotate(1deg); }
+}
+
+/* Carte 3 : flottement diagonal + rotation */
+@keyframes floatCard3 {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+    30%      { transform: translate3d(5px, -8px, 0) rotate(-0.8deg); }
+    60%      { transform: translate3d(-2px, -3px, 0) rotate(0.6deg); }
+    85%      { transform: translate3d(4px, -6px, 0) rotate(-0.4deg); }
 }
 
 /* --- Logo watermark géant --- */
@@ -438,18 +445,18 @@ section {
 
 /* --- Responsive: tablette --- */
 @media (max-width: 992px) {
-    .hero-bg-engin { display: block; }
-    .engin-pos-1 { top: -6%; left: -15%; width: 240px; height: 180px; }
-    .engin-pos-2 { top: 36%; right: -14%; width: 260px; height: 195px; }
-    .engin-pos-3 { bottom: -8%; left: -12%; width: 230px; height: 172px; }
+    .hero-engine-card { display: block; }
+    .engin-pos-1 { top: -6%; left: -15%; width: 130px; height: 97px; }
+    .engin-pos-2 { top: 36%; right: -14%; width: 120px; height: 90px; }
+    .engin-pos-3 { bottom: -8%; left: -12%; width: 145px; height: 108px; }
 }
 
 /* --- Responsive: mobile --- */
 @media (max-width: 576px) {
-    .hero-bg-engin { display: block; }
-    .engin-pos-1 { top: -5%; left: -18%; width: 180px; height: 135px; }
-    .engin-pos-2 { top: 34%; right: -16%; width: 200px; height: 150px; }
-    .engin-pos-3 { bottom: -6%; left: -14%; width: 175px; height: 130px; }
+    .hero-engine-card { display: block; }
+    .engin-pos-1 { top: -5%; left: -18%; width: 150px; height: 112px; }
+    .engin-pos-2 { top: 34%; right: -16%; width: 140px; height: 105px; }
+    .engin-pos-3 { bottom: -6%; left: -14%; width: 120px; height: 90px; }
 
     .hero-watermark-img { width: 70vw; }
     .hero-logo { width: 75px; height: 75px; border-radius: 14px; }

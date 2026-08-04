@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // HERO PREMIUM: ENTRÉE PROGRESSIVE + PARALLAX WATERMARK
     // ============================================================
     const heroSection = document.querySelector('.hero');
-    const heroEngins = document.querySelectorAll('.hero-bg-engin');
+    const heroEngins = document.querySelectorAll('.hero-engine-card');
 
     // --- Apparition progressive des 3 engins ---
     if (heroEngins.length > 0) {

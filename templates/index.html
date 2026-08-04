@@ -3,11 +3,17 @@
 
 <!-- HERO SECTION -->
 <section class="hero" id="accueil">
-    <!-- Engins décoratifs (3 seulement) -->
+    <!-- Cartes engins flottantes (3) -->
     <div class="hero-engins-bg">
-        <img src="{{ url_for('static', filename='images/cha.JPG') }}" alt="" class="hero-bg-engin engin-pos-1" data-speed="0.015" loading="lazy">
-        <img src="{{ url_for('static', filename='images/gru.JPG') }}" alt="" class="hero-bg-engin engin-pos-2" data-speed="0.025" loading="lazy">
-        <img src="{{ url_for('static', filename='images/pelle.JPG') }}" alt="" class="hero-bg-engin engin-pos-3" data-speed="0.018" loading="lazy">
+        <div class="hero-engine-card engin-pos-1">
+            <img src="{{ url_for('static', filename='images/cha.JPG') }}" alt="" loading="lazy">
+        </div>
+        <div class="hero-engine-card engin-pos-2">
+            <img src="{{ url_for('static', filename='images/gru.JPG') }}" alt="" loading="lazy">
+        </div>
+        <div class="hero-engine-card engin-pos-3">
+            <img src="{{ url_for('static', filename='images/pelle.JPG') }}" alt="" loading="lazy">
+        </div>
     </div>
     <!-- Logo LCE géant en filigrane -->
     <div class="hero-watermark">
