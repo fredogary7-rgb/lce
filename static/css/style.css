@@ -196,129 +196,52 @@ section {
 #mainNav.scrolled .navbar-toggler-icon { filter: none; }
 
 /* ============================================================
-   HERO PREMIUM
+   HERO PREMIUM — Affiche publicitaire haut de gamme
    ============================================================ */
 .hero {
     position: relative;
-    background: linear-gradient(160deg, #061a4a 0%, var(--blue-dark) 30%, var(--blue-primary) 60%, var(--blue-light) 100%);
     min-height: 100vh;
     display: flex;
     align-items: center;
     overflow: hidden;
+    /* Fond multi-couche : dégradé + radial-gradients */
+    background:
+        radial-gradient(ellipse 900px 600px at 25% 35%, rgba(45,127,249,0.22), transparent 65%),
+        radial-gradient(ellipse 500px 400px at 75% 65%, rgba(10,46,139,0.18), transparent 60%),
+        radial-gradient(circle 400px at 20% 40%, rgba(255,255,255,0.04), transparent 55%),
+        linear-gradient(175deg, #041433 0%, #061a4a 25%, var(--blue-dark) 55%, #0A3A9E 100%);
 }
 
-/* --- Couche 3 : Engins intégrés --- */
-.hero-engins-bg {
+/* --- Vignette (bords assombris) --- */
+.hero-vignette {
     position: absolute;
     inset: 0;
-    z-index: 3;
+    z-index: 2;
     pointer-events: none;
-    overflow: hidden;
+    background:
+        radial-gradient(ellipse 70% 55% at 30% 45%, transparent 40%, rgba(4,20,51,0.55) 100%);
 }
 
-.hero-engin {
+/* --- Lumière derrière le logo --- */
+.hero-light-behind {
     position: absolute;
-    display: block;
-    will-change: transform;
-    opacity: 0;
-    transition: opacity 1.8s ease-out;
-    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));
-    mix-blend-mode: normal;
+    z-index: 1;
+    pointer-events: none;
+    top: 20%;
+    left: 8%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(45,127,249,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: lightBreathe 10s ease-in-out infinite;
 }
 
-.hero-engin.visible {
-    opacity: 0.45;
+@keyframes lightBreathe {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.08); }
 }
 
-/* Engin 1 : Haut gauche - pelle/chargeuse */
-.engin-1 {
-    top: -8%;
-    left: -6%;
-    width: clamp(180px, 18vw, 280px);
-    height: auto;
-    animation: enginFloat1 22s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-    animation-delay: 0s;
-    transform-origin: center center;
-}
-
-/* Engin 2 : Milieu droite - grue */
-.engin-2 {
-    top: 40%;
-    right: -5%;
-    width: clamp(160px, 16vw, 250px);
-    height: auto;
-    animation: enginFloat2 25s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-    animation-delay: 2s;
-    transform-origin: center center;
-}
-
-/* Engin 3 : Bas gauche */
-.engin-3 {
-    bottom: -6%;
-    left: -4%;
-    width: clamp(150px, 15vw, 230px);
-    height: auto;
-    animation: enginFloat3 20s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-    animation-delay: 4s;
-    transform-origin: center center;
-}
-
-/* --- Animations naturelles --- */
-@keyframes enginFloat1 {
-    0%, 100% {
-        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
-    }
-    20% {
-        transform: translate3d(12px, -18px, 0) rotate(1.5deg) scale(1.03);
-    }
-    40% {
-        transform: translate3d(-8px, -28px, 0) rotate(-0.5deg) scale(0.98);
-    }
-    60% {
-        transform: translate3d(-14px, -8px, 0) rotate(-2deg) scale(1.02);
-    }
-    80% {
-        transform: translate3d(6px, -22px, 0) rotate(1deg) scale(0.99);
-    }
-}
-
-@keyframes enginFloat2 {
-    0%, 100% {
-        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
-    }
-    17% {
-        transform: translate3d(-14px, -10px, 0) rotate(-1.2deg) scale(1.04);
-    }
-    35% {
-        transform: translate3d(6px, -22px, 0) rotate(0.8deg) scale(0.97);
-    }
-    52% {
-        transform: translate3d(16px, -6px, 0) rotate(2deg) scale(1.02);
-    }
-    70% {
-        transform: translate3d(-10px, -18px, 0) rotate(-1.5deg) scale(0.98);
-    }
-    87% {
-        transform: translate3d(4px, -12px, 0) rotate(0.5deg) scale(1.01);
-    }
-}
-
-@keyframes enginFloat3 {
-    0%, 100% {
-        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
-    }
-    25% {
-        transform: translate3d(10px, -20px, 0) rotate(-1deg) scale(1.02);
-    }
-    50% {
-        transform: translate3d(-6px, -10px, 0) rotate(1.8deg) scale(0.97);
-    }
-    75% {
-        transform: translate3d(-12px, -24px, 0) rotate(-0.8deg) scale(1.03);
-    }
-}
-
-/* --- Couche 2 : Logo watermark géant --- */
+/* --- Filigrane LCE --- */
 .hero-watermark {
     position: absolute;
     inset: 0;
@@ -327,44 +250,97 @@ section {
     align-items: center;
     justify-content: center;
     pointer-events: none;
-    opacity: 0.035;
-    animation: watermarkBreathe 18s ease-in-out infinite;
+    opacity: 0.025;
+    animation: watermarkBreathe 20s ease-in-out infinite;
 }
 
 .hero-watermark-img {
-    width: min(500px, 55vw);
+    width: min(480px, 50vw);
     height: auto;
-    border-radius: 28px;
-    filter: blur(1.5px) brightness(0.65);
+    border-radius: 24px;
+    filter: blur(2px) brightness(0.6);
 }
 
 @keyframes watermarkBreathe {
-    0%, 100% { transform: scale(1); opacity: 0.035; }
-    50% { transform: scale(1.05); opacity: 0.05; }
+    0%, 100% { transform: scale(1); opacity: 0.025; }
+    50% { transform: scale(1.06); opacity: 0.04; }
 }
 
-/* --- Couche 4 : Halo lumineux derrière le contenu --- */
-.hero-glow {
+/* --- ENGINS : partiels, monochromes, intégrés --- */
+.hero-engin {
     position: absolute;
-    z-index: 4;
+    display: block;
+    will-change: transform, opacity;
+    opacity: 0;
     pointer-events: none;
-    top: 15%;
-    left: 5%;
-    width: 55%;
-    height: 65%;
-    background:
-        radial-gradient(ellipse 500px 350px at 35% 45%, rgba(45,127,249,0.18), transparent 70%),
-        radial-gradient(circle 300px at 30% 40%, rgba(255,255,255,0.05), transparent 60%),
-        radial-gradient(circle 200px at 25% 35%, rgba(45,127,249,0.12), transparent 50%);
-    animation: glowPulse 8s ease-in-out infinite;
+    transition: opacity 2s ease-out;
 }
 
-@keyframes glowPulse {
-    0%, 100% { opacity: 0.8; }
-    50% { opacity: 1; }
+.hero-engin.visible {
+    opacity: var(--engin-opacity, 0.28);
 }
 
-/* --- Particules lumineuses --- */
+/* Top-Left : chariot élévateur — avant uniquement, coupé en haut à gauche */
+.hero-engin--tl {
+    --engin-opacity: 0.25;
+    top: -8%;
+    left: -6%;
+    width: clamp(400px, 38vw, 600px);
+    height: auto;
+    z-index: 3;
+    clip-path: inset(0 25% 30% 0);
+    animation: enginBreathe1 14s ease-in-out infinite;
+    animation-delay: 0s;
+}
+
+/* Top-Right : grue — cabine uniquement, coupée à droite */
+.hero-engin--tr {
+    --engin-opacity: 0.22;
+    top: 38%;
+    right: -8%;
+    width: clamp(380px, 36vw, 550px);
+    height: auto;
+    z-index: 3;
+    clip-path: inset(0 10% 25% 30%);
+    animation: enginBreathe2 16s ease-in-out infinite;
+    animation-delay: 1s;
+}
+
+/* Bottom-Left : pelle — bras uniquement, coupé en bas à gauche */
+.hero-engin--bl {
+    --engin-opacity: 0.20;
+    bottom: -12%;
+    left: -4%;
+    width: clamp(350px, 34vw, 520px);
+    height: auto;
+    z-index: 3;
+    clip-path: inset(30% 20% 0 0);
+    animation: enginBreathe3 15s ease-in-out infinite;
+    animation-delay: 2s;
+}
+
+/* --- Animations respiration (très subtiles) --- */
+@keyframes enginBreathe1 {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+    33%      { transform: translate3d(2px, -4px, 0) rotate(0.4deg); }
+    66%      { transform: translate3d(-2px, -2px, 0) rotate(-0.4deg); }
+}
+
+@keyframes enginBreathe2 {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+    30%      { transform: translate3d(-4px, -3px, 0) rotate(-0.5deg); }
+    60%      { transform: translate3d(2px, -5px, 0) rotate(0.3deg); }
+    85%      { transform: translate3d(-2px, -1px, 0) rotate(-0.3deg); }
+}
+
+@keyframes enginBreathe3 {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+    25%      { transform: translate3d(4px, -3px, 0) rotate(0.6deg); }
+    55%      { transform: translate3d(-3px, -5px, 0) rotate(-0.4deg); }
+    80%      { transform: translate3d(2px, -2px, 0) rotate(0.3deg); }
+}
+
+/* --- Particules lumineuses (discrètes, max 8) --- */
 .hero-particles {
     position: absolute;
     inset: 0;
@@ -376,32 +352,28 @@ section {
 .hero-particle {
     position: absolute;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.6);
-    animation: particleDrift linear infinite;
-    box-shadow: 0 0 6px 2px rgba(45, 127, 249, 0.4);
+    background: rgba(173, 216, 255, 0.5);
+    animation: particleRise linear infinite;
+    box-shadow: 0 0 4px 1px rgba(45, 127, 249, 0.3);
 }
 
-@keyframes particleDrift {
+@keyframes particleRise {
     0% {
-        transform: translateY(0) translateX(0) scale(1);
+        transform: translateY(0) translateX(0);
         opacity: 0;
     }
-    10% {
-        opacity: 0.7;
-    }
-    90% {
-        opacity: 0.1;
-    }
+    15% { opacity: 0.5; }
+    85% { opacity: 0.08; }
     100% {
-        transform: translateY(-100vh) translateX(40px) scale(0.3);
+        transform: translateY(-100vh) translateX(20px);
         opacity: 0;
     }
 }
 
-/* --- Couche 5-7 : Contenu principal --- */
+/* --- Contenu principal --- */
 .hero-content {
     position: relative;
-    z-index: 6;
+    z-index: 5;
 }
 
 .hero-logo {
@@ -409,8 +381,10 @@ section {
     height: 100px;
     border-radius: 20px;
     object-fit: cover;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.35), 0 0 0 4px rgba(255,255,255,0.08);
-    border: 2px solid rgba(255,255,255,0.15);
+    box-shadow:
+        0 8px 40px rgba(0,0,0,0.4),
+        0 0 0 3px rgba(255,255,255,0.06);
+    border: 2px solid rgba(255,255,255,0.12);
     backdrop-filter: blur(10px);
 }
 
@@ -419,23 +393,23 @@ section {
     font-weight: 900;
     color: var(--white);
     line-height: 1.1;
-    text-shadow: 0 2px 20px rgba(0,0,0,0.25), 0 0 80px rgba(45,127,249,0.15);
+    text-shadow: 0 2px 20px rgba(0,0,0,0.3), 0 0 100px rgba(45,127,249,0.12);
     letter-spacing: -0.5px;
 }
 @media (max-width: 768px) { .hero-title { font-size: 2.2rem; } }
 
 .hero-subtitle {
     font-size: 1.25rem;
-    color: rgba(255, 255, 255, 0.88);
+    color: rgba(255, 255, 255, 0.85);
     max-width: 550px;
     font-weight: 400;
-    text-shadow: 0 1px 8px rgba(0,0,0,0.2);
+    text-shadow: 0 1px 8px rgba(0,0,0,0.25);
 }
 
 .hero-buttons .btn-outline-light {
-    border: 2px solid rgba(255,255,255,0.5);
+    border: 2px solid rgba(255,255,255,0.4);
     backdrop-filter: blur(6px);
-    background: rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.06);
 }
 .hero-buttons .btn-outline-light:hover {
     background: var(--white);
@@ -443,13 +417,13 @@ section {
     border-color: var(--white);
 }
 
-/* --- Indicateur de scroll moderne --- */
+/* --- Scroll indicator --- */
 .hero-scroll-indicator {
     position: absolute;
     bottom: 35px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 3;
+    z-index: 5;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -461,7 +435,7 @@ section {
     width: 26px;
     height: 40px;
     border-radius: 14px;
-    border: 2px solid rgba(255,255,255,0.45);
+    border: 2px solid rgba(255,255,255,0.4);
     position: relative;
 }
 .scroll-wheel {
@@ -479,7 +453,7 @@ section {
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 2px;
-    color: rgba(255,255,255,0.5);
+    color: rgba(255,255,255,0.4);
     font-weight: 500;
 }
 
@@ -489,22 +463,22 @@ section {
 }
 
 @keyframes scrollFade {
-    0%, 100% { opacity: 0.6; }
+    0%, 100% { opacity: 0.5; }
     50% { opacity: 1; }
 }
 
 /* --- Responsive: tablette --- */
 @media (max-width: 992px) {
-    .engin-1 { width: clamp(140px, 20vw, 200px); top: -6%; left: -12%; }
-    .engin-2 { width: clamp(120px, 18vw, 180px); top: 38%; right: -10%; }
-    .engin-3 { width: clamp(110px, 16vw, 160px); bottom: -5%; left: -10%; }
+    .hero-engin--tl { width: clamp(300px, 42vw, 480px); top: -10%; left: -10%; }
+    .hero-engin--tr { width: clamp(280px, 38vw, 420px); top: 40%; right: -12%; }
+    .hero-engin--bl { width: clamp(260px, 36vw, 400px); bottom: -14%; left: -8%; }
 }
 
 /* --- Responsive: mobile --- */
 @media (max-width: 576px) {
-    .engin-1 { width: clamp(100px, 32vw, 150px); top: -4%; left: -14%; }
-    .engin-2 { width: clamp(90px, 28vw, 130px); top: 35%; right: -12%; }
-    .engin-3 { width: clamp(85px, 26vw, 120px); bottom: -4%; left: -12%; }
+    .hero-engin--tl { width: clamp(240px, 55vw, 360px); top: -12%; left: -14%; }
+    .hero-engin--tr { width: clamp(220px, 50vw, 320px); top: 42%; right: -16%; }
+    .hero-engin--bl { width: clamp(200px, 48vw, 300px); bottom: -16%; left: -12%; }
 
     .hero-watermark-img { width: 70vw; }
     .hero-logo { width: 75px; height: 75px; border-radius: 14px; }

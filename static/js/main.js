@@ -39,62 +39,27 @@ document.addEventListener('DOMContentLoaded', function () {
         heroEngins.forEach((engin, i) => {
             setTimeout(() => {
                 engin.classList.add('visible');
-            }, 200 + i * 500); // 200ms, 700ms, 1200ms
+            }, 300 + i * 600); // 300ms, 900ms, 1500ms
         });
     }
 
-    // --- Particules lumineuses ---
+    // --- Particules lumineuses (8 max, subtiles) ---
     const particlesContainer = document.getElementById('heroParticles');
     if (heroSection && particlesContainer) {
-        const particleCount = 18;
         const fragment = document.createDocumentFragment();
-        for (let i = 0; i < particleCount; i++) {
+        for (let i = 0; i < 8; i++) {
             const particle = document.createElement('div');
             particle.classList.add('hero-particle');
-            const size = Math.random() * 3 + 1.5; // 1.5px - 4.5px
+            const size = Math.random() * 2 + 1; // 1px - 3px
             particle.style.width = size + 'px';
             particle.style.height = size + 'px';
             particle.style.left = Math.random() * 100 + '%';
-            particle.style.bottom = -(Math.random() * 30 + 5) + '%'; // start below
-            particle.style.animationDuration = (Math.random() * 10 + 10) + 's'; // 10-20s
-            particle.style.animationDelay = (Math.random() * 12) + 's';
+            particle.style.bottom = -(Math.random() * 40 + 10) + '%';
+            particle.style.animationDuration = (Math.random() * 12 + 12) + 's'; // 12-24s
+            particle.style.animationDelay = (Math.random() * 15) + 's';
             fragment.appendChild(particle);
         }
         particlesContainer.appendChild(fragment);
-    }
-
-    // --- Parallax souris engins (desktop only) ---
-    if (heroSection && window.matchMedia('(min-width: 993px)').matches) {
-        heroSection.addEventListener('mousemove', (e) => {
-            const { clientX, clientY } = e;
-            const { innerWidth, innerHeight } = window;
-            const x = (clientX / innerWidth) * 2 - 1;
-            const y = (clientY / innerHeight) * 2 - 1;
-
-            // Parallax sur les engins
-            heroEngins.forEach((engin, i) => {
-                const strength = (i + 1) * 6;
-                if (engin.classList.contains('visible')) {
-                    engin.style.transform = `translate3d(${x * strength}px, ${y * strength}px, 0)`;
-                }
-            });
-
-            // Parallax watermark
-            const watermark = document.querySelector('.hero-watermark');
-            if (watermark) {
-                watermark.style.transform = `translate(${x * 10}px, ${y * 10}px)`;
-            }
-        });
-
-        heroSection.addEventListener('mouseleave', () => {
-            heroEngins.forEach((engin) => {
-                if (engin.classList.contains('visible')) {
-                    engin.style.transform = '';
-                }
-            });
-            const watermark = document.querySelector('.hero-watermark');
-            if (watermark) watermark.style.transform = '';
-        });
     }
 
     // ============================================================
