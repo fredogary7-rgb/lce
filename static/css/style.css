@@ -212,36 +212,25 @@ section {
         linear-gradient(175deg, #041433 0%, #061a4a 25%, var(--blue-dark) 55%, #0A3A9E 100%);
 }
 
-/* --- Slider carrousel d'engins --- */
+/* --- Slider carrousel d'engins — défilement horizontal --- */
 .hero-slider {
     position: absolute;
     inset: 0;
     z-index: 0;
-    overflow: hidden;
+    display: flex;
+    width: 1000vw; /* 10 slides × 100vw */
+    will-change: transform;
+    transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hero-slide {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    will-change: opacity, transform;
+    flex: 0 0 100vw;
+    position: relative;
+    overflow: hidden;
 }
 
-.hero-slide.active {
-    opacity: 1;
-    z-index: 1;
-    animation: kenBurns 6.5s ease-in-out;
-}
-
-.hero-slide.active.ready {
-    /* Laisse l'image visible après l'animation d'entrée */
-    animation: none;
-}
-
-.hero-slide.fading-out {
-    opacity: 0;
-    z-index: 2;
-    transition: opacity 1.5s ease-in-out;
+.hero-slide.active .hero-slide-img {
+    animation: kenBurns 6.5s ease-in-out forwards;
 }
 
 .hero-slide-img {
