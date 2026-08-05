@@ -3,28 +3,19 @@
 
 <!-- HERO SECTION -->
 <section class="hero" id="accueil">
+    <!-- Carrousel d'engins : slides superposés avec fondu + zoom -->
+    <div class="hero-slider" id="heroSlider">
+        {% set engins = ['char.JPG','pelle.JPG','gru.JPG','mani.JPG','buldo.JPG','reash.JPG','niveu.JPG','benne.JPG','semi.JPG','bus.JPG'] %}
+        {% for engin in engins %}
+        <div class="hero-slide{% if loop.first %} active{% endif %}" data-hero-index="{{ loop.index0 }}">
+            <img src="{{ url_for('static', filename='images/' + engin) }}" alt="" class="hero-slide-img"{% if not loop.first %} loading="lazy"{% endif %}>
+        </div>
+        {% endfor %}
+    </div>
+    <!-- Overlay bleu foncé -->
+    <div class="hero-overlay"></div>
     <!-- Vignette foncée sur les bords -->
     <div class="hero-vignette"></div>
-    <!-- Lumière centrale derrière le logo -->
-    <div class="hero-light-behind"></div>
-    <!-- Logo LCE en filigrane -->
-    <div class="hero-watermark">
-        <img src="{{ url_for('static', filename='images/lc.JPG') }}" alt="" class="hero-watermark-img">
-    </div>
-    <!-- Lignes graphiques reliant les engins -->
-    <svg class="hero-lines" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" fill="none">
-        <path d="M380 180 Q700 300 1400 440" stroke="rgba(45,127,249,0.12)" stroke-width="1.2" stroke-dasharray="6 12"/>
-        <path d="M260 780 Q650 580 1350 520" stroke="rgba(45,127,249,0.08)" stroke-width="0.8"/>
-        <path d="M420 820 Q800 380 1480 380" stroke="rgba(45,127,249,0.06)" stroke-width="0.6" stroke-dasharray="3 18"/>
-    </svg>
-    <!-- Halos derrière chaque engin -->
-    <div class="hero-halo hero-halo--tl"></div>
-    <div class="hero-halo hero-halo--tr"></div>
-    <div class="hero-halo hero-halo--bl"></div>
-    <!-- Engins : affichés partiellement, coupés par les bords -->
-    <img src="{{ url_for('static', filename='images/hero/cha.webp') }}" alt="" class="hero-engin hero-engin--tl" loading="lazy">
-    <img src="{{ url_for('static', filename='images/hero/gru.webp') }}" alt="" class="hero-engin hero-engin--tr" loading="lazy">
-    <img src="{{ url_for('static', filename='images/hero/pelle.webp') }}" alt="" class="hero-engin hero-engin--bl" loading="lazy">
     <!-- Particules lumineuses discrètes -->
     <div class="hero-particles" id="heroParticles"></div>
     <!-- Contenu principal -->

@@ -29,18 +29,69 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ============================================================
-    // HERO PREMIUM: ENTRÉE PROGRESSIVE ENGINS + PARTICULES
+    // HERO SLIDER: CARROUSEL D'ENGINS AVEC FADE + KEN BURNS
     // ============================================================
     const heroSection = document.querySelector('.hero');
-    const heroEngins = document.querySelectorAll('.hero-engin');
+    const heroSlider = document.getElementById('heroSlider');
+    const heroSlides = heroSlider ? heroSlider.querySelectorAll('.hero-slide') : [];
 
-    // --- Apparition progressive des 3 engins ---
-    if (heroEngins.length > 0) {
-        heroEngins.forEach((engin, i) => {
+    let activeSlide = 0;
+    let sliderInterval = null;
+    const SLIDE_DURATION = 6500; // 6.5 secondes par slide
+    const FADE_DURATION = 1500; // 1.5 secondes de transition
+
+    function runHeroSlider() {
+        if (heroSlides.length < 2) return;
+
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function nextSlide() {
+            const current = heroSlides[activeSlide];
+
+            // Prochaine slide
+            activeSlide = (activeSlide + 1) % heroSlides.length;
+            const next = heroSlides[activeSlide];
+
+            if (reducedMotion) {
+                // Instant switch without animation
+                current.classList.remove('active', 'ready', 'fading-out');
+                next.classList.add('active');
+                return;
+            }
+
+            // 1. Démarrer le fade-out sur la slide actuelle
+            current.classList.remove('ready');
+            current.classList.add('fading-out');
+
+            // 2. Préparer la nouvelle slide (invisible)
+            next.classList.remove('fading-out');
+            next.classList.add('active');
+
+            // 3. Nettoyer l'ancienne après la transition
             setTimeout(() => {
-                engin.classList.add('visible');
-            }, 300 + i * 600); // 300ms, 900ms, 1500ms
-        });
+                current.classList.remove('active', 'fading-out');
+                // Laisser l'image chargée pour éviter un flash au prochain cycle
+            }, FADE_DURATION);
+
+            // 4. Marquer la nouvelle slide comme ready après l'animation Ken Burns (6.5s)
+            setTimeout(() => {
+                next.classList.add('ready');
+            }, SLIDE_DURATION);
+        }
+
+        // Premier affichage : marquer la première slide ready après son Ken Burns
+        if (heroSlides[0].classList.contains('active')) {
+            setTimeout(() => {
+                heroSlides[0].classList.add('ready');
+            }, SLIDE_DURATION);
+        }
+
+        // Rotation automatique
+        sliderInterval = setInterval(nextSlide, SLIDE_DURATION);
+    }
+
+    if (heroSlides.length > 0) {
+        runHeroSlider();
     }
 
     // --- Hero counter animation ---

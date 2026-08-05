@@ -212,6 +212,60 @@ section {
         linear-gradient(175deg, #041433 0%, #061a4a 25%, var(--blue-dark) 55%, #0A3A9E 100%);
 }
 
+/* --- Slider carrousel d'engins --- */
+.hero-slider {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.hero-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    will-change: opacity, transform;
+}
+
+.hero-slide.active {
+    opacity: 1;
+    z-index: 1;
+    animation: kenBurns 6.5s ease-in-out;
+}
+
+.hero-slide.active.ready {
+    /* Laisse l'image visible après l'animation d'entrée */
+    animation: none;
+}
+
+.hero-slide.fading-out {
+    opacity: 0;
+    z-index: 2;
+    transition: opacity 1.5s ease-in-out;
+}
+
+.hero-slide-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    display: block;
+}
+
+@keyframes kenBurns {
+    0%   { transform: scale(1); }
+    100% { transform: scale(1.06); }
+}
+
+/* --- Overlay bleu foncé --- */
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(135deg, rgba(8,25,75,0.82) 0%, rgba(13,71,199,0.70) 100%);
+}
+
 /* --- Vignette (bords assombris) --- */
 .hero-vignette {
     position: absolute;
@@ -220,220 +274,6 @@ section {
     pointer-events: none;
     background:
         radial-gradient(ellipse 70% 55% at 30% 45%, transparent 40%, rgba(4,20,51,0.55) 100%);
-}
-
-/* --- Lumière derrière le logo --- */
-.hero-light-behind {
-    position: absolute;
-    z-index: 1;
-    pointer-events: none;
-    top: 20%;
-    left: 8%;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(45,127,249,0.15) 0%, transparent 70%);
-    border-radius: 50%;
-    animation: lightBreathe 10s ease-in-out infinite;
-}
-
-@keyframes lightBreathe {
-    0%, 100% { opacity: 0.6; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.08); }
-}
-
-/* --- Filigrane LCE --- */
-.hero-watermark {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-    opacity: 0.025;
-    animation: watermarkBreathe 20s ease-in-out infinite;
-}
-
-.hero-watermark-img {
-    width: min(480px, 50vw);
-    height: auto;
-    border-radius: 24px;
-    filter: blur(2px) brightness(0.6);
-}
-
-@keyframes watermarkBreathe {
-    0%, 100% { transform: scale(1); opacity: 0.025; }
-    50% { transform: scale(1.06); opacity: 0.04; }
-}
-
-/* --- Lignes graphiques reliant les engins --- */
-.hero-lines {
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-    pointer-events: none;
-    width: 100%;
-    height: 100%;
-    opacity: 0.7;
-    animation: linesPulse 12s ease-in-out infinite;
-}
-
-@keyframes linesPulse {
-    0%, 100% { opacity: 0.5; }
-    50%      { opacity: 0.8; }
-}
-
-/* --- Halos bleus derrière chaque engin --- */
-.hero-halo {
-    position: absolute;
-    z-index: 2;
-    pointer-events: none;
-    border-radius: 50%;
-    filter: blur(60px);
-}
-
-.hero-halo--tl {
-    top: -5%;
-    left: -2%;
-    width: 450px;
-    height: 450px;
-    background: radial-gradient(circle, rgba(45,127,249,0.13) 0%, transparent 70%);
-    animation: haloBreathe1 16s ease-in-out infinite;
-}
-
-.hero-halo--tr {
-    top: 35%;
-    right: -5%;
-    width: 550px;
-    height: 550px;
-    background: radial-gradient(circle, rgba(45,127,249,0.16) 0%, transparent 70%);
-    animation: haloBreathe2 19s ease-in-out infinite;
-}
-
-.hero-halo--bl {
-    bottom: -10%;
-    left: -2%;
-    width: 380px;
-    height: 380px;
-    background: radial-gradient(circle, rgba(45,127,249,0.10) 0%, transparent 70%);
-    animation: haloBreathe3 17s ease-in-out infinite;
-}
-
-@keyframes haloBreathe1 {
-    0%, 100% { opacity: 0.6; transform: scale(1); }
-    50%      { opacity: 1; transform: scale(1.12); }
-}
-
-@keyframes haloBreathe2 {
-    0%, 100% { opacity: 0.7; transform: scale(1.05); }
-    50%      { opacity: 1; transform: scale(0.92); }
-}
-
-@keyframes haloBreathe3 {
-    0%, 100% { opacity: 0.5; transform: scale(0.95); }
-    50%      { opacity: 0.9; transform: scale(1.08); }
-}
-
-/* --- ENGINS : hiérarchie visuelle, 3 profondeurs --- */
-.hero-engin {
-    position: absolute;
-    display: block;
-    will-change: transform, opacity, filter;
-    opacity: 0;
-    pointer-events: auto;
-    cursor: default;
-    transition: opacity 2s ease-out, filter 0.6s ease;
-}
-
-.hero-engin.visible {
-    opacity: var(--engin-opacity, 0.28);
-}
-
-/* --- Profondeur 1 : Arrière — top-left, 90% --- */
-.hero-engin--tl {
-    --engin-opacity: 0.18;
-    top: -8%;
-    left: -6%;
-    width: clamp(360px, 34vw, 540px);
-    height: auto;
-    z-index: 3;
-    clip-path: inset(0 25% 30% 0);
-    filter: blur(0.6px);
-    animation: enginBreathe1 17s ease-in-out infinite;
-    animation-delay: 0s;
-}
-
-/* --- Profondeur 2 : Principal — right, 120% --- */
-.hero-engin--tr {
-    --engin-opacity: 0.28;
-    top: 36%;
-    right: -8%;
-    width: clamp(450px, 43vw, 660px);
-    height: auto;
-    z-index: 5;
-    clip-path: inset(0 8% 25% 28%);
-    filter: blur(0px);
-    animation: enginBreathe2 20s ease-in-out infinite;
-    animation-delay: 0s;
-}
-
-/* --- Profondeur 3 : Avant — bottom-left, 75% --- */
-.hero-engin--bl {
-    --engin-opacity: 0.22;
-    bottom: -12%;
-    left: -4%;
-    width: clamp(260px, 26vw, 390px);
-    height: auto;
-    z-index: 4;
-    clip-path: inset(30% 20% 0 0);
-    filter: blur(0.3px);
-    animation: enginBreathe3 21s ease-in-out infinite;
-    animation-delay: 0s;
-}
-
-/* --- Hover desktop : engin principal --- */
-@media (hover: hover) and (pointer: fine) {
-    .hero-engin--tr:hover {
-        --engin-opacity: 0.34;
-        filter: blur(0px) brightness(1.15);
-        transform: scale(1.025);
-        animation-duration: 14s; /* légère accélération */
-    }
-    .hero-engin--tl:hover {
-        --engin-opacity: 0.22;
-        filter: blur(0.3px) brightness(1.10);
-        transform: scale(1.02);
-        animation-duration: 13s;
-    }
-    .hero-engin--bl:hover {
-        --engin-opacity: 0.26;
-        filter: blur(0.1px) brightness(1.10);
-        transform: scale(1.02);
-        animation-duration: 16s;
-    }
-}
-
-/* --- Animations : décalées, subtiles, jamais simultanées --- */
-@keyframes enginBreathe1 {
-     0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-    22%       { transform: translate3d(2px, -5px, 0) rotate(0.5deg); }
-    48%       { transform: translate3d(0px, 0px, 0) rotate(0deg); }
-    72%       { transform: translate3d(-2px, -3px, 0) rotate(-0.4deg); }
-}
-
-@keyframes enginBreathe2 {
-     0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-    18%       { transform: translate3d(0px, 0px, 0) rotate(0deg); }
-    42%       { transform: translate3d(-4px, -3px, 0) rotate(-0.5deg); }
-    68%       { transform: translate3d(0px, 0px, 0) rotate(0deg); }
-    86%       { transform: translate3d(3px, -4px, 0) rotate(0.3deg); }
-}
-
-@keyframes enginBreathe3 {
-     0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-    28%       { transform: translate3d(0px, 0px, 0) rotate(0deg); }
-    56%       { transform: translate3d(3px, -4px, 0) rotate(0.5deg); }
-    82%       { transform: translate3d(0px, 0px, 0) rotate(0deg); }
 }
 
 /* --- Particules lumineuses (discrètes, max 8) --- */
@@ -682,44 +522,30 @@ section {
 
 /* --- Responsive: tablette --- */
 @media (max-width: 992px) {
-    .hero-engin--tl { width: clamp(300px, 42vw, 480px); top: -10%; left: -10%; }
-    .hero-engin--tr { width: clamp(280px, 38vw, 420px); top: 40%; right: -12%; }
-    .hero-engin--bl { width: clamp(260px, 36vw, 400px); bottom: -14%; left: -8%; }
+    .hero-slide-img { object-position: center 35%; }
 }
 
 /* --- Responsive: mobile --- */
 @media (max-width: 576px) {
-    .hero-engin--tl { width: clamp(240px, 55vw, 360px); top: -12%; left: -14%; }
-    .hero-engin--tr { width: clamp(220px, 50vw, 320px); top: 42%; right: -16%; }
-    .hero-engin--bl { width: clamp(200px, 48vw, 300px); bottom: -16%; left: -12%; }
-
-    .hero-watermark-img { width: 70vw; }
+    .hero-slide-img { object-position: center 40%; }
     .hero-logo { width: 75px; height: 75px; border-radius: 14px; }
 }
 
 /* --- prefers-reduced-motion : désactiver les animations --- */
 @media (prefers-reduced-motion: reduce) {
-    .hero-engin,
-    .hero-engin.visible {
+    .hero-slide,
+    .hero-slide.active,
+    .hero-slide.fading-out {
         animation: none !important;
         transition: none !important;
     }
-    .hero-halo,
-    .hero-light-behind,
     .hero-vignette,
-    .hero-watermark,
-    .hero-lines,
     .hero-logo,
     .hero-particle,
     .hero-scroll-indicator,
     .scroll-dot {
         animation: none !important;
         transition: none !important;
-    }
-    .hero-engin--tl,
-    .hero-engin--tr,
-    .hero-engin--bl {
-        opacity: 0.25;
     }
 }
 
